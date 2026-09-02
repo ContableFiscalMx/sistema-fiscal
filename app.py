@@ -107,7 +107,7 @@ if opcion_menu == "📊 Panel General":
 
   col1, col2, col3 = st.columns(3)
   with col1:
-    st.metric(label="Valor UMA 2025", value="$130.14", delta="Vigente")
+    st.metric(label="Valor UMA 2026", value="$117.31", delta="Vigente")
   with col2:
     st.metric(label="Tasa Recargos", value="1.47%", delta="Mensual")
   with col3:
@@ -115,7 +115,7 @@ if opcion_menu == "📊 Panel General":
 
   st.markdown("---")
   st.subheader("Directorio de Aclaraciones")
-  st.info("✉️ : vigilancia.cumplimiento@tamaulipas.gob.mx")
+  st.info("✉️ : contablefiscalmx27@gmail.com")
 
 # ---------------------------------------------------------
 # APARTADO 2: CALCULADORA DE IMPUESTOS
