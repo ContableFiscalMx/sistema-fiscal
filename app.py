@@ -107,15 +107,40 @@ if opcion_menu == "📊 Panel General":
 
   col1, col2, col3 = st.columns(3)
   with col1:
-    st.metric(label="Valor UMA 2026", value="$117.31", delta="Vigente")
+    st.metric(label="Valor UMA 2026 (Diario)", value="$117.31", delta="Vigente")
   with col2:
     st.metric(label="Tasa Recargos", value="2.07%", delta="Mensual")
   with col3:
     st.metric(label="ISN Tamaulipas", value="3%", delta="Estatal")
 
   st.markdown("---")
+
+  # --- TABLA DE INGRESOS EXENTOS (ART. 93 LISR) ---
+  with st.expander("📌 Ver Tabla de Ingresos Exentos para Trabajadores (Art. 93 LISR 2026)", expanded=True):
+    st.caption("Cálculos elaborados con base en el valor UMA diario vigente ($117.31 MXN).")
+    
+    # Datos extraídos para presentación estructurada
+    datos_exentos = [
+        {"Concepto": "Aguinaldo", "Exención Ley": "30 UMA", "Fundamento": "Art. 93 Fracc. XIV", "Importe Máx. Exento": "$3,519.30"},
+        {"Concepto": "Prima Vacacional", "Exención Ley": "15 UMA", "Fundamento": "Art. 93 Fracc. XIV", "Importe Máx. Exento": "$1,759.65"},
+        {"Concepto": "PTU (Reparto de Utilidades)", "Exención Ley": "15 UMA", "Fundamento": "Art. 93 Fracc. XIV", "Importe Máx. Exento": "$1,759.65"},
+        {"Concepto": "Prima Dominical", "Exención Ley": "1 UMA por domingo", "Fundamento": "Art. 93 Fracc. XIV", "Importe Máx. Exento": "$117.31 / domingo"},
+        {"Concepto": "Jubilaciones / Pensiones", "Exención Ley": "15 UMA diarias", "Fundamento": "Art. 93 Fracc. IV", "Importe Máx. Exento": "$1,759.65 / día"},
+        {"Concepto": "Indemnizaciones / Separación", "Exención Ley": "90 UMA por año trabajado", "Fundamento": "Art. 93 Fracc. XIII", "Importe Máx. Exento": "$10,557.90 / año"},
+    ]
+    
+    st.dataframe(pd.DataFrame(datos_exentos), use_container_width=True, hide_index=True)
+    
+    st.markdown("""
+    **Notas sobre Tiempo Extra y Días de Descanso (Art. 93 Fracc. I):**
+    * **Trabajadores con Salario Mínimo General (SMG):** 100% exento (sin rebasar los límites de la LFT).
+    * **Trabajadores con salario superior al mínimo:** 50% exento, siempre que la exención no rebase de **5 UMA semanales ($586.55 MXN)**.
+    """)
+
+  st.markdown("---")
   st.subheader("Directorio de Aclaraciones")
   st.info("✉️ : contablefiscalmx27@gmail.com")
+
 
 # ---------------------------------------------------------
 # APARTADO 2: CALCULADORA DE IMPUESTOS
