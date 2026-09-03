@@ -151,8 +151,8 @@ elif opcion_menu == "🧮 Calculadora de Impuestos":
   with col_centro:
     st.title("🧮 Calculadora de Retenciones")
     st.caption(
-        "Determina los importes directos e inversos para RESICO, Honorarios y"
-        " Arrendamiento."
+        "Determina los importes directos e inversos para RESICO, Honorarios, "
+        "Arrendamiento y Actividad Empresarial."
     )
 
     if "calc_cantidad" not in st.session_state:
@@ -174,33 +174,35 @@ elif opcion_menu == "🧮 Calculadora de Impuestos":
         ],
     )
 
+    # Las tuplas tienen el formato: (Tasa_ISR, Factor_Ret_IVA, Tasa_IVA_Defecto, Mostrar_Reglon_IVA, Mostrar_Reglon_Ret_IVA)
     if regimen == "RESICO":
       opciones_ret = {
-          "Ret ISR 1.25% | Ret IVA 2/3 (Persona Moral)": (0.0125, 2 / 3, 16.0),
-          "Solo Ret ISR 1.25% (IVA Tasa 0% / Exento)": (0.0125, 0.0, 0.0),
-          "Solo Ret ISR 1.25% (Con IVA 16% sin Ret. IVA)": (0.0125, 0.0, 16.0),
-          "Sin Retenciones (Público General / PF)": (0.0, 0.0, 16.0),
+          "Retención ISR 1.25%, Retención IVA 2/3 partes": (0.0125, 2 / 3, 16.0, True, True),
+          "Retención ISR 1.25%, Sin retención de IVA": (0.0125, 0.0, 16.0, True, False),
+          "Retención ISR 1.25%": (0.0125, 0.0, 0.0, False, False),
       }
     elif regimen in ["Arrendamiento", "Servicios Profesionales (Honorarios)"]:
       opciones_ret = {
-          "Ret ISR 10% | Ret IVA 2/3 (Persona Moral)": (0.10, 2 / 3, 16.0),
-          "Solo Ret ISR 10% (IVA Tasa 0% / Exento)": (0.10, 0.0, 0.0),
-          "Solo Ret ISR 10% (Con IVA 16% sin Ret. IVA)": (0.10, 0.0, 16.0),
-          "Sin Retenciones (Público General / PF)": (0.0, 0.0, 16.0),
+          "Ret ISR 10% | Ret IVA 2/3 (Persona Moral)": (0.10, 2 / 3, 16.0, True, True),
+          "Solo Ret ISR 10% (IVA Tasa 0% / Exento)": (0.10, 0.0, 0.0, False, False),
+          "Solo Ret ISR 10% (Con IVA 16% sin Ret. IVA)": (0.10, 0.0, 16.0, True, False),
       }
     else:
+      # Actividad Empresarial (Comercial)
       opciones_ret = {
-          "Operación General (IVA 16%)": (0.0, 0.0, 16.0),
-          "Operación Tasa 0% / Exento": (0.0, 0.0, 0.0),
+          "Operación General (IVA 16%)": (0.0, 0.0, 16.0, True, False),
       }
 
     escenario = st.radio(
         "Configuración de Retenciones:", list(opciones_ret.keys())
     )
 
-    tasa_isr_aplicable = opciones_ret[escenario][0]
-    factor_ret_iva = opciones_ret[escenario][1]
-    tasa_iva_defecto = opciones_ret[escenario][2]
+    # Extraemos las variables de configuración según la opción elegida
+    (tasa_isr_aplicable, 
+     factor_ret_iva, 
+     tasa_iva_defecto, 
+     mostrar_iva, 
+     mostrar_ret_iva) = opciones_ret[escenario]
 
     st.markdown("---")
 
@@ -248,23 +250,26 @@ elif opcion_menu == "🧮 Calculadora de Impuestos":
 
     st.markdown("<br>", unsafe_allow_html=True)
     st.text_input("Subtotal", value=f"$ {subtotal:,.2f}", disabled=True)
-    st.text_input(
-        "(+) Importe de IVA", value=f"$ {importe_iva:,.2f}", disabled=True
-    )
-    st.text_input(
-        "(-) Importe de Retención de IVA",
-        value=f"$ {importe_ret_iva:,.2f}",
-        disabled=True,
-    )
+    
+    # Mostrar u ocultar renglones dinámicamente
+    if mostrar_iva:
+        st.text_input(
+            "(+) Importe de IVA", value=f"$ {importe_iva:,.2f}", disabled=True
+        )
+        
+    if mostrar_ret_iva:
+        st.text_input(
+            "(-) Importe de Retención de IVA",
+            value=f"$ {importe_ret_iva:,.2f}",
+            disabled=True,
+        )
 
-    etiqueta_isr = (
-        f"(-) Importe de Retención de ISR ({tasa_isr_aplicable * 100:.2f}%)"
-        if tasa_isr_aplicable > 0
-        else "(-) Importe de Retención de ISR"
-    )
-    st.text_input(
-        etiqueta_isr, value=f"$ {importe_ret_isr:,.2f}", disabled=True
-    )
+    if tasa_isr_aplicable > 0:
+        st.text_input(
+            f"(-) Importe de Retención de ISR ({tasa_isr_aplicable * 100:.2f}%)", 
+            value=f"$ {importe_ret_isr:,.2f}", 
+            disabled=True
+        )
 
     st.text_input("Importe Neto", value=f"$ {importe_neto:,.2f}", disabled=True)
 
