@@ -129,7 +129,7 @@ if opcion_menu == "📊 Panel General":
         {"Concepto": "Indemnizaciones / Separación", "Exención Ley": "90 UMA por año trabajado", "Fundamento": "Art. 93 Fracc. XIII", "Importe Máx. Exento": "$10,557.90 / año"},
     ]
     
-    st.dataframe(pd.DataFrame(datos_exentos), use_container_width=True, hide_index=True)
+    st.dataframe(pd.DataFrame(datos_exentos), use_container_width=False, hide_index=True)
     
     st.markdown("""
     **Notas sobre Tiempo Extra y Días de Descanso (Art. 93 Fracc. I):**
