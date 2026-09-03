@@ -85,35 +85,41 @@ def cargar_catalogo(path):
 # Función de caché para leer las tablas de ISR desde las pestañas de Excel
 @st.cache_data
 def cargar_tabla_isr(path_excel, periodo_seleccionado):
-    try:
-        df = pd.read_excel(path_excel, sheet_name=periodo_seleccionado)
-        df.columns = df.columns.str.strip()
+  try:
+    df = pd.read_excel(path_excel, sheet_name=periodo_seleccionado)
+    df.columns = df.columns.str.strip()
 
-        tabla_tuplas = []
-        for _, row in df.iterrows():
-            lim_inf = float(row["Límite inferior"])
+    tabla_tuplas = []
+    for _, row in df.iterrows():
+      lim_inf = float(row["Límite inferior"])
 
-            lim_sup_val = str(row["Límite superior"]).strip().lower()
-            if (
-                pd.isna(row["Límite superior"])
-                or "inf" in lim_sup_val
-                or "adelante" in lim_sup_val
-                or lim_sup_val == ""
-            ):
-                lim_sup = float("inf")
-            else:
-                lim_sup = float(row["Límite superior"])
+      lim_sup_val = str(row["Límite superior"]).strip().lower()
+      if (
+          pd.isna(row["Límite superior"])
+          or "inf" in lim_sup_val
+          or "adelante" in lim_sup_val
+          or lim_sup_val == ""
+      ):
+        lim_sup = float("inf")
+      else:
+        lim_sup = float(row["Límite superior"])
 
-            cf_val = str(row["Cuota fija"]).replace("$", "").strip()
-            cuota_fija = 0.0 if cf_val in ["-", "", "nan", "None"] else float(cf_val)
+      cf_val = str(row["Cuota fija"]).replace("$", "").strip()
+      cuota_fija = 0.0 if cf_val in ["-", "", "nan", "None"] else float(cf_val)
 
-            pct_val = str(row["% sobre excedente"]).replace("%", "").strip()
-            porcentaje = float(pct_val)
+      pct_val = str(row["% sobre excedente"]).replace("%", "").strip()
+      porcentaje_raw = float(pct_val)
 
-            tabla_tuplas.append((lim_inf, lim_sup, cuota_fija, porcentaje))
-        return tabla_tuplas
-    except Exception as e:
-        return []
+      # Si Excel lo guardó como fracción decimal (menor a 1.0), lo convertimos a porcentaje real
+      if porcentaje_raw < 1.0:
+        porcentaje = porcentaje_raw * 100.0
+      else:
+        porcentaje = porcentaje_raw
+
+      tabla_tuplas.append((lim_inf, lim_sup, cuota_fija, porcentaje))
+    return tabla_tuplas
+  except Exception as e:
+    return []
 
 
 # Función auxiliar para calcular el ISR mediante tarifa progresiva
