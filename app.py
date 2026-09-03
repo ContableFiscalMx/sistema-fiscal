@@ -222,7 +222,15 @@ elif opcion_menu == "🧮 Calculadora de Impuestos":
     col_izq, col_centro, col_der = st.columns([1, 2, 1])
 
     with col_centro:
-        st.title("🧮 Calculadora de Retenciones e ISR")
+        st.markdown(
+    """
+    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 1rem;">
+        <span style="font-size: 2.5rem;">🧮</span>
+        <h1 style="margin: 0; font-size: 2.2rem; font-weight: 700; color: #ffffff; line-height: 1.2;">Calculadora de Retenciones e ISR</h1>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
         st.caption(
             "Determina retenciones para RESICO, Arrendamiento, Honorarios, "
             "Actividad Empresarial y cálculo de ISR por Tarifas (Sueldos y Salarios)."
