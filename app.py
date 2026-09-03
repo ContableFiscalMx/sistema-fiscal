@@ -248,39 +248,97 @@ elif opcion_menu == "🧮 Calculadora de Impuestos":
             ],
         )
 
-        # --- LÓGICA PARA SUELDOS Y SALARIOS (USANDO EXCEL) ---
+       # --- LÓGICA PARA SUELDOS Y SALARIOS (USANDO EXCEL) ---
         if regimen == "Sueldos y Salarios (ISR por Tarifas)":
-            st.markdown("---")
+          st.markdown("---")
+          col_p1, col_p2 = st.columns(2)
+          with col_p1:
             periodo_isr = st.selectbox(
                 "Seleccionar Periodo de la Tarifa:",
-                ["Diaria", "Semanal", "Decenal", "Quincenal", "Mensual", "Bimestral", "Anual"]
+                [
+                    "Diaria",
+                    "Semanal",
+                    "Decenal",
+                    "Quincenal",
+                    "Mensual",
+                    "Bimestral",
+                    "Anual",
+                ],
             )
-            
-            archivo_tabla_isr = "tabla_isr.xlsx"
-            if os.path.exists(archivo_tabla_isr):
-                tabla_cargada = cargar_tabla_isr(archivo_tabla_isr, periodo_isr)
-                
-                if tabla_cargada:
-                    ingreso_gravado = st.number_input(
-                        "Ingreso Gravado del Periodo ($)*", min_value=0.0, step=100.0, key="calc_cantidad"
+          with col_p2:
+            ingreso_gravado = st.number_input(
+                "Ingreso Gravado del Periodo ($)*",
+                min_value=0.0,
+                step=100.0,
+                key="calc_cantidad",
+            )
+
+          archivo_tabla_isr = "tabla_isr.xlsx"
+          if os.path.exists(archivo_tabla_isr):
+            tabla_cargada = cargar_tabla_isr(archivo_tabla_isr, periodo_isr)
+
+            if tabla_cargada:
+              if ingreso_gravado > 0:
+                resultado_isr = calcular_isr_tarifa(
+                    ingreso_gravado, tabla_cargada
+                )
+                if resultado_isr:
+                  st.markdown("### 📊 Resultado del Cálculo ISR")
+
+                  # Usamos una cuadrícula de 2 columnas para los resultados para eliminar el scroll excesivo
+                  res_col1, res_col2 = st.columns(2)
+
+                  with res_col1:
+                    st.text_input(
+                        "Límite Inferior",
+                        value=f"$ {resultado_isr['lim_inf']:,.2f}",
+                        disabled=True,
                     )
-                    
-                    if ingreso_gravado > 0:
-                        resultado_isr = calcular_isr_tarifa(ingreso_gravado, tabla_cargada)
-                        if resultado_isr:
-                            st.markdown("### Resultado del Cálculo ISR")
-                            st.text_input("Límite Inferior", value=f"$ {resultado_isr['lim_inf']:,.2f}", disabled=True)
-                            st.text_input("Límite Superior", value="En adelante (inf)" if resultado_isr['lim_sup'] == float('inf') else f"$ {resultado_isr['lim_sup']:,.2f}", disabled=True)
-                            st.text_input("Excedente del Límite Inferior", value=f"$ {resultado_isr['excedente']:,.2f}", disabled=True)
-                            st.text_input("Porcentaje sobre Excedente", value=f"{resultado_isr['porcentaje']:.2f}%", disabled=True)
-                            st.text_input("Impuesto Marginal", value=f"$ {resultado_isr['impuesto_marginal']:,.2f}", disabled=True)
-                            st.text_input("Cuota Fija", value=f"$ {resultado_isr['cuota_fija']:,.2f}", disabled=True)
-                            st.text_input("ISR Determinado", value=f"$ {resultado_isr['isr_total']:,.2f}", disabled=True)
-                else:
-                    st.warning(f"⚠️ La pestaña '{periodo_isr}' en '{archivo_tabla_isr}' está vacía o tiene un formato incorrecto.")
+                    st.text_input(
+                        "Excedente Límite Inf.",
+                        value=f"$ {resultado_isr['excedente']:,.2f}",
+                        disabled=True,
+                    )
+                    st.text_input(
+                        "Impuesto Marginal",
+                        value=f"$ {resultado_isr['impuesto_marginal']:,.2f}",
+                        disabled=True,
+                    )
+                    st.text_input(
+                        "Cuota Fija",
+                        value=f"$ {resultado_isr['cuota_fija']:,.2f}",
+                        disabled=True,
+                    )
+
+                  with res_col2:
+                    lim_sup_txt = (
+                        "En adelante (inf)"
+                        if resultado_isr["lim_sup"] == float("inf")
+                        else f"$ {resultado_isr['lim_sup']:,.2f}"
+                    )
+                    st.text_input(
+                        "Límite Superior", value=lim_sup_txt, disabled=True
+                    )
+                    st.text_input(
+                        "% sobre Excedente",
+                        value=f"{resultado_isr['porcentaje']:.2f}%",
+                        disabled=True,
+                    )
+                    # Destacamos el ISR Determinado con métrica visual limpia
+                    st.metric(
+                        label="ISF / ISR Determinado",
+                        value=f"$ {resultado_isr['isr_total']:,.2f}",
+                    )
             else:
-                st.error(f"❌ No se encontró el archivo '{archivo_tabla_isr}' en la carpeta del sistema.")
-                st.info("Coloca tu archivo de Excel con las pestañas de tarifas configuradas en el directorio.")
+              st.warning(
+                  f"⚠️ La pestaña '{periodo_isr}' en '{archivo_tabla_isr}' está"
+                  " vacía o tiene un formato incorrecto."
+              )
+          else:
+            st.error(
+                f"❌ No se encontró el archivo '{archivo_tabla_isr}' en la"
+                " carpeta del sistema."
+            )
 
         # --- LÓGICA PARA REGÍMENES COMERCIALES / PROFESIONALES ---
         else:
