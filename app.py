@@ -226,7 +226,7 @@ elif opcion_menu == "🧮 Calculadora de Impuestos":
     """
     <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 1rem;">
         <span style="font-size: 2.5rem;">🧮</span>
-        <h1 style="margin: 0; font-size: 2.2rem; font-weight: 700; color: #ffffff; line-height: 1.2;">Calculadora de Retenciones e ISR</h1>
+        <h1 style="margin: 0; font-size: 2.2rem; font-weight: 700; color: #ffffff; line-height: 1.5;">Calculadora de Retenciones e ISR</h1>
     </div>
     """,
     unsafe_allow_html=True,
