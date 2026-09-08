@@ -289,12 +289,15 @@ elif opcion_menu == "🧮 Calculadora de Impuestos":
             tabla_cargada = cargar_tabla_isr(archivo_tabla_isr, periodo_isr)
 
             if tabla_cargada:
-              if ingreso_gravado > 0:
+              # Validamos que tenga un valor asignado y sea mayor a cero
+              if ingreso_gravado is not None and ingreso_gravado > 0:
                 resultado_isr = calcular_isr_tarifa(
                     ingreso_gravado, tabla_cargada
                 )
+
                 if resultado_isr:
                   st.markdown("### 📊 Resultado del Cálculo ISR")
+                  # (Aquí van las columnas de resultados que definimos antes)
 
                   # Usamos una cuadrícula de 2 columnas para los resultados para eliminar el scroll excesivo
                   res_col1, res_col2 = st.columns(2)
