@@ -418,6 +418,8 @@ elif opcion_menu == "🧮 Calculadora de Impuestos":
                 factor_inverso = (
                     1.0 + tasa_iva_dec - tasa_ret_iva_dec - tasa_isr_aplicable
                 )
+                # Verificamos que la cantidad no esté vacía antes de hacer operaciones
+if cantidad is not None and cantidad > 0:
                 subtotal = cantidad / factor_inverso if factor_inverso != 0 else 0.0
 
             importe_iva = subtotal * tasa_iva_dec
