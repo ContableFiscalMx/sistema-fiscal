@@ -274,10 +274,12 @@ elif opcion_menu == "🧮 Calculadora de Impuestos":
                     "Anual",
                 ],
             )
-          with col_p2:
+         with col_p2:
             ingreso_gravado = st.number_input(
                 "Ingreso Gravado del Periodo ($)*",
                 min_value=0.0,
+                value=None,  # <-- Esto deja el campo en blanco al cargar
+                placeholder="Escribe el importe...",  # <-- Texto guía opcional
                 step=100.0,
                 key="calc_cantidad",
             )
