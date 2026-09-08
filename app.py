@@ -33,11 +33,12 @@ def check_password():
     """Valida la contraseña antes de mostrar el contenido."""
 
     def password_entered():
-        if st.session_state["password"] == "adminfiscal27":
-            st.session_state["password_correct"] = True
-            del st.session_state["password"]
-        else:
-            st.session_state["password_correct"] = False
+      # Cambia esta línea para que lea de forma segura:
+      if st.session_state["password"] == st.secrets["password"]:
+        st.session_state["password_correct"] = True
+        del st.session_state["password"]
+      else:
+        st.session_state["password_correct"] = False
 
     if "password_correct" not in st.session_state:
         st.title("🔒 Acceso Restringido")
