@@ -74,7 +74,7 @@ if not check_password():
 st.title("Cálculo de Nómina y Retenciones")
 
 try:
-    with open("Calculadora de Nómina 2026 CFDI 4.0_2.html", "r", encoding="utf-8") as archivo_html:
+    with open("Calculadora de Nómina 2026 CFDI 4.0.html", "r", encoding="utf-8") as archivo_html:
         codigo_calculadora = archivo_html.read()
     components.html(codigo_calculadora, height=800, scrolling=True)
 except FileNotFoundError:
