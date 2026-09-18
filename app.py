@@ -4,19 +4,6 @@ import pandas as pd
 import streamlit as st
 import streamlit.components.v1 as components
 
-# Título de tu aplicación (opcional)
-st.title("Cálculo de Nómina y Retenciones")
-
-# 1. Abrir y leer tu archivo HTML
-# Asegúrate de que el nombre coincida exactamente con el archivo que subiste
-with open("Calculadora de Nómina 2026 CFDI 4.0_2.html", "r", encoding="utf-8") as archivo_html:
-    codigo_calculadora = archivo_html.read()
-
-# 2. Incrustar el HTML en tu página de Streamlit
-# Puedes ajustar el 'height' (altura) dependiendo de qué tan larga sea tu calculadora
-components.html(codigo_calculadora, height=800, scrolling=True)
-
-
 # 1. LA CONFIGURACIÓN DE PÁGINA DEBE SER LO PRIMERO DE STREAMLIT
 st.set_page_config(
     page_title="Sistema de Control Fiscal", page_icon="📊", layout="wide"
@@ -47,12 +34,11 @@ def check_password():
     """Valida la contraseña antes de mostrar el contenido."""
 
     def password_entered():
-      # Cambia esta línea para que lea de forma segura:
-      if st.session_state["password"] == st.secrets["password"]:
-        st.session_state["password_correct"] = True
-        del st.session_state["password"]
-      else:
-        st.session_state["password_correct"] = False
+        if st.session_state["password"] == st.secrets["password"]:
+            st.session_state["password_correct"] = True
+            del st.session_state["password"]
+        else:
+            st.session_state["password_correct"] = False
 
     if "password_correct" not in st.session_state:
         st.title("🔒 Acceso Restringido")
@@ -82,6 +68,21 @@ if not check_password():
 # --- FIN DEL SISTEMA DE SEGURIDAD ---
 
 
+# ---------------------------------------------------------
+# CALCULADORA HTML INCRUSTADA (Ahora protegida por contraseña)
+# ---------------------------------------------------------
+st.title("Cálculo de Nómina y Retenciones")
+
+try:
+    with open("Calculadora de Nómina 2026 CFDI 4.0_2.html", "r", encoding="utf-8") as archivo_html:
+        codigo_calculadora = archivo_html.read()
+    components.html(codigo_calculadora, height=800, scrolling=True)
+except FileNotFoundError:
+    st.warning("⚠️ No se encontró el archivo 'Calculadora de Nómina 2026 CFDI 4.0_2.html'. Asegúrate de haberlo subido con ese nombre exacto.")
+
+st.markdown("---")
+
+
 # Función de caché para el catálogo general del SAT
 @st.cache_data
 def cargar_catalogo(path):
@@ -100,41 +101,41 @@ def cargar_catalogo(path):
 # Función de caché para leer las tablas de ISR desde las pestañas de Excel
 @st.cache_data
 def cargar_tabla_isr(path_excel, periodo_seleccionado):
-  try:
-    df = pd.read_excel(path_excel, sheet_name=periodo_seleccionado)
-    df.columns = df.columns.str.strip()
+    try:
+        df = pd.read_excel(path_excel, sheet_name=periodo_seleccionado)
+        df.columns = df.columns.str.strip()
 
-    tabla_tuplas = []
-    for _, row in df.iterrows():
-      lim_inf = float(row["Límite inferior"])
+        tabla_tuplas = []
+        for _, row in df.iterrows():
+            lim_inf = float(row["Límite inferior"])
 
-      lim_sup_val = str(row["Límite superior"]).strip().lower()
-      if (
-          pd.isna(row["Límite superior"])
-          or "inf" in lim_sup_val
-          or "adelante" in lim_sup_val
-          or lim_sup_val == ""
-      ):
-        lim_sup = float("inf")
-      else:
-        lim_sup = float(row["Límite superior"])
+            lim_sup_val = str(row["Límite superior"]).strip().lower()
+            if (
+                pd.isna(row["Límite superior"])
+                or "inf" in lim_sup_val
+                or "adelante" in lim_sup_val
+                or lim_sup_val == ""
+            ):
+                lim_sup = float("inf")
+            else:
+                lim_sup = float(row["Límite superior"])
 
-      cf_val = str(row["Cuota fija"]).replace("$", "").strip()
-      cuota_fija = 0.0 if cf_val in ["-", "", "nan", "None"] else float(cf_val)
+            cf_val = str(row["Cuota fija"]).replace("$", "").strip()
+            cuota_fija = 0.0 if cf_val in ["-", "", "nan", "None"] else float(cf_val)
 
-      pct_val = str(row["% sobre excedente"]).replace("%", "").strip()
-      porcentaje_raw = float(pct_val)
+            pct_val = str(row["% sobre excedente"]).replace("%", "").strip()
+            porcentaje_raw = float(pct_val)
 
-      # Si Excel lo guardó como fracción decimal (menor a 1.0), lo convertimos a porcentaje real
-      if porcentaje_raw < 1.0:
-        porcentaje = porcentaje_raw * 100.0
-      else:
-        porcentaje = porcentaje_raw
+            # Si Excel lo guardó como fracción decimal (menor a 1.0), lo convertimos a porcentaje real
+            if porcentaje_raw < 1.0:
+                porcentaje = porcentaje_raw * 100.0
+            else:
+                porcentaje = porcentaje_raw
 
-      tabla_tuplas.append((lim_inf, lim_sup, cuota_fija, porcentaje))
-    return tabla_tuplas
-  except Exception as e:
-    return []
+            tabla_tuplas.append((lim_inf, lim_sup, cuota_fija, porcentaje))
+        return tabla_tuplas
+    except Exception as e:
+        return []
 
 
 # Función auxiliar para calcular el ISR mediante tarifa progresiva
@@ -207,7 +208,7 @@ if opcion_menu == "📊 Panel General":
     # --- TABLA DE INGRESOS EXENTOS (ART. 93 LISR) ---
     with st.expander("📌 Ver Tabla de Ingresos Exentos para Trabajadores (Art. 93 LISR 2026)", expanded=True):
         st.caption("Cálculos elaborados con base en el valor UMA diario vigente ($117.31 MXN).")
-        
+
         datos_exentos = [
             {"Concepto": "Aguinaldo", "Exención Ley": "30 UMA", "Fundamento": "Art. 93 Fracc. XIV", "Importe Máx. Exento": "$3,519.30"},
             {"Concepto": "Prima Vacacional", "Exención Ley": "15 UMA", "Fundamento": "Art. 93 Fracc. XIV", "Importe Máx. Exento": "$1,759.65"},
@@ -216,9 +217,9 @@ if opcion_menu == "📊 Panel General":
             {"Concepto": "Jubilaciones / Pensiones", "Exención Ley": "15 UMA diarias", "Fundamento": "Art. 93 Fracc. IV", "Importe Máx. Exento": "$1,759.65 / día"},
             {"Concepto": "Indemnizaciones / Separación", "Exención Ley": "90 UMA por año trabajado", "Fundamento": "Art. 93 Fracc. XIII", "Importe Máx. Exento": "$10,557.90 / año"},
         ]
-        
+
         st.dataframe(pd.DataFrame(datos_exentos), use_container_width=False, hide_index=True)
-        
+
         st.markdown("""
         **Notas sobre Tiempo Extra y Días de Descanso (Art. 93 Fracc. I):**
         * **Trabajadores con Salario Mínimo General (SMG):** 100% exento (sin rebasar los límites de la LFT).
@@ -238,14 +239,14 @@ elif opcion_menu == "🧮 Calculadora de Impuestos":
 
     with col_centro:
         st.markdown(
-    """
-    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 1rem;">
-        <span style="font-size: 2.5rem;">🧮</span>
-        <h1 style="margin: 0; font-size: 2.0rem; font-weight: 700; color: #ffffff; line-height: 1.2;">Calculadora de Retenciones e ISR</h1>
-    </div>
-    """,
-    unsafe_allow_html=True,
-)
+            """
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 1rem;">
+                <span style="font-size: 2.5rem;">🧮</span>
+                <h1 style="margin: 0; font-size: 2.0rem; font-weight: 700; color: #ffffff; line-height: 1.2;">Calculadora de Retenciones e ISR</h1>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
         st.caption(
             "Determina retenciones para RESICO, Arrendamiento, Honorarios, "
             "Actividad Empresarial y cálculo de ISR por Tarifas (Sueldos y Salarios)."
@@ -271,102 +272,97 @@ elif opcion_menu == "🧮 Calculadora de Impuestos":
             ],
         )
 
-       # --- LÓGICA PARA SUELDOS Y SALARIOS (USANDO EXCEL) ---
+        # --- LÓGICA PARA SUELDOS Y SALARIOS (USANDO EXCEL) ---
         if regimen == "Sueldos y Salarios (ISR por Tarifas)":
-          st.markdown("---")
-          col_p1, col_p2 = st.columns(2)
-          with col_p1:
-            periodo_isr = st.selectbox(
-                "Seleccionar Periodo de la Tarifa:",
-                [
-                    "Diaria",
-                    "Semanal",
-                    "Decenal",
-                    "Quincenal",
-                    "Mensual",
-                    "Bimestral",
-                    "Anual",
-                ],
-            )
-          with col_p2:
-            ingreso_gravado = st.number_input(
-                "Ingreso Gravado del Periodo ($)*",
-                min_value=0.0,
-                value=None,
-                placeholder="Escribe el importe...",
-                step=100.0,
-                key="calc_cantidad",
-            )
-
-          archivo_tabla_isr = "tabla_isr.xlsx"
-          if os.path.exists(archivo_tabla_isr):
-            tabla_cargada = cargar_tabla_isr(archivo_tabla_isr, periodo_isr)
-
-            if tabla_cargada:
-              # Validamos que tenga un valor asignado y sea mayor a cero
-              if ingreso_gravado is not None and ingreso_gravado > 0:
-                resultado_isr = calcular_isr_tarifa(
-                    ingreso_gravado, tabla_cargada
+            st.markdown("---")
+            col_p1, col_p2 = st.columns(2)
+            with col_p1:
+                periodo_isr = st.selectbox(
+                    "Seleccionar Periodo de la Tarifa:",
+                    [
+                        "Diaria",
+                        "Semanal",
+                        "Decenal",
+                        "Quincenal",
+                        "Mensual",
+                        "Bimestral",
+                        "Anual",
+                    ],
+                )
+            with col_p2:
+                ingreso_gravado = st.number_input(
+                    "Ingreso Gravado del Periodo ($)*",
+                    min_value=0.0,
+                    value=None,
+                    placeholder="Escribe el importe...",
+                    step=100.0,
+                    key="calc_cantidad",
                 )
 
-                if resultado_isr:
-                  st.markdown("### 📊 Resultado del Cálculo ISR")
-                  # (Aquí van las columnas de resultados que definimos antes)
+            archivo_tabla_isr = "tabla_isr.xlsx"
+            if os.path.exists(archivo_tabla_isr):
+                tabla_cargada = cargar_tabla_isr(archivo_tabla_isr, periodo_isr)
 
-                  # Usamos una cuadrícula de 2 columnas para los resultados para eliminar el scroll excesivo
-                  res_col1, res_col2 = st.columns(2)
+                if tabla_cargada:
+                    if ingreso_gravado is not None and ingreso_gravado > 0:
+                        resultado_isr = calcular_isr_tarifa(
+                            ingreso_gravado, tabla_cargada
+                        )
 
-                  with res_col1:
-                    st.text_input(
-                        "Límite Inferior",
-                        value=f"$ {resultado_isr['lim_inf']:,.2f}",
-                        disabled=True,
-                    )
-                    st.text_input(
-                        "Excedente Límite Inf.",
-                        value=f"$ {resultado_isr['excedente']:,.2f}",
-                        disabled=True,
-                    )
-                    st.text_input(
-                        "Impuesto Marginal",
-                        value=f"$ {resultado_isr['impuesto_marginal']:,.2f}",
-                        disabled=True,
-                    )
-                    st.text_input(
-                        "Cuota Fija",
-                        value=f"$ {resultado_isr['cuota_fija']:,.2f}",
-                        disabled=True,
-                    )
+                        if resultado_isr:
+                            st.markdown("### 📊 Resultado del Cálculo ISR")
+                            res_col1, res_col2 = st.columns(2)
 
-                  with res_col2:
-                    lim_sup_txt = (
-                        "En adelante (inf)"
-                        if resultado_isr["lim_sup"] == float("inf")
-                        else f"$ {resultado_isr['lim_sup']:,.2f}"
-                    )
-                    st.text_input(
-                        "Límite Superior", value=lim_sup_txt, disabled=True
-                    )
-                    st.text_input(
-                        "% sobre Excedente",
-                        value=f"{resultado_isr['porcentaje']:.2f}%",
-                        disabled=True,
-                    )
-                    # Destacamos el ISR Determinado con métrica visual limpia
-                    st.metric(
-                        label="ISF / ISR Determinado",
-                        value=f"$ {resultado_isr['isr_total']:,.2f}",
+                            with res_col1:
+                                st.text_input(
+                                    "Límite Inferior",
+                                    value=f"$ {resultado_isr['lim_inf']:,.2f}",
+                                    disabled=True,
+                                )
+                                st.text_input(
+                                    "Excedente Límite Inf.",
+                                    value=f"$ {resultado_isr['excedente']:,.2f}",
+                                    disabled=True,
+                                )
+                                st.text_input(
+                                    "Impuesto Marginal",
+                                    value=f"$ {resultado_isr['impuesto_marginal']:,.2f}",
+                                    disabled=True,
+                                )
+                                st.text_input(
+                                    "Cuota Fija",
+                                    value=f"$ {resultado_isr['cuota_fija']:,.2f}",
+                                    disabled=True,
+                                )
+
+                            with res_col2:
+                                lim_sup_txt = (
+                                    "En adelante (inf)"
+                                    if resultado_isr["lim_sup"] == float("inf")
+                                    else f"$ {resultado_isr['lim_sup']:,.2f}"
+                                )
+                                st.text_input(
+                                    "Límite Superior", value=lim_sup_txt, disabled=True
+                                )
+                                st.text_input(
+                                    "% sobre Excedente",
+                                    value=f"{resultado_isr['porcentaje']:.2f}%",
+                                    disabled=True,
+                                )
+                                st.metric(
+                                    label="ISF / ISR Determinado",
+                                    value=f"$ {resultado_isr['isr_total']:,.2f}",
+                                )
+                else:
+                    st.warning(
+                        f"⚠️ La pestaña '{periodo_isr}' en '{archivo_tabla_isr}' está"
+                        " vacía o tiene un formato incorrecto."
                     )
             else:
-              st.warning(
-                  f"⚠️ La pestaña '{periodo_isr}' en '{archivo_tabla_isr}' está"
-                  " vacía o tiene un formato incorrecto."
-              )
-          else:
-            st.error(
-                f"❌ No se encontró el archivo '{archivo_tabla_isr}' en la"
-                " carpeta del sistema."
-            )
+                st.error(
+                    f"❌ No se encontró el archivo '{archivo_tabla_isr}' en la"
+                    " carpeta del sistema."
+                )
 
         # --- LÓGICA PARA REGÍMENES COMERCIALES / PROFESIONALES ---
         else:
@@ -415,11 +411,11 @@ elif opcion_menu == "🧮 Calculadora de Impuestos":
                     value=0.0 if es_tasa_cero else st.session_state["calc_tasa_iva"],
                     step=1.0,
                     disabled=es_tasa_cero,
-                    key="calc_tasa_iva" if not es_tasa_cero else None,
+                    key="calc_tasa_iva_input" if not es_tasa_cero else None,
                 )
             with col_b:
                 cantidad = st.number_input(
-                    "Cantidad ($)*", min_value=0.0, step=100.0, key="calc_cantidad"
+                    "Cantidad ($)*", min_value=0.0, step=100.0, key="calc_cantidad_input"
                 )
 
             tasa_iva_actual = 0.0 if es_tasa_cero else tasa_iva_input
@@ -432,9 +428,10 @@ elif opcion_menu == "🧮 Calculadora de Impuestos":
                 factor_inverso = (
                     1.0 + tasa_iva_dec - tasa_ret_iva_dec - tasa_isr_aplicable
                 )
-                # Verificamos que la cantidad no esté vacía antes de hacer operaciones
             if cantidad is not None and cantidad > 0:
                 subtotal = cantidad / factor_inverso if factor_inverso != 0 else 0.0
+            else:
+                subtotal = 0.0
 
             importe_iva = subtotal * tasa_iva_dec
             importe_ret_iva = subtotal * tasa_ret_iva_dec
@@ -445,12 +442,12 @@ elif opcion_menu == "🧮 Calculadora de Impuestos":
 
             st.markdown("<br>", unsafe_allow_html=True)
             st.text_input("Subtotal", value=f"$ {subtotal:,.2f}", disabled=True)
-            
+
             if mostrar_iva:
                 st.text_input(
                     "(+) Importe de IVA", value=f"$ {importe_iva:,.2f}", disabled=True
                 )
-                
+
             if mostrar_ret_iva:
                 st.text_input(
                     "(-) Importe de Retención de IVA",
