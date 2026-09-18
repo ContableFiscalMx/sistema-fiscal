@@ -308,7 +308,7 @@
                                     <input type="number" step="0.5" id="nom-dias-pagados" value="15.00" class="w-full font-semibold border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500" oninput="calcularNomina()">
                                 </div>
                                 <div>
-                                    <label class="block font-medium text-slate-700 mb-1">Días Vacaciones LFT</label>
+                                    <label class="block font-medium text-slate-700 mb-1">Días Vacaciones LFT (anuales)</label>
                                     <input type="number" id="cfg-dias-vac-lft" value="20" readonly class="w-full bg-slate-100 font-semibold border border-slate-300 rounded-lg p-2 text-slate-600">
                                 </div>
                             </div>
@@ -909,18 +909,23 @@
             }
         }
 
+        /**
+         * Días de vacaciones LFT (art. 76, régimen vigente):
+         * 1 año = 12 días; 2 = 14; 3 = 16; 4 = 18; 5 = 20.
+         * A partir del 6.º año, aumentan 2 días por cada 5 años de servicios:
+         * 6-10 = 22, 11-15 = 24, 16-20 = 26, 21-25 = 28,
+         * 26-30 = 30, 31-35 = 32, 36-40 = 34, etc.
+         */
         function calcularVacacionesLFT(anios) {
-            if (anios < 1) return 12;
+            if (anios <= 0) return 0;
             if (anios === 1) return 12;
             if (anios === 2) return 14;
             if (anios === 3) return 16;
             if (anios === 4) return 18;
-            if (anios >= 5 && anios <= 9) return 20;
-            if (anios >= 10 && anios <= 14) return 22;
-            if (anios >= 15 && anios <= 19) return 24;
-            if (anios >= 20 && anios <= 24) return 26;
-            if (anios >= 25 && anios <= 29) return 28;
-            return 30;
+            if (anios === 5) return 20;
+
+            // Desde el 6.º año: 22 días y +2 por cada bloque adicional de 5 años.
+            return 22 + (Math.floor((anios - 6) / 5) * 2);
         }
 
         function alCambiarFechas() {
