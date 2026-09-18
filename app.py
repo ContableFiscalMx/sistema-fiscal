@@ -543,3 +543,18 @@ elif opcion_menu == "📋 Catálogo y Claves SAT":
             "Coloca tu archivo de Excel del SAT directamente dentro del"
             " repositorio y nómbralo 'catalogo.xlsx'."
         )
+import streamlit as st
+import streamlit.components.v1 as components
+
+# Título de tu aplicación (opcional)
+st.title("Cálculo de Nómina y Retenciones")
+
+# 1. Abrir y leer tu archivo HTML
+# Asegúrate de que el nombre coincida exactamente con el archivo que subiste
+with open("Calculadora de Nómina 2026 CFDI 4.0_2.html", "r", encoding="utf-8") as archivo_html:
+    codigo_calculadora = archivo_html.read()
+
+# 2. Incrustar el HTML en tu página de Streamlit
+# Puedes ajustar el 'height' (altura) dependiendo de qué tan larga sea tu calculadora
+components.html(codigo_calculadora, height=800, scrolling=True)
+
