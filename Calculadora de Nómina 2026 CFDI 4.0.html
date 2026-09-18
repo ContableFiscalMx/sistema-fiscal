@@ -60,15 +60,15 @@
             <div class="hidden md:flex items-center space-x-3 text-xs">
                 <div class="bg-slate-800/80 px-3 py-1.5 rounded-md border border-slate-700/80 flex items-center">
                     <span class="text-slate-400 mr-1.5">UMA 2026:</span>
-                    <span class="font-semibold text-blue-400" id="lbl-uma">$113.14</span>
+                    <span class="font-semibold text-blue-400" id="lbl-uma">$117.31</span>
                 </div>
                 <div class="bg-slate-800/80 px-3 py-1.5 rounded-md border border-slate-700/80 flex items-center">
                     <span class="text-slate-400 mr-1.5">SMI General:</span>
-                    <span class="font-semibold text-emerald-400" id="lbl-smi">$278.80</span>
+                    <span class="font-semibold text-emerald-400" id="lbl-smi">$315.04</span>
                 </div>
                 <div class="bg-slate-800/80 px-3 py-1.5 rounded-md border border-slate-700/80 flex items-center">
                     <span class="text-slate-400 mr-1.5">UMI Infonavit:</span>
-                    <span class="font-semibold text-purple-400" id="lbl-umi">$108.30</span>
+                    <span class="font-semibold text-purple-400" id="lbl-umi">$100.81</span>
                 </div>
                 <button onclick="switchTab('tab-config'); window.scrollTo({top: 0, behavior: 'smooth'});" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1.5 rounded-md border border-slate-700 flex items-center transition">
                     <i data-lucide="settings-2" class="w-3.5 h-3.5 mr-1 text-blue-400"></i> Tablas 2026
@@ -111,6 +111,16 @@
                         <option value="catorcenal">03 - Catorcenal (14 días)</option>
                         <option value="quincenal" selected>04 - Quincenal (15 días)</option>
                         <option value="mensual">05 - Mensual (30.4 días)</option>
+                        <option value="mensual30">06 - Mensual (30 días)</option>
+                    </select>
+                </div>
+
+                <!-- Wage Zone Selector -->
+                <div class="flex items-center space-x-2 bg-slate-50 p-1 rounded-lg border border-slate-200">
+                    <label for="sel-zona-salarial" class="text-xs font-medium text-slate-600 pl-2">Zona salarial:</label>
+                    <select id="sel-zona-salarial" class="bg-white border border-slate-300 text-slate-800 text-xs rounded-md focus:ring-2 focus:ring-blue-500 p-1.5 font-semibold" onchange="alCambiarZonaSalarial()">
+                        <option value="general" selected>General</option>
+                        <option value="zlfn">ZLFN</option>
                     </select>
                 </div>
             </div>
@@ -551,12 +561,15 @@
                                 <input type="number" step="0.01" id="cfg-smi-val" class="w-full border rounded p-2 font-semibold">
                             </div>
                             <div>
-                                <label class="block font-medium mb-1">UMI Infonavit ($)</label>
+                                <label class="block font-medium mb-1">UMI Infonavit diaria ($)</label>
                                 <input type="number" step="0.01" id="cfg-umi-val" class="w-full border rounded p-2 font-semibold">
                             </div>
                         </div>
 
                         <p class="text-[11px] text-slate-500">Nota: Al guardar cambios aquí se recalculan de forma automática todas las exenciones y retenciones del sistema.</p>
+                        <p class="text-[10px] text-slate-500 mt-1">
+                            Valores 2026: UMA $117.31 diaria / $3,566.22 mensual / $42,794.64 anual; salario mínimo general $315.04 diaria; ZLFN $440.87 diaria (solo municipios ZLFN); UMI $100.81 diaria. La UMA usada para IMSS en enero de 2026 es $113.14 y desde febrero $117.31.
+                        </p>
 
                         <div class="flex justify-end pt-2">
                             <button type="button" onclick="guardarConfiguracionTablas()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-lg shadow-sm">
@@ -746,97 +759,105 @@
          */
         const CONFIG_NOMINA_2026 = {
             UMA: {
-                diario: 113.14,
-                mensual: 3439.46,
-                anual: 41273.52
+                diario: 117.31,
+                mensual: 3566.22,
+                anual: 42794.64
             },
             SMI: {
-                general: 278.80,
-                frontera: 419.88
+                general: 315.04,
+                frontera: 440.87
             },
-            UMI: 108.30,
+            UMI: 100.81,
             subsidio2026: {
-                // Decreto Subsidio al Empleo vigente (11.82% UMA Mensual para salarios hasta $9,081.00 mensual)
-                limiteIngresoMensual: 9081.00,
-                porcentajeUma: 0.1182
+                // Decreto DOF 31/12/2025: 15.02% de UMA mensual;
+                // para enero de 2026 aplica 15.59% sobre la UMA 2025.
+                limiteIngresoMensual: 11492.66,
+                porcentajeUma: 0.1502,
+                porcentajeUmaEnero: 0.1559,
+                umaMensualEnero: 3439.46
             },
-            // Tabla Progresiva Cuota Patronal Cesantía y Vejez 2026 (Reforma LSS)
+            // Tabla progresiva de cuota patronal CEAV 2026
+            // (Decreto LSS 16/12/2020, aplicación gradual).
             cesantiaVejezPatronal: [
                 { maxUma: 1.00, tasa: 0.03150 },
-                { maxUma: 1.50, tasa: 0.04241 },
-                { maxUma: 2.00, tasa: 0.06513 },
-                { maxUma: 2.50, tasa: 0.07876 },
-                { maxUma: 3.00, tasa: 0.08785 },
-                { maxUma: 3.50, tasa: 0.09434 },
-                { maxUma: 4.00, tasa: 0.09921 },
-                { maxUma: 999.0, tasa: 0.11875 }
+                { maxUma: 1.50, tasa: 0.03676 },
+                { maxUma: 2.00, tasa: 0.04851 },
+                { maxUma: 2.50, tasa: 0.05556 },
+                { maxUma: 3.00, tasa: 0.06026 },
+                { maxUma: 3.50, tasa: 0.06361 },
+                { maxUma: 4.00, tasa: 0.06613 },
+                { maxUma: 999.0, tasa: 0.07513 }
             ],
-            // Tablas ISR 2026
+            // Tablas ISR 2026 (Anexo 8 RMF 2026) (Anexo 8 RMF 2026, retenciones de salarios)
+            // Catorcenal: equivalente a 2 x tarifa semanal; no existe como tabla
+            // independiente en el Anexo 8.
             tablasISR: {
                 diario: [
-                    { limInf: 0.01, limSup: 24.86, cuotaFija: 0.00, pct: 0.0192 },
-                    { limInf: 24.87, limSup: 211.06, cuotaFija: 0.48, pct: 0.0640 },
-                    { limInf: 211.07, limSup: 370.93, cuotaFija: 12.39, pct: 0.1088 },
-                    { limInf: 370.94, limSup: 431.19, cuotaFija: 29.79, pct: 0.1600 },
-                    { limInf: 431.20, limSup: 516.25, cuotaFija: 39.43, pct: 0.1792 },
-                    { limInf: 516.26, limSup: 1041.21, cuotaFija: 54.67, pct: 0.2136 },
-                    { limInf: 1041.22, limSup: 1641.10, cuotaFija: 166.80, pct: 0.2352 },
-                    { limInf: 1641.11, limSup: 3133.13, cuotaFija: 307.89, pct: 0.3000 },
-                    { limInf: 3133.14, limSup: 4177.50, cuotaFija: 755.50, pct: 0.3200 },
-                    { limInf: 4177.51, limSup: 12532.52, cuotaFija: 1089.70, pct: 0.3400 },
-                    { limInf: 12532.53, limSup: 9999999.00, cuotaFija: 3930.41, pct: 0.3500 }
+                    { limInf: 0.01, limSup: 27.78, cuotaFija: 0.00, pct: 0.0192 },
+                    { limInf: 27.79, limSup: 235.81, cuotaFija: 0.53, pct: 0.0640 },
+                    { limInf: 235.82, limSup: 414.41, cuotaFija: 13.85, pct: 0.1088 },
+                    { limInf: 414.42, limSup: 481.73, cuotaFija: 33.28, pct: 0.1600 },
+                    { limInf: 481.74, limSup: 576.76, cuotaFija: 44.05, pct: 0.1792 },
+                    { limInf: 576.77, limSup: 1163.25, cuotaFija: 61.08, pct: 0.2136 },
+                    { limInf: 1163.26, limSup: 1833.44, cuotaFija: 186.35, pct: 0.2352 },
+                    { limInf: 1833.45, limSup: 3500.35, cuotaFija: 343.98, pct: 0.3000 },
+                    { limInf: 3500.36, limSup: 4667.13, cuotaFija: 844.05, pct: 0.3200 },
+                    { limInf: 4667.14, limSup: 14001.38, cuotaFija: 1217.42, pct: 0.3400 },
+                    { limInf: 14001.39, limSup: 9999999.00, cuotaFija: 4391.07, pct: 0.3500 }
                 ],
                 semanal: [
-                    { limInf: 0.01, limSup: 174.02, cuotaFija: 0.00, pct: 0.0192 },
-                    { limInf: 174.03, limSup: 1477.42, cuotaFija: 3.34, pct: 0.0640 },
-                    { limInf: 1477.43, limSup: 2596.51, cuotaFija: 86.73, pct: 0.1088 },
-                    { limInf: 2596.52, limSup: 3018.33, cuotaFija: 208.53, pct: 0.1600 },
-                    { limInf: 3018.34, limSup: 3613.75, cuotaFija: 276.01, pct: 0.1792 },
-                    { limInf: 3613.76, limSup: 7288.51, cuotaFija: 382.69, pct: 0.2136 },
-                    { limInf: 7288.52, limSup: 11487.70, cuotaFija: 1167.60, pct: 0.2352 },
-                    { limInf: 11487.71, limSup: 21931.91, cuotaFija: 2155.23, pct: 0.3000 },
-                    { limInf: 21931.92, limSup: 29242.50, cuotaFija: 5288.49, pct: 0.3200 },
-                    { limInf: 29242.51, limSup: 87727.64, cuotaFija: 7627.88, pct: 0.3400 },
-                    { limInf: 87727.65, limSup: 9999999.00, cuotaFija: 27512.83, pct: 0.3500 }
+                    { limInf: 0.01, limSup: 194.46, cuotaFija: 0.00, pct: 0.0192 },
+                    { limInf: 194.47, limSup: 1650.67, cuotaFija: 3.71, pct: 0.0640 },
+                    { limInf: 1650.68, limSup: 2900.87, cuotaFija: 96.95, pct: 0.1088 },
+                    { limInf: 2900.88, limSup: 3372.11, cuotaFija: 232.96, pct: 0.1600 },
+                    { limInf: 3372.12, limSup: 4037.32, cuotaFija: 308.35, pct: 0.1792 },
+                    { limInf: 4037.33, limSup: 8142.75, cuotaFija: 427.56, pct: 0.2136 },
+                    { limInf: 8142.76, limSup: 12834.08, cuotaFija: 1304.45, pct: 0.2352 },
+                    { limInf: 12834.09, limSup: 24502.45, cuotaFija: 2407.86, pct: 0.3000 },
+                    { limInf: 24502.46, limSup: 32669.91, cuotaFija: 5908.35, pct: 0.3200 },
+                    { limInf: 32669.92, limSup: 98009.66, cuotaFija: 8521.94, pct: 0.3400 },
+                    { limInf: 98009.67, limSup: 9999999.00, cuotaFija: 30737.49, pct: 0.3500 }
                 ],
                 catorcenal: [
-                    { limInf: 0.01, limSup: 348.04, cuotaFija: 0.00, pct: 0.0192 },
-                    { limInf: 348.05, limSup: 2954.84, cuotaFija: 6.68, pct: 0.0640 },
-                    { limInf: 2954.85, limSup: 5193.02, cuotaFija: 173.46, pct: 0.1088 },
-                    { limInf: 5193.03, limSup: 6036.66, cuotaFija: 417.06, pct: 0.1600 },
-                    { limInf: 6036.67, limSup: 7227.50, cuotaFija: 552.02, pct: 0.1792 },
-                    { limInf: 7227.51, limSup: 14577.02, cuotaFija: 765.38, pct: 0.2136 },
-                    { limInf: 14577.03, limSup: 22975.40, cuotaFija: 2335.20, pct: 0.2352 },
-                    { limInf: 22975.41, limSup: 43863.82, cuotaFija: 4310.46, pct: 0.3000 },
-                    { limInf: 43863.83, limSup: 58485.00, cuotaFija: 10576.98, pct: 0.3200 },
-                    { limInf: 58485.01, limSup: 175455.28, cuotaFija: 15255.76, pct: 0.3400 },
-                    { limInf: 175455.29, limSup: 9999999.00, cuotaFija: 55025.66, pct: 0.3500 }
+                    { limInf: 0.02, limSup: 388.92, cuotaFija: 0.00, pct: 0.0192 },
+                    { limInf: 388.94, limSup: 3301.34, cuotaFija: 7.42, pct: 0.0640 },
+                    { limInf: 3301.36, limSup: 5801.74, cuotaFija: 193.90, pct: 0.1088 },
+                    { limInf: 5801.76, limSup: 6744.22, cuotaFija: 465.92, pct: 0.1600 },
+                    { limInf: 6744.24, limSup: 8074.64, cuotaFija: 616.70, pct: 0.1792 },
+                    { limInf: 8074.66, limSup: 16285.50, cuotaFija: 855.12, pct: 0.2136 },
+                    { limInf: 16285.52, limSup: 25668.16, cuotaFija: 2608.90, pct: 0.2352 },
+                    { limInf: 25668.18, limSup: 49004.90, cuotaFija: 4815.72, pct: 0.3000 },
+                    { limInf: 49004.92, limSup: 65339.82, cuotaFija: 11816.70, pct: 0.3200 },
+                    { limInf: 65339.84, limSup: 196019.32, cuotaFija: 17043.88, pct: 0.3400 },
+                    { limInf: 196019.34, limSup: 19999998.00, cuotaFija: 61474.98, pct: 0.3500 }
                 ],
                 quincenal: [
-                    { limInf: 0.01, limSup: 373.02, cuotaFija: 0.00, pct: 0.0192 },
-                    { limInf: 373.03, limSup: 3166.02, cuotaFija: 7.16, pct: 0.0640 },
-                    { limInf: 3166.03, limSup: 5564.00, cuotaFija: 185.92, pct: 0.1088 },
-                    { limInf: 5564.01, limSup: 6467.91, cuotaFija: 446.82, pct: 0.1600 },
-                    { limInf: 6467.92, limSup: 7743.85, cuotaFija: 591.44, pct: 0.1792 },
-                    { limInf: 7743.86, limSup: 15618.24, cuotaFija: 820.09, pct: 0.2136 },
-                    { limInf: 15618.25, limSup: 24616.50, cuotaFija: 2502.06, pct: 0.2352 },
-                    { limInf: 24616.51, limSup: 46996.95, cuotaFija: 4618.45, pct: 0.3000 },
-                    { limInf: 46996.96, limSup: 62662.60, cuotaFija: 11332.58, pct: 0.3200 },
-                    { limInf: 62662.61, limSup: 187987.80, cuotaFija: 16345.59, pct: 0.3400 },
-                    { limInf: 187987.81, limSup: 9999999.00, cuotaFija: 58956.16, pct: 0.3500 }
+                    { limInf: 0.01, limSup: 416.70, cuotaFija: 0.00, pct: 0.0192 },
+                    { limInf: 416.71, limSup: 3537.15, cuotaFija: 7.95, pct: 0.0640 },
+                    { limInf: 3537.16, limSup: 6216.15, cuotaFija: 207.75, pct: 0.1088 },
+                    { limInf: 6216.16, limSup: 7225.95, cuotaFija: 499.20, pct: 0.1600 },
+                    { limInf: 7225.96, limSup: 8651.40, cuotaFija: 660.75, pct: 0.1792 },
+                    { limInf: 8651.41, limSup: 17448.75, cuotaFija: 916.20, pct: 0.2136 },
+                    { limInf: 17448.76, limSup: 27501.60, cuotaFija: 2795.25, pct: 0.2352 },
+                    { limInf: 27501.61, limSup: 52505.25, cuotaFija: 5159.70, pct: 0.3000 },
+                    { limInf: 52505.26, limSup: 70006.95, cuotaFija: 12660.75, pct: 0.3200 },
+                    { limInf: 70006.96, limSup: 210020.70, cuotaFija: 18261.30, pct: 0.3400 },
+                    { limInf: 210020.71, limSup: 9999999.00, cuotaFija: 65866.05, pct: 0.3500 }
                 ],
+                // La opción mensual30 usa la tarifa ISR mensual sobre el periodo real de 30 días;
+                // la diferencia respecto a 30.4 se aplica a días pagados y subsidio.
                 mensual: [
-                    { limInf: 0.01, limSup: 746.04, cuotaFija: 0.00, pct: 0.0192 },
-                    { limInf: 746.05, limSup: 6332.05, cuotaFija: 14.32, pct: 0.0640 },
-                    { limInf: 6332.06, limSup: 11128.01, cuotaFija: 371.83, pct: 0.1088 },
-                    { limInf: 11128.02, limSup: 12935.82, cuotaFija: 893.63, pct: 0.1600 },
-                    { limInf: 12935.83, limSup: 15487.71, cuotaFija: 1182.88, pct: 0.1792 },
-                    { limInf: 15487.72, limSup: 31236.49, cuotaFija: 1640.18, pct: 0.2136 },
-                    { limInf: 31236.50, limSup: 49233.00, cuotaFija: 5004.12, pct: 0.2352 },
-                    { limInf: 49233.01, limSup: 93993.90, cuotaFija: 9236.89, pct: 0.3000 },
-                    { limInf: 93993.91, limSup: 125325.20, cuotaFija: 22665.17, pct: 0.3200 },
-                    { limInf: 125325.21, limSup: 375975.61, cuotaFija: 32691.18, pct: 0.3400 },
-                    { limInf: 375975.62, limSup: 9999999.00, cuotaFija: 117912.32, pct: 0.3500 }
+                    { limInf: 0.01, limSup: 844.59, cuotaFija: 0.00, pct: 0.0192 },
+                    { limInf: 844.60, limSup: 7168.51, cuotaFija: 16.22, pct: 0.0640 },
+                    { limInf: 7168.52, limSup: 12598.02, cuotaFija: 420.95, pct: 0.1088 },
+                    { limInf: 12598.03, limSup: 14644.64, cuotaFija: 1011.68, pct: 0.1600 },
+                    { limInf: 14644.65, limSup: 17533.64, cuotaFija: 1339.14, pct: 0.1792 },
+                    { limInf: 17533.65, limSup: 35362.83, cuotaFija: 1856.84, pct: 0.2136 },
+                    { limInf: 35362.84, limSup: 55736.68, cuotaFija: 5665.16, pct: 0.2352 },
+                    { limInf: 55736.69, limSup: 106410.50, cuotaFija: 10457.09, pct: 0.3000 },
+                    { limInf: 106410.51, limSup: 141880.66, cuotaFija: 25659.23, pct: 0.3200 },
+                    { limInf: 141880.67, limSup: 425641.99, cuotaFija: 37009.69, pct: 0.3400 },
+                    { limInf: 425642.00, limSup: 9999999.00, cuotaFija: 133488.54, pct: 0.3500 }
                 ]
             }
         };
@@ -963,6 +984,11 @@
             calcularNomina();
         }
 
+        function obtenerSalarioMinimoZona() {
+            const zona = document.getElementById('sel-zona-salarial')?.value || 'general';
+            return zona === 'zlfn' ? CONFIG_NOMINA_2026.SMI.frontera : CONFIG_NOMINA_2026.SMI.general;
+        }
+
         function alCambiarPeriodicidad() {
             const p = document.getElementById('sel-periodicidad').value;
             let dias = 15;
@@ -971,8 +997,14 @@
             if (p === 'catorcenal') dias = 14;
             if (p === 'quincenal') dias = 15;
             if (p === 'mensual') dias = 30.4;
+            if (p === 'mensual30') dias = 30;
 
             document.getElementById('nom-dias-pagados').value = dias;
+            calcularNomina();
+        }
+
+        function alCambiarZonaSalarial() {
+            calcularSBC();
             calcularNomina();
         }
 
@@ -988,7 +1020,7 @@
             let sbc = sd * factorIntegracion;
 
             // Ceil and Floor boundaries
-            const smiGral = CONFIG_NOMINA_2026.SMI.general;
+            const smiGral = obtenerSalarioMinimoZona();
             const tope25Uma = CONFIG_NOMINA_2026.UMA.diario * 25;
 
             if (sbc < smiGral && sbc > 0) sbc = smiGral;
@@ -1002,7 +1034,8 @@
                 return { isrCausado: 0, subsidio: 0, isrRetenido: 0, tramo: { limInf: 0, cuotaFija: 0, pct: 0 } };
             }
 
-            let tabla = CONFIG_NOMINA_2026.tablasISR[periodicidad] || CONFIG_NOMINA_2026.tablasISR.quincenal;
+            const periodicidadISR = periodicidad === 'mensual30' ? 'mensual' : periodicidad;
+            let tabla = CONFIG_NOMINA_2026.tablasISR[periodicidadISR] || CONFIG_NOMINA_2026.tablasISR.quincenal;
             let tramo = tabla.find(t => baseGravable >= t.limInf && baseGravable <= t.limSup);
             if (!tramo) tramo = tabla[tabla.length - 1];
 
@@ -1013,18 +1046,30 @@
             // Subsidio al Empleo (Decreto 2026)
             let subsidio = 0;
             if (document.getElementById('chk-subsidio').checked) {
-                let limiteMensual = CONFIG_NOMINA_2026.subsidio2026.limiteIngresoMensual;
+                const limiteMensual = CONFIG_NOMINA_2026.subsidio2026.limiteIngresoMensual;
                 let factorDias = 15;
                 if (periodicidad === 'diario') factorDias = 1;
                 if (periodicidad === 'semanal') factorDias = 7;
                 if (periodicidad === 'catorcenal') factorDias = 14;
                 if (periodicidad === 'quincenal') factorDias = 15;
                 if (periodicidad === 'mensual') factorDias = 30.4;
+                if (periodicidad === 'mensual30') factorDias = 30;
 
                 let limitePeriodo = (limiteMensual / 30.4) * factorDias;
 
+                // Regla 2026: 15.59% de la UMA 2025 durante enero;
+                // 15.02% de la UMA 2026 a partir del 1 de febrero.
+                const fechaFin = document.getElementById('nom-fecha-fin')?.value || '';
+                const esEnero2026 = /^2026-01-/.test(fechaFin);
+                const porcentajeUma = esEnero2026
+                    ? CONFIG_NOMINA_2026.subsidio2026.porcentajeUmaEnero
+                    : CONFIG_NOMINA_2026.subsidio2026.porcentajeUma;
+                const umaMensualSubsidio = esEnero2026
+                    ? CONFIG_NOMINA_2026.subsidio2026.umaMensualEnero
+                    : CONFIG_NOMINA_2026.UMA.mensual;
+
                 if (baseGravable <= limitePeriodo) {
-                    subsidio = (CONFIG_NOMINA_2026.UMA.mensual * CONFIG_NOMINA_2026.subsidio2026.porcentajeUma / 30.4) * factorDias;
+                    subsidio = (umaMensualSubsidio * porcentajeUma / 30.4) * factorDias;
                 }
             }
 
@@ -1053,12 +1098,22 @@
             return { isrRetenidoIndem, tasaEfectivaPct: tasaEfectiva * 100 };
         }
 
+        function getUMAIMSSVigente() {
+            const fechaFin = document.getElementById('nom-fecha-fin')?.value || '';
+            // La UMA 2025 ($113.14) continúa vigente en enero de 2026;
+            // la UMA 2026 ($117.31) entra en vigor el 1 de febrero de 2026.
+            return /^2026-01-/.test(fechaFin) ? 113.14 : CONFIG_NOMINA_2026.UMA.diario;
+        }
+
         function calcularIMSS(sbc, diasCotizados, claseRiesgo, esSalarioMinimo) {
             if (!document.getElementById('chk-imss').checked || diasCotizados <= 0) {
                 return { obrero: 0, patronal: 0, desglosePatronal: { cyvPatronal: 0, infonavitPatronal: 0, resto: 0 }, vecesUma: 0, tasaCEAV: 0 };
             }
 
-            const uma = CONFIG_NOMINA_2026.UMA.diario;
+            const uma = getUMAIMSSVigente();
+            // Art. 28 LSS: SBC máximo = 25 UMA.
+            const sbcCotizacion = Math.min(sbc, uma * 25);
+            sbc = sbcCotizacion;
             
             // Cuotas Obrero
             let eymExcedenteObrero = Math.max(0, sbc - (3 * uma)) * 0.004 * diasCotizados;
@@ -1193,7 +1248,7 @@
 
             // 6. IMSS Calculation
             const claseRiesgo = document.getElementById('emp-riesgo-puesto').value;
-            const esSalarioMinimo = sd <= CONFIG_NOMINA_2026.SMI.general;
+            const esSalarioMinimo = sd <= CONFIG_NOMINA_2026.SMI.general; // Zona general; si se habilita ZLFN deberá usar $440.87.
             let resIMSS = calcularIMSS(sbc, diasCotizadosIMSS, claseRiesgo, esSalarioMinimo);
 
             // 7. Other Deductions
@@ -1312,6 +1367,8 @@
         }
 
         function limpiarDatos() {
+            document.getElementById('sel-zona-salarial').value = "general";
+            document.getElementById('sel-periodicidad').value = "quincenal";
             document.getElementById('tra-salario-diario').value = "300.00";
             document.getElementById('he-dobles').value = "0";
             document.getElementById('he-triples').value = "0";
@@ -1345,9 +1402,9 @@
         }
 
         function guardarConfiguracionTablas() {
-            CONFIG_NOMINA_2026.UMA.diario = parseFloat(document.getElementById('cfg-uma-val').value) || 113.14;
-            CONFIG_NOMINA_2026.SMI.general = parseFloat(document.getElementById('cfg-smi-val').value) || 278.80;
-            CONFIG_NOMINA_2026.UMI = parseFloat(document.getElementById('cfg-umi-val').value) || 108.30;
+            CONFIG_NOMINA_2026.UMA.diario = parseFloat(document.getElementById('cfg-uma-val').value) || 117.31;
+            CONFIG_NOMINA_2026.SMI.general = parseFloat(document.getElementById('cfg-smi-val').value) || 315.04;
+            CONFIG_NOMINA_2026.UMI = parseFloat(document.getElementById('cfg-umi-val').value) || 100.81;
 
             cargarConfiguracionEnUI();
             calcularSBC();
@@ -1356,9 +1413,9 @@
         }
 
         function restaurarValoresPorDefecto() {
-            CONFIG_NOMINA_2026.UMA.diario = 113.14;
-            CONFIG_NOMINA_2026.SMI.general = 278.80;
-            CONFIG_NOMINA_2026.UMI = 108.30;
+            CONFIG_NOMINA_2026.UMA.diario = 117.31;
+            CONFIG_NOMINA_2026.SMI.general = 315.04;
+            CONFIG_NOMINA_2026.UMI = 100.81;
 
             cargarConfiguracionEnUI();
             calcularSBC();
