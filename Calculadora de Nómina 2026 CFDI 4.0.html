@@ -115,6 +115,49 @@
                     </select>
                 </div>
 
+                <!-- ISR Tariff Mode Selector -->
+                <div class="flex items-center space-x-2 bg-slate-50 p-1 rounded-lg border border-slate-200">
+                    <label for="sel-metodo-isr" class="text-xs font-medium text-slate-600 pl-2">Tarifa ISR:</label>
+                    <select id="sel-metodo-isr" class="bg-white border border-slate-300 text-slate-800 text-xs rounded-md focus:ring-2 focus:ring-blue-500 p-1.5 font-semibold" onchange="calcularNomina()">
+                        <option value="periodo">Tarifa del periodo</option>
+                        <option value="mensual-prorrateada">Mensual prorrateada al periodo</option>
+                    </select>
+                    <span title="La opción mensual prorrateada mensualiza el ingreso y calcula el ISR con la tarifa mensual; después divide el ISR entre los periodos equivalentes del mes." class="text-slate-400 cursor-help">ⓘ</span>
+                </div>
+
+                <!-- Extraordinary ISR Treatment -->
+                <div class="flex items-center space-x-2 bg-slate-50 p-1 rounded-lg border border-slate-200">
+                    <label for="sel-extra-isr" class="text-xs font-medium text-slate-600 pl-2">Extraordinarias ISR:</label>
+                    <select id="sel-extra-isr" class="bg-white border border-slate-300 text-slate-800 text-xs rounded-md focus:ring-2 focus:ring-blue-500 p-1.5 font-semibold" onchange="calcularNomina()">
+                        <option value="acumulacion">Acumular al ISR del mes</option>
+                        <option value="art174">Procedimiento opcional Art. 174 RLISR</option>
+                    </select>
+                    <span title="Aplica a aguinaldo, PTU, prima dominical y prima vacacional gravados. El Art. 174 permite un procedimiento opcional específico para estas remuneraciones." class="text-slate-400 cursor-help">ⓘ</span>
+                </div>
+
+                <!-- Monthly ISR History -->
+                <div class="bg-white border border-slate-200 rounded-lg p-3 space-y-2">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <div class="text-xs font-bold text-slate-700">Historial ISR del mes</div>
+                            <div class="text-[10px] text-slate-500">Registra cada pago para que el siguiente cálculo reste automáticamente el ISR ya retenido.</div>
+                        </div>
+                        <div class="flex gap-1">
+                            <button type="button" onclick="registrarPagoISR()" class="text-[10px] bg-blue-600 hover:bg-blue-700 text-white font-semibold px-2 py-1 rounded">Registrar pago</button>
+                            <button type="button" onclick="limpiarHistorialISR()" class="text-[10px] bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold px-2 py-1 rounded">Limpiar</button>
+                        </div>
+                    </div>
+                    <div id="historial-isr-resumen" class="text-[10px] text-slate-600 bg-slate-50 rounded p-2">Sin pagos registrados para este trabajador/mes.</div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-[10px] hidden" id="tabla-historial-isr">
+                            <thead><tr class="text-left text-slate-500 border-b"><th class="py-1">Fecha</th><th class="py-1">Gravado</th><th class="py-1">ISR neto</th><th class="py-1">Método</th><th></th></tr></thead>
+                            <tbody id="tbody-historial-isr"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="text-[10px] text-slate-500 px-1">Para acumulación mensual, registra cada pago con <b>Registrar pago</b>. El siguiente pago del mismo trabajador y mes descontará automáticamente el ISR neto ya retenido. Para aguinaldo, PTU, prima dominical y prima vacacional puedes elegir el procedimiento opcional del Art. 174 RLISR.</div>
+
                 <!-- Wage Zone Selector -->
                 <div class="flex items-center space-x-2 bg-slate-50 p-1 rounded-lg border border-slate-200">
                     <label for="sel-zona-salarial" class="text-xs font-medium text-slate-600 pl-2">Zona salarial:</label>
@@ -515,6 +558,8 @@
                             <h4 class="font-bold text-blue-900 uppercase text-[11px]">Pasos del Cálculo ISR (Tabla Progresiva)</h4>
                             <div class="grid grid-cols-2 gap-2 text-slate-700 font-mono text-[11px]">
                                 <div>• Base Gravable: <span id="audit-isr-base" class="font-semibold text-slate-900">$0.00</span></div>
+                                <div>• Método ISR: <span id="audit-isr-metodo" class="font-semibold text-slate-900">Tarifa del periodo</span></div>
+                                <div>• Base para tarifa: <span id="audit-isr-base-tarifa" class="font-semibold text-slate-900">$0.00</span></div>
                                 <div>• Límite Inferior: <span id="audit-isr-liminf" class="font-semibold text-slate-900">$0.00</span></div>
                                 <div>• Excedente Lím. Inf.: <span id="audit-isr-excedente" class="font-semibold text-slate-900">$0.00</span></div>
                                 <div>• Tasa Marginal (%): <span id="audit-isr-tasa" class="font-semibold text-slate-900">0.00%</span></div>
@@ -526,6 +571,9 @@
                                 <div class="col-span-2 text-emerald-700">
                                     - Subsidio al Empleo Aplicado (Decreto 2026): <span id="audit-isr-subsidio" class="font-bold">-$0.00</span>
                                 </div>
+                                <div class="col-span-2 border-t pt-1 text-slate-700">• Historial ISR previo del mes: <span id="audit-isr-previo" class="font-semibold text-slate-900">$0.00</span></div>
+                                <div class="col-span-2 text-slate-700">• ISR por extraordinarias (Art. 174): <span id="audit-isr-art174" class="font-semibold text-slate-900">$0.00</span></div>
+                                <div class="col-span-2 text-slate-700">• ISR neto a retener en este pago: <span id="audit-isr-neto-pago" class="font-semibold text-rose-700">$0.00</span></div>
                             </div>
                         </div>
 
@@ -777,7 +825,8 @@
                 umaMensualEnero: 3439.46
             },
             // Tabla progresiva de cuota patronal CEAV 2026
-            // (Decreto LSS 16/12/2020, aplicación gradual).
+            // Valores 2026 conforme al Segundo Transitorio del decreto LSS 16/12/2020.
+            // La cuota obrera CEAV permanece en 1.125%.
             cesantiaVejezPatronal: [
                 { maxUma: 1.00, tasa: 0.03150 },
                 { maxUma: 1.50, tasa: 0.03676 },
@@ -1029,24 +1078,74 @@
             document.getElementById('tra-sbc').value = sbc.toFixed(2);
         }
 
-        function calcularISR(baseGravable, periodicidad) {
+        function calcularISR(baseGravable, periodicidad, opciones = {}) {
             if (!document.getElementById('chk-isr').checked || baseGravable <= 0) {
-                return { isrCausado: 0, subsidio: 0, isrRetenido: 0, tramo: { limInf: 0, cuotaFija: 0, pct: 0 } };
+                return { isrCausado: 0, subsidio: 0, isrRetenido: 0, tramo: { limInf: 0, cuotaFija: 0, pct: 0 }, baseISR: 0, factorProrrateo: 1, metodo: 'periodo', usaMensualProrrateada: false, esAcumulado: false };
             }
 
-            const periodicidadISR = periodicidad === 'mensual30' ? 'mensual' : periodicidad;
-            let tabla = CONFIG_NOMINA_2026.tablasISR[periodicidadISR] || CONFIG_NOMINA_2026.tablasISR.quincenal;
-            let tramo = tabla.find(t => baseGravable >= t.limInf && baseGravable <= t.limSup);
-            if (!tramo) tramo = tabla[tabla.length - 1];
+            const metodo = opciones.metodo || document.getElementById('sel-metodo-isr')?.value || 'periodo';
+            const esAcumulado = metodo === 'mensual-acumulada';
+            const usaMensualProrrateada = metodo === 'mensual-prorrateada' && !['mensual', 'mensual30'].includes(periodicidad);
+            const historial = opciones.historial || [];
 
-            let excedente = baseGravable - tramo.limInf;
-            let impuestoMarginal = excedente * tramo.pct;
-            let isrCausado = tramo.cuotaFija + impuestoMarginal;
-
-            // Subsidio al Empleo (Decreto 2026)
+            let factorProrrateo = 1;
+            let baseISR = baseGravable;
+            let isrCausado = 0;
             let subsidio = 0;
-            if (document.getElementById('chk-subsidio').checked) {
+            let tramo = { limInf: 0, cuotaFija: 0, pct: 0 };
+            let excedente = 0;
+            let impuestoMarginal = 0;
+
+            if (esAcumulado) {
+                // Art. 96: acumulamos los pagos del mismo mes y calculamos el ISR mensual.
+                const gravadoPrevio = historial.reduce((a, x) => a + (Number(x.gravadoOrdinario || 0) + Number(x.extraGravadoAcumulado || 0)), 0);
+                const baseMensualAcumulada = gravadoPrevio + baseGravable;
+                const tabla = CONFIG_NOMINA_2026.tablasISR.mensual;
+                tramo = tabla.find(t => baseMensualAcumulada >= t.limInf && baseMensualAcumulada <= t.limSup) || tabla[tabla.length - 1];
+                excedente = Math.max(0, baseMensualAcumulada - tramo.limInf);
+                impuestoMarginal = excedente * tramo.pct;
+                isrCausado = tramo.cuotaFija + impuestoMarginal;
+                baseISR = baseMensualAcumulada;
+
+                const fechaFin = document.getElementById('nom-fecha-fin')?.value || '';
+                const esEnero2026 = /^2026-01-/.test(fechaFin);
+                const porcentajeUma = esEnero2026 ? CONFIG_NOMINA_2026.subsidio2026.porcentajeUmaEnero : CONFIG_NOMINA_2026.subsidio2026.porcentajeUma;
+                const umaMensualSubsidio = esEnero2026 ? CONFIG_NOMINA_2026.subsidio2026.umaMensualEnero : CONFIG_NOMINA_2026.UMA.mensual;
                 const limiteMensual = CONFIG_NOMINA_2026.subsidio2026.limiteIngresoMensual;
+                if (document.getElementById('chk-subsidio').checked && baseMensualAcumulada <= limiteMensual) {
+                    subsidio = umaMensualSubsidio * porcentajeUma;
+                }
+
+                // Retención acumulada: impuesto neto del mes menos lo ya retenido en pagos anteriores.
+                const retenidoPrevio = historial.reduce((a, x) => a + Number(x.isrRetenido || 0), 0);
+                const netoMensual = Math.max(0, isrCausado - subsidio);
+                const isrRetenido = Math.max(0, netoMensual - retenidoPrevio);
+                const subsidioPrevio = historial.reduce((a, x) => a + Number(x.subsidio || 0), 0);
+                const subsidioPeriodo = Math.max(0, subsidio - subsidioPrevio);
+
+                return { isrCausado, subsidio: subsidioPeriodo, isrRetenido, tramo, excedente, impuestoMarginal, baseISR, factorProrrateo, metodo, usaMensualProrrateada, esAcumulado, gravadoPrevio, retenidoPrevio, netoMensual, subsidioMensual: subsidio };
+            }
+
+            if (usaMensualProrrateada) {
+                let diasPeriodo = 15;
+                if (periodicidad === 'diario') diasPeriodo = 1;
+                if (periodicidad === 'semanal') diasPeriodo = 7;
+                if (periodicidad === 'catorcenal') diasPeriodo = 14;
+                if (periodicidad === 'quincenal') diasPeriodo = 15;
+                factorProrrateo = 30.4 / diasPeriodo;
+                baseISR = baseGravable * factorProrrateo;
+            }
+
+            const periodicidadISR = usaMensualProrrateada ? 'mensual' : (periodicidad === 'mensual30' ? 'mensual' : periodicidad);
+            const tabla = CONFIG_NOMINA_2026.tablasISR[periodicidadISR] || CONFIG_NOMINA_2026.tablasISR.quincenal;
+            tramo = tabla.find(t => baseISR >= t.limInf && baseISR <= t.limSup) || tabla[tabla.length - 1];
+            excedente = Math.max(0, baseISR - tramo.limInf);
+            impuestoMarginal = excedente * tramo.pct;
+            const isrCalculado = tramo.cuotaFija + impuestoMarginal;
+            isrCausado = usaMensualProrrateada ? isrCalculado / factorProrrateo : isrCalculado;
+
+            const limiteMensual = CONFIG_NOMINA_2026.subsidio2026.limiteIngresoMensual;
+            if (document.getElementById('chk-subsidio').checked) {
                 let factorDias = 15;
                 if (periodicidad === 'diario') factorDias = 1;
                 if (periodicidad === 'semanal') factorDias = 7;
@@ -1054,28 +1153,31 @@
                 if (periodicidad === 'quincenal') factorDias = 15;
                 if (periodicidad === 'mensual') factorDias = 30.4;
                 if (periodicidad === 'mensual30') factorDias = 30;
-
-                let limitePeriodo = (limiteMensual / 30.4) * factorDias;
-
-                // Regla 2026: 15.59% de la UMA 2025 durante enero;
-                // 15.02% de la UMA 2026 a partir del 1 de febrero.
                 const fechaFin = document.getElementById('nom-fecha-fin')?.value || '';
                 const esEnero2026 = /^2026-01-/.test(fechaFin);
-                const porcentajeUma = esEnero2026
-                    ? CONFIG_NOMINA_2026.subsidio2026.porcentajeUmaEnero
-                    : CONFIG_NOMINA_2026.subsidio2026.porcentajeUma;
-                const umaMensualSubsidio = esEnero2026
-                    ? CONFIG_NOMINA_2026.subsidio2026.umaMensualEnero
-                    : CONFIG_NOMINA_2026.UMA.mensual;
-
-                if (baseGravable <= limitePeriodo) {
+                const porcentajeUma = esEnero2026 ? CONFIG_NOMINA_2026.subsidio2026.porcentajeUmaEnero : CONFIG_NOMINA_2026.subsidio2026.porcentajeUma;
+                const umaMensualSubsidio = esEnero2026 ? CONFIG_NOMINA_2026.subsidio2026.umaMensualEnero : CONFIG_NOMINA_2026.UMA.mensual;
+                const limitePeriodo = (limiteMensual / 30.4) * factorDias;
+                if (usaMensualProrrateada) {
+                    if (baseISR <= limiteMensual) subsidio = (umaMensualSubsidio * porcentajeUma) / factorProrrateo;
+                } else if (baseGravable <= limitePeriodo) {
                     subsidio = (umaMensualSubsidio * porcentajeUma / 30.4) * factorDias;
                 }
             }
 
-            let isrRetenido = Math.max(0, isrCausado - subsidio);
+            const isrRetenido = Math.max(0, isrCausado - subsidio);
+            return { isrCausado, subsidio, isrRetenido, tramo, excedente, impuestoMarginal, baseISR, factorProrrateo, metodo, usaMensualProrrateada, esAcumulado: false };
+        }
 
-            return { isrCausado, subsidio, isrRetenido, tramo, excedente, impuestoMarginal };
+        function calcularISRArt174(remuneracionGravada, ingresoOrdinarioMensual) {
+            if (!remuneracionGravada || remuneracionGravada <= 0) return { impuesto: 0, tasa: 0, mensualizada: 0, impuestoOrdinario: 0, impuestoConExtra: 0 };
+            const mensualizada = remuneracionGravada / 365 * 30.4;
+            const ordinario = calcularISR(Math.max(0, ingresoOrdinarioMensual), 'mensual', { metodo: 'periodo' });
+            const conExtra = calcularISR(Math.max(0, ingresoOrdinarioMensual + mensualizada), 'mensual', { metodo: 'periodo' });
+            const diferencia = Math.max(0, conExtra.isrCausado - ordinario.isrCausado);
+            const tasa = mensualizada > 0 ? diferencia / mensualizada : 0;
+            const impuesto = remuneracionGravada * tasa;
+            return { impuesto, tasa, mensualizada, impuestoOrdinario: ordinario.isrCausado, impuestoConExtra: conExtra.isrCausado };
         }
 
         function calcularISRSeparacionArt174(montoGravado, sd) {
@@ -1168,6 +1270,69 @@
             };
         }
 
+        function obtenerClaveHistorialISR() {
+            const rfc = (document.getElementById('tra-rfc')?.value || 'SINRFC').trim().toUpperCase();
+            const fecha = document.getElementById('nom-fecha-fin')?.value || '';
+            const mes = fecha ? fecha.slice(0, 7) : new Date().toISOString().slice(0, 7);
+            return `nominaISR:${rfc}:${mes}`;
+        }
+
+        function leerHistorialISR() {
+            try { return JSON.parse(localStorage.getItem(obtenerClaveHistorialISR()) || '[]'); }
+            catch(e) { return []; }
+        }
+
+        function guardarHistorialISR(historial) {
+            localStorage.setItem(obtenerClaveHistorialISR(), JSON.stringify(historial));
+            actualizarUIHistorialISR(historial);
+        }
+
+        function actualizarUIHistorialISR(historial = leerHistorialISR()) {
+            const tabla = document.getElementById('tabla-historial-isr');
+            const tbody = document.getElementById('tbody-historial-isr');
+            const resumen = document.getElementById('historial-isr-resumen');
+            if (!tabla || !tbody || !resumen) return;
+            historial.sort((a,b) => String(a.fecha).localeCompare(String(b.fecha)) || Number(a.id)-Number(b.id));
+            tbody.innerHTML = historial.map((x,i) => `<tr class="border-b border-slate-100"><td class="py-1">${x.fecha}</td><td class="py-1">${fmtMXN(x.gravadoTotal || 0)}</td><td class="py-1">${fmtMXN(x.isrRetenido || 0)}</td><td class="py-1">${x.metodoTexto || 'Periodo'}</td><td class="py-1 text-right"><button type="button" class="text-rose-600" onclick="eliminarPagoISR(${Number(x.id)})">×</button></td></tr>`).join('');
+            tabla.classList.toggle('hidden', historial.length === 0);
+            const gravado = historial.reduce((a,x)=>a+Number(x.gravadoTotal||0),0);
+            const isr = historial.reduce((a,x)=>a+Number(x.isrRetenido||0),0);
+            resumen.innerText = historial.length ? `${historial.length} pago(s) registrado(s) · Gravado acumulado: ${fmtMXN(gravado)} · ISR retenido acumulado: ${fmtMXN(isr)}` : 'Sin pagos registrados para este trabajador/mes.';
+        }
+
+        function registrarPagoISR() {
+            const fecha = document.getElementById('nom-fecha-fin')?.value || '';
+            if (!fecha) { alert('Captura primero la fecha de fin del periodo.'); return; }
+            const historial = leerHistorialISR();
+            const rfc = (document.getElementById('tra-rfc')?.value || '').trim().toUpperCase();
+            const periodicidad = document.getElementById('sel-periodicidad').value;
+            const metodo = document.getElementById('sel-metodo-isr')?.value || 'periodo';
+            const extraMetodo = document.getElementById('sel-extra-isr')?.value || 'acumulacion';
+            const sd = parseFloat(document.getElementById('tra-salario-diario').value)||0;
+            const dias = parseFloat(document.getElementById('nom-dias-pagados').value)||0;
+            const gravadoTotal = Number(window.__nominaISRContext?.gravadoTotal || 0);
+            const gravadoOrdinario = Number(window.__nominaISRContext?.gravadoOrdinario || 0);
+            const extraGravado = Number(window.__nominaISRContext?.extraGravado || 0);
+            const res = window.__nominaISRContext?.resISR || {};
+            const entry = { id: Date.now(), fecha, rfc, periodicidad, dias, sd, gravadoTotal, gravadoOrdinario, extraGravadoAcumulado: extraMetodo==='acumulacion' ? extraGravado : 0, isrRetenido: Number(res.isrRetenido||0), isrCausado: Number(res.isrCausado||0), subsidio: Number(res.subsidio||0), metodo: metodo, metodoTexto: metodo==='mensual-acumulada'?'Mensual acumulada':(metodo==='mensual-prorrateada'?'Mensual prorrateada':'Tarifa periodo'), extraMetodo };
+            historial.push(entry);
+            guardarHistorialISR(historial);
+            calcularNomina();
+        }
+
+        function eliminarPagoISR(id) {
+            const historial = leerHistorialISR().filter(x => Number(x.id) !== Number(id));
+            guardarHistorialISR(historial);
+            calcularNomina();
+        }
+
+        function limpiarHistorialISR() {
+            if (!confirm('¿Limpiar el historial ISR de este trabajador y mes?')) return;
+            localStorage.removeItem(obtenerClaveHistorialISR());
+            actualizarUIHistorialISR([]);
+            calcularNomina();
+        }
+
         function calcularNomina() {
             // Read Inputs
             const sd = parseFloat(document.getElementById('tra-salario-diario').value) || 0;
@@ -1237,14 +1402,25 @@
             let totalExento = exentoHe + exentoAguinaldo + exentoPrimaVac + exentoPrimaDom + exentoPtu + exentoIndem;
             let totalGravado = totalBruto - totalExento;
 
-            // Separate ordinary gravado vs severance gravado
-            let gravadoOrdinario = totalGravado - gravadoIndem;
+            // Separate ordinary gravado vs extraordinary gravado eligible for Art. 174.
+            // Art. 174 covers aguinaldo, PTU, prima dominical and prima vacacional.
+            const extraGravadoArt174 = gravadoAguinaldo + gravadoPrimaVac + gravadoPrimaDom + gravadoPtu;
+            let gravadoOrdinario = Math.max(0, totalGravado - gravadoIndem - extraGravadoArt174);
+            const gravadoParaAcumulacion = gravadoOrdinario + (document.getElementById('sel-extra-isr')?.value === 'acumulacion' ? extraGravadoArt174 : 0);
+            const historialISR = leerHistorialISR();
+            const metodoISR = document.getElementById('sel-metodo-isr')?.value || 'periodo';
 
-            // 5. ISR Calculation
-            let resISR = calcularISR(gravadoOrdinario, periodicidad);
+            // 5. ISR Calculation. For monthly accumulated mode, previous payments of the same month are considered.
+            let resISR = calcularISR(gravadoParaAcumulacion, periodicidad, { historial: historialISR });
+
+            let resExtraArt174 = { impuesto: 0, tasa: 0, mensualizada: 0 };
+            if (extraGravadoArt174 > 0 && document.getElementById('sel-extra-isr')?.value === 'art174') {
+                const ingresoOrdinarioMensual = historialISR.reduce((a,x)=>a+Number(x.gravadoOrdinario||0),0) + gravadoOrdinario;
+                resExtraArt174 = calcularISRArt174(extraGravadoArt174, ingresoOrdinarioMensual);
+            }
 
             let resIndemISR = calcularISRSeparacionArt174(gravadoIndem, sd);
-            let totalISRRetenido = resISR.isrRetenido + resIndemISR.isrRetenidoIndem;
+            let totalISRRetenido = resISR.isrRetenido + resExtraArt174.impuesto + resIndemISR.isrRetenidoIndem;
 
             // 6. IMSS Calculation
             const claseRiesgo = document.getElementById('emp-riesgo-puesto').value;
@@ -1285,6 +1461,8 @@
 
             // AUDIT TAB UPDATES
             document.getElementById('audit-isr-base').innerText = fmtMXN(gravadoOrdinario);
+            document.getElementById('audit-isr-metodo').innerText = resISR.esAcumulado ? 'Mensual acumulada' : (resISR.usaMensualProrrateada ? 'Mensual prorrateada al periodo' : 'Tarifa del periodo');
+            document.getElementById('audit-isr-base-tarifa').innerText = fmtMXN(resISR.baseISR || gravadoOrdinario);
             document.getElementById('audit-isr-liminf').innerText = fmtMXN(resISR.tramo ? resISR.tramo.limInf : 0);
             document.getElementById('audit-isr-excedente').innerText = fmtMXN(resISR.excedente || 0);
             document.getElementById('audit-isr-tasa').innerText = ((resISR.tramo ? resISR.tramo.pct : 0) * 100).toFixed(2) + '%';
@@ -1292,6 +1470,20 @@
             document.getElementById('audit-isr-cuota').innerText = fmtMXN(resISR.tramo ? resISR.tramo.cuotaFija : 0);
             document.getElementById('audit-isr-causado').innerText = fmtMXN(resISR.isrCausado);
             document.getElementById('audit-isr-subsidio').innerText = '-' + fmtMXN(resISR.subsidio);
+            document.getElementById('audit-isr-previo').innerText = fmtMXN(resISR.retenidoPrevio || 0);
+            document.getElementById('audit-isr-art174').innerText = fmtMXN(resExtraArt174.impuesto || 0);
+            document.getElementById('audit-isr-neto-pago').innerText = fmtMXN(totalISRRetenido);
+
+            window.__nominaISRContext = {
+                gravadoTotal: totalGravado,
+                gravadoOrdinario,
+                extraGravado: extraGravadoArt174,
+                resISR,
+                totalISRRetenido,
+                metodoISR,
+                extraMetodo: document.getElementById('sel-extra-isr')?.value || 'acumulacion'
+            };
+            actualizarUIHistorialISR(historialISR);
 
             document.getElementById('audit-ceav-veces').innerText = resIMSS.vecesUma.toFixed(2) + ' UMAs';
             document.getElementById('audit-ceav-tasa').innerText = (resIMSS.tasaCEAV * 100).toFixed(3) + '%';
@@ -1466,6 +1658,7 @@
         window.onload = function() {
             lucide.createIcons();
             cargarConfiguracionEnUI();
+            actualizarUIHistorialISR();
             validarInputsCFDI();
             alCambiarFechas();
         };
