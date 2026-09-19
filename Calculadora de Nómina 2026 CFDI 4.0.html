@@ -580,6 +580,7 @@
                                 <div>• Base Gravable: <span id="audit-isr-base" class="font-semibold text-slate-900">$0.00</span></div>
                                 <div>• Método ISR: <span id="audit-isr-metodo" class="font-semibold text-slate-900">Tarifa del periodo</span></div>
                                 <div>• Base para tarifa: <span id="audit-isr-base-tarifa" class="font-semibold text-slate-900">$0.00</span></div>
+                                <div class="text-[10px] text-slate-500 ml-2">En mensual prorrateada, el sueldo ordinario se mensualiza y la extraordinaria se suma una sola vez.</div>
                                 <div>• Límite Inferior: <span id="audit-isr-liminf" class="font-semibold text-slate-900">$0.00</span></div>
                                 <div>• Excedente Lím. Inf.: <span id="audit-isr-excedente" class="font-semibold text-slate-900">$0.00</span></div>
                                 <div>• Tasa Marginal (%): <span id="audit-isr-tasa" class="font-semibold text-slate-900">0.00%</span></div>
@@ -1170,7 +1171,15 @@
                 if (periodicidad === 'quincenal') diasPeriodo = 15;
                 const baseMensual = obtenerBaseMensualizacion();
                 factorProrrateo = baseMensual / diasPeriodo;
-                baseISR = baseGravable * factorProrrateo;
+
+                // IMPORTANTE: al mensualizar una nómina con percepciones extraordinarias
+                // (p. ej. prima vacacional), solo el sueldo ordinario se eleva al mes.
+                // La percepción extraordinaria se incorpora una sola vez a la base mensual.
+                // Así, una quincena de sueldo de $10,000 + prima gravada de $2,000
+                // con factor 2 se convierte en $20,000 + $2,000, NO en $24,000.
+                const ordinarioPeriodo = Number(opciones.gravadoOrdinario ?? baseGravable) || 0;
+                const extraordinarioUnaVez = Number(opciones.extraGravado ?? 0) || 0;
+                baseISR = (ordinarioPeriodo * factorProrrateo) + extraordinarioUnaVez;
             }
 
             const periodicidadISR = usaMensualProrrateada ? 'mensual' : (periodicidad === 'mensual30' ? 'mensual' : periodicidad);
@@ -1494,7 +1503,11 @@
             const metodoISR = document.getElementById('sel-metodo-isr')?.value || 'periodo';
 
             // 5. ISR Calculation. For monthly accumulated mode, previous payments of the same month are considered.
-            let resISR = calcularISR(gravadoParaAcumulacion, periodicidad, { historial: historialISR });
+            let resISR = calcularISR(gravadoParaAcumulacion, periodicidad, {
+                historial: historialISR,
+                gravadoOrdinario,
+                extraGravado: (document.getElementById('sel-extra-isr')?.value === 'acumulacion' ? extraGravadoArt174 : 0)
+            });
 
             let resExtraArt174 = { impuesto: 0, tasa: 0, mensualizada: 0 };
             if (extraGravadoArt174 > 0 && document.getElementById('sel-extra-isr')?.value === 'art174') {
