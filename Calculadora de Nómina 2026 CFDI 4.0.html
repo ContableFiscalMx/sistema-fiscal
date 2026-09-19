@@ -21,7 +21,76 @@
             background-color: #ffffff;
         }
 
+        /* Estilo de la representación impresa tipo recibo de nómina */
+        .payroll-receipt {
+            font-family: Arial, Helvetica, sans-serif;
+            color: #1f2937;
+            background: #fff;
+            border: 1px solid #cbd5e1;
+            box-shadow: 0 4px 14px rgba(15, 23, 42, .08);
+        }
+        .payroll-receipt .receipt-title {
+            color: #111827;
+            letter-spacing: .02em;
+            font-size: 20px;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+        .payroll-receipt .receipt-subtitle {
+            color: #64748b;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .payroll-receipt .receipt-rule { border-top: 2px solid #334155; }
+        .payroll-receipt .receipt-info {
+            font-size: 10px;
+            line-height: 1.55;
+        }
+        .payroll-receipt .receipt-label { font-weight: 800; text-transform: uppercase; }
+        .payroll-receipt .receipt-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 10px;
+        }
+        .payroll-receipt .receipt-table th {
+            background: #1d4ed8;
+            color: #fff;
+            padding: 7px 8px;
+            font-weight: 800;
+            border: 1px solid #1e40af;
+        }
+        .payroll-receipt .receipt-table td {
+            padding: 6px 8px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .payroll-receipt .receipt-table .section-total td {
+            background: #f1f5f9;
+            font-weight: 800;
+        }
+        .payroll-receipt .receipt-table .grand-total td {
+            background: #e2e8f0;
+            font-weight: 900;
+            border-top: 2px solid #94a3b8;
+        }
+        .payroll-receipt .net-box {
+            border: 2px solid #1e3a8a;
+            background: #f8fafc;
+            color: #0f172a;
+        }
+        .payroll-receipt .net-amount {
+            color: #1e3a8a;
+            font-size: 21px;
+            font-weight: 900;
+        }
+        .payroll-receipt .signature-line {
+            border-top: 1px solid #64748b;
+            padding-top: 5px;
+            text-align: center;
+            font-size: 10px;
+            color: #475569;
+        }
         @media print {
+            @page { size: letter portrait; margin: 10mm; }
             body * { visibility: hidden; }
             #printable-receipt, #printable-receipt * { visibility: visible; }
             #printable-receipt {
@@ -29,13 +98,20 @@
                 left: 0;
                 top: 0;
                 width: 100%;
-                padding: 1.5rem;
+                padding: 0 !important;
+                margin: 0 !important;
                 background: white;
                 color: black;
                 border: none !important;
                 box-shadow: none !important;
             }
             .no-print { display: none !important; }
+            .payroll-receipt .receipt-table th {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            .payroll-receipt .receipt-table td,
+            .payroll-receipt .receipt-table th { page-break-inside: avoid; }
         }
     </style>
 </head>
@@ -752,68 +828,93 @@
                     </div>
                 </div>
 
-                <!-- CFDI 4.0 VISUAL RECEIPT PREVIEW -->
-                <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200" id="printable-receipt">
-                    <div class="text-center border-b pb-3 mb-3">
-                        <span class="bg-slate-100 text-slate-700 text-[10px] font-bold px-2 py-0.5 rounded border border-slate-200">COMPROBANTE FISCAL DIGITAL POR INTERNET CFDI 4.0</span>
-                        <h2 class="text-xs font-bold text-slate-900 uppercase mt-1" id="rec-emisor-nombre">GRUPO INDUSTRIAL MEXICANO SA DE CV</h2>
-                        <p class="text-[10px] text-slate-500">RFC: <span id="rec-emisor-rfc" class="font-mono">GIM850101XYZ</span> | Reg. Patronal: <span id="rec-emisor-rp" class="font-mono">Y6812345108</span></p>
-                        <p class="text-[10px] text-slate-500">Lugar Expedición C.P.: <span id="rec-emisor-cp">06600</span> | Régimen Patronal: 601 General de Ley Personas Morales</p>
+                <!-- REPRESENTACIÓN IMPRESA DEL RECIBO DE NÓMINA -->
+                <div class="payroll-receipt rounded-xl p-5" id="printable-receipt">
+                    <div class="text-center pb-2">
+                        <div class="receipt-title">Recibo de Nómina</div>
+                        <div class="receipt-subtitle">Comprobante de Pago de Sueldos y Salarios</div>
+                    </div>
+                    <div class="receipt-rule mt-2 mb-3"></div>
+
+                    <!-- Emisor / CFDI: se conservan los datos existentes del archivo -->
+                    <div class="receipt-info grid grid-cols-2 gap-x-8 gap-y-0.5 mb-3">
+                        <div><span class="receipt-label">Patrón / Emisor:</span> <span id="rec-emisor-nombre">GRUPO INDUSTRIAL MEXICANO SA DE CV</span></div>
+                        <div><span class="receipt-label">RFC Emisor:</span> <span id="rec-emisor-rfc" class="font-mono">GIM850101XYZ</span></div>
+                        <div><span class="receipt-label">Registro Patronal:</span> <span id="rec-emisor-rp" class="font-mono">Y6812345108</span></div>
+                        <div><span class="receipt-label">C.P. Expedición:</span> <span id="rec-emisor-cp">06600</span></div>
                     </div>
 
-                    <div class="grid grid-cols-2 gap-2 text-[10px] mb-3 bg-slate-50 p-2.5 rounded border border-slate-200">
-                        <div>
-                            <p><strong>Trabajador:</strong> <span id="rec-tra-nombre">MANUEL GARCIA RODRIGUEZ</span></p>
-                            <p><strong>RFC:</strong> <span id="rec-tra-rfc" class="font-mono">GARM900412AB3</span></p>
-                            <p><strong>CURP:</strong> <span id="rec-tra-curp" class="font-mono">GARM900412HDFRR09</span></p>
-                            <p><strong>NSS:</strong> <span id="rec-tra-nss" class="font-mono">12989043210</span></p>
+                    <!-- Datos del trabajador en el formato de la segunda imagen -->
+                    <div class="receipt-info grid grid-cols-2 gap-x-10 gap-y-1 mb-4">
+                        <div class="space-y-1">
+                            <div><span class="receipt-label">Empleado:</span> <span id="rec-tra-nombre">MANUEL GARCIA RODRIGUEZ</span></div>
+                            <div><span class="receipt-label">RFC:</span> <span id="rec-tra-rfc" class="font-mono">GARM900412AB3</span></div>
+                            <div><span class="receipt-label">CURP:</span> <span id="rec-tra-curp" class="font-mono">GARM900412HDFRR09</span></div>
+                            <div><span class="receipt-label">NSS:</span> <span id="rec-tra-nss" class="font-mono">12989043210</span></div>
+                            <div><span class="receipt-label">Días pagados:</span> <span id="rec-dias-pagados">15.00</span></div>
+                            <div><span class="receipt-label">Fecha ingreso:</span> <span id="rec-fecha-ingreso">2021-03-15</span></div>
+                            <div><span class="receipt-label">Antigüedad:</span> <span id="rec-antiguedad">5 años, 6 meses, 0 días</span></div>
                         </div>
-                        <div>
-                            <p><strong>Fecha Pago:</strong> <span id="rec-fecha-pago">2026-09-15</span></p>
-                            <p><strong>Días Pagados:</strong> <span id="rec-dias-pagados">15.00</span></p>
-                            <p><strong>Periodicidad:</strong> <span id="rec-periodicidad">04 - Quincenal</span></p>
-                            <p><strong>SBC Integrado:</strong> $<span id="rec-sbc" class="font-mono">524.65</span></p>
-                        </div>
-                    </div>
-
-                    <!-- Perceptions & Deductions Table -->
-                    <div class="grid grid-cols-2 gap-3 text-[10px] mb-3">
-                        <!-- Percepciones -->
-                        <div>
-                            <h4 class="font-bold border-b border-slate-300 text-slate-800 pb-0.5 mb-1 flex justify-between">
-                                <span>Percepciones SAT</span>
-                                <span>Monto</span>
-                            </h4>
-                            <table class="w-full text-left font-mono text-[9px]">
-                                <tbody id="rec-tabla-percepciones">
-                                    <!-- Dynamic Rows -->
-                                </tbody>
-                            </table>
-                        </div>
-                        <!-- Deducciones -->
-                        <div>
-                            <h4 class="font-bold border-b border-slate-300 text-slate-800 pb-0.5 mb-1 flex justify-between">
-                                <span>Deducciones SAT</span>
-                                <span>Monto</span>
-                            </h4>
-                            <table class="w-full text-left font-mono text-[9px]">
-                                <tbody id="rec-tabla-deducciones">
-                                    <!-- Dynamic Rows -->
-                                </tbody>
-                            </table>
+                        <div class="space-y-1">
+                            <div><span class="receipt-label">Fecha pago:</span> <span id="rec-fecha-pago">2026-09-15</span></div>
+                            <div><span class="receipt-label">Periodo:</span> <span id="rec-periodo">2026-09-01 al 2026-09-15</span></div>
+                            <div><span class="receipt-label">Periodicidad:</span> <span id="rec-periodicidad">04 - Quincenal (15 días)</span></div>
+                            <div><span class="receipt-label">Tipo nómina:</span> <span id="rec-tipo-nomina">O - Nómina Ordinaria</span></div>
+                            <div><span class="receipt-label">Salario diario:</span> $<span id="rec-salario-diario" class="font-mono">500.00</span></div>
+                            <div><span class="receipt-label">SBC integrado:</span> $<span id="rec-sbc" class="font-mono">524.65</span></div>
+                            <div><span class="receipt-label">C.P. fiscal trabajador:</span> <span id="rec-tra-cp">06600</span></div>
                         </div>
                     </div>
 
-                    <!-- Receipt Totals -->
-                    <div class="border-t pt-2 text-[11px] flex justify-between font-bold bg-slate-100 p-2 rounded">
-                        <span>NETO A RECIBIR:</span>
-                        <span class="text-blue-700 font-mono" id="rec-total-neto">$0.00 MXN</span>
+                    <!-- Tabla principal con el mismo esquema visual solicitado -->
+                    <table class="receipt-table mb-2">
+                        <thead>
+                            <tr>
+                                <th style="width:34%; text-align:left;">PERCEPCIONES</th>
+                                <th style="width:17%; text-align:right;">GRAVADO (+)</th>
+                                <th style="width:17%; text-align:right;">EXENTO (+)</th>
+                                <th style="width:22%; text-align:left;">DEDUCCIONES</th>
+                                <th style="width:10%; text-align:right;">IMPORTE (-)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="rec-tabla-principal">
+                        </tbody>
+                    </table>
+
+                    <!-- Otros pagos -->
+                    <div class="mt-3 mb-3">
+                        <div class="text-[11px] font-extrabold uppercase text-slate-700 mb-1">Otros pagos:</div>
+                        <table class="receipt-table">
+                            <thead>
+                                <tr>
+                                    <th style="text-align:left;">CONCEPTO</th>
+                                    <th style="text-align:right;">IMPORTE</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>Subsidio causado</td><td class="text-right font-mono" id="rec-subsidio">$0.00</td></tr>
+                            </tbody>
+                        </table>
                     </div>
 
-                    <div class="mt-3 text-[9px] text-slate-400 text-center space-y-0.5 border-t pt-2">
-                        <p>Representación Impresa de un Comprobante Fiscal Digital a Través de Internet (Complemento Nómina 1.2)</p>
-                        <p class="font-mono">UUID: 4A8E9B12-901B-41C2-887E-892312A30F92</p>
+                    <div class="net-box p-3 mt-3 text-center">
+                        <div class="text-[11px] font-extrabold uppercase">Neto a pagar</div>
+                        <div class="net-amount font-mono" id="rec-total-neto">$0.00 MXN</div>
+                        <div class="text-[10px] uppercase mt-1 font-semibold" id="rec-total-letras">CERO PESOS 00/100 M.N.</div>
                     </div>
+
+                    <div class="receipt-info mt-4 pt-3 border-t border-slate-200 grid grid-cols-2 gap-x-10 gap-y-1">
+                        <div><span class="receipt-label">Régimen fiscal trabajador:</span> <span id="rec-regimen">02 - Sueldos y Salarios</span></div>
+                        <div><span class="receipt-label">Tipo de contrato:</span> <span id="rec-contrato">01 - Tiempo indeterminado</span></div>
+                        <div><span class="receipt-label">UUID:</span> <span id="rec-uuid" class="font-mono">4A8E9B12-901B-41C2-887E-892312A30F92</span></div>
+                        <div><span class="receipt-label">CFDI:</span> 4.0 / Complemento Nómina 1.2</div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-12 mt-8 px-8">
+                        <div class="signature-line">Firma del Empleado</div>
+                        <div class="signature-line">Sello y Firma del Patrón</div>
+                    </div>
+                    <div class="text-[8px] text-slate-400 text-center mt-4">Este documento es una representación simplificada de un comprobante fiscal digital.</div>
                 </div>
 
             </div>
@@ -1585,7 +1686,7 @@
             document.getElementById('audit-ceav-tasa').innerText = (resIMSS.tasaCEAV * 100).toFixed(3) + '%';
             document.getElementById('audit-ceav-monto').innerText = fmtMXN(resIMSS.desglosePatronal.cyvPatronal);
 
-            // UPDATE RECEIPT STUB
+            // UPDATE RECEIPT / PRINTED PAYROLL STUB
             document.getElementById('rec-emisor-nombre').innerText = document.getElementById('emp-nombre-emisor').value;
             document.getElementById('rec-emisor-rfc').innerText = document.getElementById('emp-rfc-emisor').value;
             document.getElementById('rec-emisor-rp').innerText = document.getElementById('emp-reg-patronal').value;
@@ -1595,33 +1696,71 @@
             document.getElementById('rec-tra-rfc').innerText = document.getElementById('tra-rfc').value;
             document.getElementById('rec-tra-curp').innerText = document.getElementById('tra-curp').value;
             document.getElementById('rec-tra-nss').innerText = document.getElementById('tra-nss').value;
-
+            document.getElementById('rec-tra-cp').innerText = document.getElementById('tra-cp').value;
+            document.getElementById('rec-fecha-ingreso').innerText = document.getElementById('tra-fecha-ingreso').value;
+            document.getElementById('rec-antiguedad').innerText = document.getElementById('txt-antiguedad-humana').innerText;
             document.getElementById('rec-fecha-pago').innerText = document.getElementById('nom-fecha-fin').value;
+            document.getElementById('rec-periodo').innerText = `${document.getElementById('nom-fecha-ini').value} al ${document.getElementById('nom-fecha-fin').value}`;
             document.getElementById('rec-dias-pagados').innerText = diasPagados.toFixed(2);
             document.getElementById('rec-sbc').innerText = sbc.toFixed(2);
+            document.getElementById('rec-salario-diario').innerText = sd.toFixed(2);
             document.getElementById('rec-periodicidad').innerText = document.getElementById('sel-periodicidad').options[document.getElementById('sel-periodicidad').selectedIndex].text;
+            document.getElementById('rec-tipo-nomina').innerText = document.getElementById('nom-tipo-nomina').options[document.getElementById('nom-tipo-nomina').selectedIndex].text;
+            document.getElementById('rec-regimen').innerText = document.getElementById('tra-tipo-regimen').options[document.getElementById('tra-tipo-regimen').selectedIndex].text;
+            document.getElementById('rec-contrato').innerText = document.getElementById('tra-tipo-contrato').options[document.getElementById('tra-tipo-contrato').selectedIndex].text;
 
-            // Populate Perceptions Rows
-            let htmlPerc = `<tr><td class="py-0.5">001 Sueldos y Salarios</td><td class="text-right py-0.5">${fmtMXN(sueldoBase)}</td></tr>`;
-            if (totalHE > 0) htmlPerc += `<tr><td class="py-0.5">002 Horas Extra</td><td class="text-right py-0.5">${fmtMXN(totalHE)}</td></tr>`;
-            if (montoAguinaldo > 0) htmlPerc += `<tr><td class="py-0.5">003 Aguinaldo</td><td class="text-right py-0.5">${fmtMXN(montoAguinaldo)}</td></tr>`;
-            if (montoPrimaVac > 0) htmlPerc += `<tr><td class="py-0.5">021 Prima Vacacional</td><td class="text-right py-0.5">${fmtMXN(montoPrimaVac)}</td></tr>`;
-            if (montoPrimaDom > 0) htmlPerc += `<tr><td class="py-0.5">019 Prima Dominical</td><td class="text-right py-0.5">${fmtMXN(montoPrimaDom)}</td></tr>`;
-            if (montoPtu > 0) htmlPerc += `<tr><td class="py-0.5">004 PTU / Utilidades</td><td class="text-right py-0.5">${fmtMXN(montoPtu)}</td></tr>`;
-            if (montoIndem > 0) htmlPerc += `<tr><td class="py-0.5">022 Severance / Indemnización</td><td class="text-right py-0.5">${fmtMXN(montoIndem)}</td></tr>`;
-            document.getElementById('rec-tabla-percepciones').innerHTML = htmlPerc;
+            // Tabla principal: cada percepción conserva su importe total y se separa en gravado/exento.
+            const percepciones = [
+                ['001 Sueldos y Salarios', sueldoBase, 0],
+                ['002 Horas Extra', gravadoHe, exentoHe],
+                ['003 Aguinaldo', gravadoAguinaldo, exentoAguinaldo],
+                ['021 Prima Vacacional', gravadoPrimaVac, exentoPrimaVac],
+                ['019 Prima Dominical', gravadoPrimaDom, exentoPrimaDom],
+                ['004 PTU / Utilidades', gravadoPtu, exentoPtu],
+                ['022 Indemnización', gravadoIndem, exentoIndem]
+            ].filter(x => (Number(x[1]) + Number(x[2])) > 0);
 
-            // Populate Deductions Rows
-            let htmlDed = '';
-            if (totalISRRetenido > 0) htmlDed += `<tr><td class="py-0.5">001 ISR Retenido</td><td class="text-right py-0.5">${fmtMXN(totalISRRetenido)}</td></tr>`;
-            if (resIMSS.obrero > 0) htmlDed += `<tr><td class="py-0.5">002 IMSS Obrero</td><td class="text-right py-0.5">${fmtMXN(resIMSS.obrero)}</td></tr>`;
-            if (dedInfonavit > 0) htmlDed += `<tr><td class="py-0.5">004 Infonavit</td><td class="text-right py-0.5">${fmtMXN(dedInfonavit)}</td></tr>`;
-            if (dedFonacot > 0) htmlDed += `<tr><td class="py-0.5">011 FONACOT</td><td class="text-right py-0.5">${fmtMXN(dedFonacot)}</td></tr>`;
-            if (dedPension > 0) htmlDed += `<tr><td class="py-0.5">007 Pensión Alimenticia</td><td class="text-right py-0.5">${fmtMXN(dedPension)}</td></tr>`;
-            if (dedOtras > 0) htmlDed += `<tr><td class="py-0.5">008 Otras Deducciones</td><td class="text-right py-0.5">${fmtMXN(dedOtras)}</td></tr>`;
-            document.getElementById('rec-tabla-deducciones').innerHTML = htmlDed || '<tr><td colspan="2" class="py-0.5 text-slate-400">Sin deducciones</td></tr>';
+            const deducciones = [];
+            if (totalISRRetenido > 0) deducciones.push(['001 ISR Retenido', totalISRRetenido]);
+            if (resIMSS.obrero > 0) deducciones.push(['002 IMSS Obrero', resIMSS.obrero]);
+            if (dedInfonavit > 0) deducciones.push(['004 Infonavit', dedInfonavit]);
+            if (dedFonacot > 0) deducciones.push(['011 FONACOT', dedFonacot]);
+            if (dedPension > 0) deducciones.push(['007 Pensión Alimenticia', dedPension]);
+            if (dedOtras > 0) deducciones.push(['008 Otras Deducciones', dedOtras]);
 
+            const filas = Math.max(percepciones.length, deducciones.length);
+            let htmlPrincipal = '';
+            for (let i = 0; i < filas; i++) {
+                const p = percepciones[i];
+                const d = deducciones[i];
+                htmlPrincipal += `<tr>
+                    <td>${p ? p[0] : ''}</td>
+                    <td class="text-right font-mono">${p ? fmtMXN(p[1]) : ''}</td>
+                    <td class="text-right font-mono">${p && p[2] > 0 ? fmtMXN(p[2]) : (p ? '-' : '')}</td>
+                    <td>${d ? d[0] : ''}</td>
+                    <td class="text-right font-mono">${d ? fmtMXN(d[1]) : ''}</td>
+                </tr>`;
+            }
+            const sumaDeducciones = deducciones.reduce((a, x) => a + Number(x[1] || 0), 0);
+            htmlPrincipal += `<tr class="section-total">
+                <td>Suma Percepciones</td>
+                <td class="text-right font-mono">${fmtMXN(totalGravado)}</td>
+                <td class="text-right font-mono">${fmtMXN(totalExento)}</td>
+                <td>Suma Deducciones</td>
+                <td class="text-right font-mono">${fmtMXN(sumaDeducciones)}</td>
+            </tr>`;
+            htmlPrincipal += `<tr class="grand-total">
+                <td>TOTAL PERCEPCIONES</td>
+                <td class="text-right font-mono" colspan="2">${fmtMXN(totalBruto)}</td>
+                <td>TOTAL DEDUCCIONES</td>
+                <td class="text-right font-mono">${fmtMXN(sumaDeducciones)}</td>
+            </tr>`;
+            document.getElementById('rec-tabla-principal').innerHTML = htmlPrincipal;
+
+            const subsidio = Number(resISR.subsidio || 0);
+            document.getElementById('rec-subsidio').innerText = fmtMXN(subsidio);
             document.getElementById('rec-total-neto').innerText = fmtMXN(netoAPagar);
+            document.getElementById('rec-total-letras').innerText = numeroALetrasMXN(netoAPagar);
         }
 
         function cargarEjemplo() {
@@ -1708,6 +1847,33 @@
             cargarConfiguracionEnUI();
             calcularSBC();
             calcularNomina();
+        }
+
+        function numeroALetrasMXN(valor) {
+            const n = Math.max(0, Number(valor) || 0);
+            const entero = Math.floor(n + 0.000001);
+            const centavos = Math.round((n - entero) * 100);
+            const unidades = ['','UNO','DOS','TRES','CUATRO','CINCO','SEIS','SIETE','OCHO','NUEVE','DIEZ','ONCE','DOCE','TRECE','CATORCE','QUINCE','DIECISÉIS','DIECISIETE','DIECIOCHO','DIECINUEVE','VEINTE','VEINTIUNO','VEINTIDÓS','VEINTITRÉS','VEINTICUATRO','VEINTICINCO','VEINTISÉIS','VEINTISIETE','VEINTIOCHO','VEINTINUEVE'];
+            const decenas = ['','','TREINTA','CUARENTA','CINCUENTA','SESENTA','SETENTA','OCHENTA','NOVENTA'];
+            const centenas = ['','CIENTO','DOSCIENTOS','TRESCIENTOS','CUATROCIENTOS','QUINIENTOS','SEISCIENTOS','SETECIENTOS','OCHOCIENTOS','NOVECIENTOS'];
+            function seccion(x) {
+                x = Math.floor(x);
+                if (x === 0) return '';
+                if (x < 30) return unidades[x];
+                if (x < 100) return decenas[Math.floor(x/10)] + (x%10 ? ' Y ' + unidades[x%10] : '');
+                if (x === 100) return 'CIEN';
+                if (x < 1000) return centenas[Math.floor(x/100)] + (x%100 ? ' ' + seccion(x%100) : '');
+                if (x < 1000000) {
+                    const miles = Math.floor(x/1000);
+                    const resto = x%1000;
+                    return (miles === 1 ? 'MIL' : seccion(miles) + ' MIL') + (resto ? ' ' + seccion(resto) : '');
+                }
+                const millones = Math.floor(x/1000000);
+                const resto = x%1000000;
+                return (millones === 1 ? 'UN MILLÓN' : seccion(millones) + ' MILLONES') + (resto ? ' ' + seccion(resto) : '');
+            }
+            const texto = entero === 0 ? 'CERO' : seccion(entero);
+            return `${texto} PESOS ${String(centavos).padStart(2,'0')}/100 M.N.`;
         }
 
         function exportarExcel() {
