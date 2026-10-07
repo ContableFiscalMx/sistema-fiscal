@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora de Nómina 2026 CFDI 4.0 (México) · v1.3.0</title>
+    <title>Calculadora de Nómina 2026 CFDI 4.0 (México) · v1.5.0</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Lucide Icons -->
@@ -90,31 +90,57 @@
             color: #475569;
         }
         @media print {
-            @page { size: letter portrait; margin: 10mm; }
-            body * { visibility: hidden; }
-            #printable-receipt, #printable-receipt * { visibility: visible; }
-            #printable-receipt {
-                position: absolute;
-                left: 0;
-                top: 0;
-                width: 100%;
-                padding: 0 !important;
+            @page { size: letter portrait; margin: 8mm; }
+            html, body {
                 margin: 0 !important;
-                background: white;
-                color: black;
+                padding: 0 !important;
+                width: 100% !important;
+                min-height: 0 !important;
+                height: auto !important;
+                background: #fff !important;
+                overflow: visible !important;
+            }
+            body.printing-receipt > * { display: none !important; }
+            body.printing-receipt > #print-only-root {
+                display: block !important;
+                position: static !important;
+                width: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+            body.printing-receipt #print-only-root #printable-receipt {
+                display: block !important;
+                position: static !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                min-height: 0 !important;
+                height: auto !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                background: #fff !important;
+                color: #000 !important;
                 border: none !important;
                 box-shadow: none !important;
+                overflow: visible !important;
+                break-before: auto !important;
+                break-after: auto !important;
+                page-break-before: auto !important;
+                page-break-after: auto !important;
             }
+            body.printing-receipt #print-only-root #printable-receipt * { visibility: visible !important; }
             .no-print { display: none !important; }
             .payroll-receipt .receipt-table th {
                 -webkit-print-color-adjust: exact;
                 print-color-adjust: exact;
             }
             .payroll-receipt .receipt-table td,
-            .payroll-receipt .receipt-table th { page-break-inside: avoid; }
+            .payroll-receipt .receipt-table th { page-break-inside: avoid; break-inside: avoid; }
+            .payroll-receipt .signature-line,
+            .payroll-receipt .net-box,
+            .payroll-receipt .receipt-info { break-inside: avoid; page-break-inside: avoid; }
         }
 
-        /* ===== v1.3 - Dynamic workspaces ===== */
+        /* ===== v1.3 - Dynamic workspaces / v1.4 protected overrides ===== */
         .workspace-panel { animation: workspaceIn .24s ease-out; }
         @keyframes workspaceIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:none; } }
         .mode-switcher { position:sticky; top:4.2rem; z-index:35; }
@@ -156,6 +182,63 @@
         .input-focus-ring:focus-within { border-color:#93c5fd; box-shadow:0 0 0 4px rgba(37,99,235,.08); }
         .sticky-action { position:sticky; bottom:.75rem; z-index:25; }
         @media (max-width:767px){ .mode-switcher{top:4rem;} .sticky-action{bottom:.5rem;} }
+        .manual-override-card { border:1px solid #fed7aa; background:linear-gradient(180deg,#fffaf5,#fff7ed); }
+        .manual-override-row { border:1px solid #e2e8f0; background:#fff; transition:border-color .18s ease, box-shadow .18s ease, background-color .18s ease; }
+        .manual-override-row.enabled { border-color:#f59e0b; background:#fffaf0; box-shadow:0 6px 18px rgba(245,158,11,.08); }
+        .manual-override-row input[type="number"]:disabled { background:#f1f5f9; color:#94a3b8; cursor:not-allowed; }
+        .manual-warning { background:#fffbeb; border:1px solid #fde68a; color:#92400e; }
+        .manual-status { font-size:9px; font-weight:800; letter-spacing:.04em; padding:.2rem .45rem; border-radius:999px; }
+        .manual-status.auto { background:#dcfce7; color:#166534; }
+        .manual-status.manual { background:#ffedd5; color:#9a3412; }
+
+        /* ===== v1.5 Dashboard lateral ===== */
+        body { background: #f1f5f9; }
+        .dashboard-shell { display:grid; grid-template-columns:250px minmax(0,1fr); gap:1rem; align-items:start; }
+        .dashboard-sidebar { position:sticky; top:5.4rem; max-height:calc(100vh - 6.3rem); overflow:auto; background:rgba(255,255,255,.98); border:1px solid #e2e8f0; border-radius:1rem; box-shadow:0 12px 30px rgba(15,23,42,.08); padding:.85rem; }
+        .sidebar-brand { display:flex; align-items:center; gap:.65rem; padding:.45rem .35rem .85rem; }
+        .sidebar-brand-icon { width:34px; height:34px; border-radius:.75rem; background:#0f172a; color:#fff; display:grid; place-items:center; box-shadow:0 5px 14px rgba(15,23,42,.14); }
+        .sidebar-close { margin-left:auto; border:1px solid #e2e8f0; background:#f8fafc; border-radius:.5rem; padding:.3rem; color:#475569; }
+        .sidebar-section-label { margin:.6rem .25rem .35rem; font-size:9px; font-weight:900; letter-spacing:.1em; text-transform:uppercase; color:#94a3b8; }
+        .sidebar-module-grid { display:grid; gap:.45rem; }
+        .sidebar-module { position:relative; display:flex; gap:.55rem; align-items:center; text-align:left; width:100%; border:1px solid #e2e8f0; background:#f8fafc; border-radius:.75rem; padding:.6rem; transition:.18s ease; }
+        .sidebar-module:hover { transform:translateY(-1px); border-color:#cbd5e1; }
+        .sidebar-module.active { background:#eff6ff; border-color:#bfdbfe; box-shadow:0 6px 18px rgba(37,99,235,.10); }
+        .sidebar-module.exit.active { background:#fffbeb; border-color:#fde68a; box-shadow:0 6px 18px rgba(245,158,11,.10); }
+        .sidebar-module-icon { width:29px; height:29px; border-radius:.6rem; color:#fff; display:grid; place-items:center; flex:0 0 auto; }
+        .sidebar-module b { display:block; font-size:10px; color:#0f172a; line-height:1.2; }
+        .sidebar-module small { display:block; font-size:8.5px; color:#64748b; margin-top:2px; line-height:1.25; }
+        .sidebar-nav { display:grid; gap:.2rem; }
+        .side-nav-btn { position:relative; width:100%; display:flex; align-items:center; gap:.55rem; padding:.58rem .6rem; border:1px solid transparent; border-radius:.65rem; color:#475569; background:transparent; text-align:left; font-size:10px; font-weight:700; transition:.18s ease; }
+        .side-nav-btn span { flex:1; }
+        .side-nav-btn em { font-style:normal; font-size:8px; font-weight:900; color:#94a3b8; min-width:16px; height:16px; border-radius:999px; display:grid; place-items:center; background:#f1f5f9; }
+        .side-nav-btn:hover { background:#f8fafc; color:#1d4ed8; }
+        .side-nav-btn.active { background:#eff6ff; color:#1d4ed8; border-color:#dbeafe; }
+        .side-nav-btn.active::before { content:''; position:absolute; left:-1px; top:6px; bottom:6px; width:3px; border-radius:999px; background:#2563eb; }
+        .sidebar-divider { height:1px; background:#e2e8f0; margin:.75rem .2rem; }
+        .sidebar-tools { display:grid; gap:.28rem; }
+        .sidebar-tool { display:flex; align-items:center; gap:.5rem; width:100%; padding:.5rem .6rem; border-radius:.6rem; background:#f8fafc; border:1px solid #e2e8f0; color:#475569; font-size:9px; font-weight:800; text-align:left; transition:.18s ease; }
+        .sidebar-tool:hover { background:#fff; border-color:#cbd5e1; color:#0f172a; }
+        .sidebar-tool.backup { background:#f8fafc; border-color:#c7d2fe; color:#3730a3; }
+        .sidebar-note { display:flex; align-items:flex-start; gap:.45rem; margin-top:.75rem; padding:.6rem; border:1px dashed #cbd5e1; border-radius:.65rem; background:#f8fafc; color:#64748b; font-size:8px; line-height:1.4; }
+        .dashboard-content { min-width:0; }
+        .scroll-anchor { scroll-margin-top:6rem; }
+        #salida-datos,#salida-derechos,#salida-liquidacion,#salida-isr,#salida-resultado { scroll-margin-top:6rem; }
+        .mobile-dashboard-bar { position:sticky; top:4.25rem; z-index:30; display:flex; align-items:center; gap:.55rem; padding:.55rem .65rem; margin-bottom:.7rem; border:1px solid #e2e8f0; background:rgba(255,255,255,.96); backdrop-filter:blur(8px); border-radius:.8rem; box-shadow:0 8px 20px rgba(15,23,42,.06); }
+        .mobile-dashboard-bar>div { flex:1; }
+        .mobile-menu-btn { display:inline-flex; align-items:center; gap:.35rem; border:1px solid #e2e8f0; background:#f8fafc; color:#334155; border-radius:.55rem; padding:.45rem .55rem; font-size:9px; font-weight:800; }
+        .dashboard-sidebar.is-open { display:block; }
+        .legacy-tab-strip { display:none !important; }
+        @media (max-width:1023px){
+          .dashboard-shell { grid-template-columns:1fr; }
+          .dashboard-sidebar { position:fixed; z-index:60; left:.75rem; top:4.8rem; bottom:.75rem; width:min(310px,calc(100vw - 1.5rem)); max-height:none; transform:translateX(-115%); transition:transform .22s ease; box-shadow:0 24px 60px rgba(15,23,42,.22); }
+          .dashboard-sidebar.is-open { transform:translateX(0); }
+          body.sidebar-lock::before { content:''; position:fixed; inset:0; z-index:50; background:rgba(15,23,42,.42); }
+        }
+        @media (min-width:1024px){ .mobile-dashboard-bar{display:none;} }
+        .app-toast { position:fixed; right:1rem; bottom:1rem; z-index:100; transform:translateY(12px); opacity:0; pointer-events:none; background:#0f172a; color:#fff; border:1px solid #334155; border-radius:.75rem; box-shadow:0 18px 40px rgba(15,23,42,.24); padding:.65rem .8rem; font-size:10px; font-weight:800; transition:.22s ease; max-width:min(380px,calc(100vw - 2rem)); }
+        .app-toast.show { opacity:1; transform:none; }
+        @media (max-width:767px){ .dashboard-content .bg-white.p-4.rounded-xl{padding:.8rem;} }
+
     </style>
 </head>
 <body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col">
@@ -189,7 +272,7 @@
                     <span class="text-slate-400 mr-1.5">UMI Infonavit:</span>
                     <span class="font-semibold text-purple-400" id="lbl-umi">$100.81</span>
                 </div>
-                <button onclick="switchTab('tab-config'); window.scrollTo({top: 0, behavior: 'smooth'});" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1.5 rounded-md border border-slate-700 flex items-center transition">
+                <button onclick="switchTab('tab-config')" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1.5 rounded-md border border-slate-700 flex items-center transition">
                     <i data-lucide="settings-2" class="w-3.5 h-3.5 mr-1 text-blue-400"></i> Tablas 2026
                 </button>
             </div>
@@ -197,29 +280,73 @@
     </header>
 
 
-    <!-- WORKSPACE SWITCHER -->
-    <div class="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 pt-4 mode-switcher">
-        <div class="bg-white/95 backdrop-blur border border-slate-200 rounded-2xl shadow-sm p-1.5 grid grid-cols-2 gap-1">
-            <button id="mode-btn-nomina" type="button" onclick="setAppMode('nomina')" class="mode-btn active rounded-xl px-4 py-3 text-left border border-transparent bg-slate-50">
-                <span class="flex items-center gap-3"><span class="bg-blue-600 text-white p-2 rounded-lg shadow-sm"><i data-lucide="wallet-cards" class="w-5 h-5"></i></span><span class="min-w-0"><span class="block text-xs font-bold text-slate-900">Nómina</span><span class="block text-[10px] text-slate-500 truncate">Pago ordinario, ISR, IMSS y CFDI</span></span></span>
-                <span class="mode-accent"></span>
-            </button>
-            <button id="mode-btn-salida" type="button" onclick="setAppMode('salida')" class="mode-btn exit rounded-xl px-4 py-3 text-left border border-transparent bg-slate-50">
-                <span class="flex items-center gap-3"><span class="bg-amber-500 text-white p-2 rounded-lg shadow-sm"><i data-lucide="file-warning" class="w-5 h-5"></i></span><span class="min-w-0"><span class="block text-xs font-bold text-slate-900">Finiquito / Liquidación</span><span class="block text-[10px] text-slate-500 truncate">Separación laboral, indemnización e ISR</span></span></span>
-                <span class="mode-accent"></span>
-            </button>
-        </div>
-    </div>
-    <!-- MAIN CONTAINER -->
-    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <section id="workspace-nomina" class="workspace-panel space-y-6">
+    <!-- MAIN DASHBOARD -->
+    <main class="flex-1 w-full px-3 sm:px-4 lg:px-6 py-4 lg:py-5">
+        <div class="dashboard-shell max-w-[1500px] mx-auto">
+            <aside id="dashboard-sidebar" class="dashboard-sidebar">
+                <div class="sidebar-brand">
+                    <div class="sidebar-brand-icon"><i data-lucide="layout-dashboard" class="w-5 h-5"></i></div>
+                    <div class="min-w-0"><div class="text-xs font-black text-slate-900">Centro de Nómina</div><div class="text-[9px] text-slate-500 truncate">Nómina MX · 2026</div></div>
+                    <button type="button" class="sidebar-close lg:hidden" onclick="toggleSidebar(false)" aria-label="Cerrar menú"><i data-lucide="x" class="w-4 h-4"></i></button>
+                </div>
+                <div class="sidebar-section-label">Módulos</div>
+                <div class="sidebar-module-grid">
+                    <button id="mode-btn-nomina" type="button" onclick="setAppMode('nomina')" class="sidebar-module active">
+                        <span class="sidebar-module-icon bg-blue-600"><i data-lucide="wallet-cards" class="w-4 h-4"></i></span><span><b>Nómina</b><small>Pago, ISR, IMSS y CFDI</small></span>
+                    </button>
+                    <button id="mode-btn-salida" type="button" onclick="setAppMode('salida')" class="sidebar-module exit">
+                        <span class="sidebar-module-icon bg-amber-500"><i data-lucide="file-warning" class="w-4 h-4"></i></span><span><b>Finiquito / Liquidación</b><small>Separación e indemnizaciones</small></span>
+                    </button>
+                </div>
+
+                <div id="sidebar-nav-nomina">
+                    <div class="sidebar-section-label">Nómina</div>
+                    <nav class="sidebar-nav">
+                        <button type="button" data-side-tab="tab-general" class="side-nav-btn active" onclick="switchTab('tab-general')"><i data-lucide="user-round" class="w-4 h-4"></i><span>Empleado y CFDI</span><em>1</em></button>
+                        <button type="button" data-side-tab="tab-percepciones" class="side-nav-btn" onclick="switchTab('tab-percepciones')"><i data-lucide="coins" class="w-4 h-4"></i><span>Percepciones y SBC</span><em>2</em></button>
+                        <button type="button" data-side-tab="tab-deducciones" class="side-nav-btn" onclick="switchTab('tab-deducciones')"><i data-lucide="minus-circle" class="w-4 h-4"></i><span>Deducciones</span><em>3</em></button>
+                        <button type="button" data-side-tab="tab-auditoria" class="side-nav-btn" onclick="switchTab('tab-auditoria')"><i data-lucide="file-search" class="w-4 h-4"></i><span>Auditoría</span><em>4</em></button>
+                        <button type="button" data-side-tab="tab-config" class="side-nav-btn" onclick="switchTab('tab-config')"><i data-lucide="settings-2" class="w-4 h-4"></i><span>Tablas 2026</span><em>5</em></button>
+                    </nav>
+                </div>
+
+                <div id="sidebar-nav-salida" class="hidden">
+                    <div class="sidebar-section-label">Finiquito / Liquidación</div>
+                    <nav class="sidebar-nav">
+                        <button type="button" class="side-nav-btn" onclick="navegarSalida('salida-datos')"><i data-lucide="user-round" class="w-4 h-4"></i><span>Datos de salida</span></button>
+                        <button type="button" class="side-nav-btn" onclick="navegarSalida('salida-derechos')"><i data-lucide="receipt-text" class="w-4 h-4"></i><span>Derechos / Finiquito</span></button>
+                        <button type="button" class="side-nav-btn" onclick="navegarSalida('salida-liquidacion')"><i data-lucide="gavel" class="w-4 h-4"></i><span>Liquidación</span></button>
+                        <button type="button" class="side-nav-btn" onclick="navegarSalida('salida-isr')"><i data-lucide="percent" class="w-4 h-4"></i><span>ISR de salida</span></button>
+                        <button type="button" class="side-nav-btn" onclick="navegarSalida('salida-resultado')"><i data-lucide="badge-dollar-sign" class="w-4 h-4"></i><span>Resultado y auditoría</span></button>
+                    </nav>
+                </div>
+
+                <div class="sidebar-divider"></div>
+                <div class="sidebar-section-label">Herramientas</div>
+                <div class="sidebar-tools">
+                    <button type="button" class="sidebar-tool" onclick="cargarEjemplo();"><i data-lucide="sparkles" class="w-4 h-4"></i><span> Cargar ejemplo</span></button>
+                    <button type="button" class="sidebar-tool" onclick="limpiarDatos();"><i data-lucide="rotate-ccw" class="w-4 h-4"></i><span> Limpiar captura</span></button>
+                    <button type="button" class="sidebar-tool backup" onclick="exportarRespaldoJSON();"><i data-lucide="download" class="w-4 h-4"></i><span> Respaldar JSON</span></button>
+                    <button type="button" class="sidebar-tool backup" onclick="document.getElementById('import-json-file').click();"><i data-lucide="upload" class="w-4 h-4"></i><span> Importar JSON</span></button>
+                    <input id="import-json-file" type="file" accept="application/json,.json" class="hidden" onchange="importarRespaldoJSON(event)">
+                </div>
+                <div class="sidebar-note"><i data-lucide="shield-check" class="w-4 h-4 shrink-0"></i><span>Los respaldos JSON usan identificadores de campos y un esquema versionado. La versión de la aplicación es informativa: el respaldo se puede importar entre versiones siempre que los campos sigan siendo compatibles; los campos desconocidos se conservan para no perder información.</span></div>
+            </aside>
+
+            <div id="dashboard-content" class="dashboard-content">
+                <div class="mobile-dashboard-bar lg:hidden">
+                    <button type="button" onclick="toggleSidebar(true)" class="mobile-menu-btn"><i data-lucide="menu" class="w-5 h-5"></i><span>Menú</span></button>
+                    <div class="min-w-0"><div id="mobile-section-title" class="text-xs font-black text-slate-900 truncate">Empleado y CFDI</div><div id="mobile-mode-title" class="text-[9px] text-slate-500">Nómina</div></div>
+                    <button type="button" onclick="exportarRespaldoJSON()" class="mobile-menu-btn"><i data-lucide="download" class="w-4 h-4"></i></button>
+                </div>
+                <section id="workspace-nomina" class="workspace-panel space-y-6">
 
         <!-- GLOBAL CONTROL BAR -->
         <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-wrap items-center justify-between gap-4">
             <div class="flex flex-wrap items-center gap-5">
                 <!-- Toggles -->
                 <label class="inline-flex items-center cursor-pointer">
-                    <input type="checkbox" id="chk-isr" class="sr-only peer" checked onchange="calcularNomina()">
+                    <input type="checkbox" id="chk-isr" class="sr-only peer" checked onchange="actualizarControlesManuales(); calcularNomina()">
                     <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600 relative"></div>
                     <span class="ml-2.5 text-xs font-semibold text-slate-700">Calcular ISR</span>
                 </label>
@@ -231,7 +358,7 @@
                 </label>
 
                 <label class="inline-flex items-center cursor-pointer">
-                    <input type="checkbox" id="chk-imss" class="sr-only peer" checked onchange="calcularNomina()">
+                    <input type="checkbox" id="chk-imss" class="sr-only peer" checked onchange="actualizarControlesManuales(); calcularNomina()">
                     <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600 relative"></div>
                     <span class="ml-2.5 text-xs font-semibold text-slate-700">Calcular IMSS/Infonavit</span>
                 </label>
@@ -353,7 +480,7 @@
                 <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
                     
                     <!-- Tab Headers -->
-                    <div class="border-b border-slate-200 flex overflow-x-auto bg-slate-50/80 p-1 gap-1 text-xs font-medium">
+                    <div class="legacy-tab-strip border-b border-slate-200 flex overflow-x-auto bg-slate-50/80 p-1 gap-1 text-xs font-medium">
                         <button onclick="switchTab('tab-general')" id="btn-tab-general" class="tab-btn active rounded-lg px-4 py-2.5 text-slate-600 hover:text-blue-600 whitespace-nowrap flex items-center transition">
                             <i data-lucide="user-check" class="w-4 h-4 mr-1.5"></i> 1. CFDI 4.0 & Empleado
                         </button>
@@ -673,13 +800,9 @@
                         <!-- Otras Deducciones -->
                         <div class="p-4 bg-slate-50 rounded-lg border border-slate-200 space-y-3">
                             <h4 class="text-xs font-bold text-slate-700 uppercase flex items-center">
-                                <i data-lucide="minus-circle" class="w-4 h-4 mr-1 text-blue-600"></i> Deducciones Generales & Créditos
+                                <i data-lucide="minus-circle" class="w-4 h-4 mr-1 text-blue-600"></i> Deducciones Generales
                             </h4>
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-                                <div>
-                                    <label class="block text-slate-600 mb-1">Amortización Infonavit ($)</label>
-                                    <input type="number" id="ded-infonavit" value="0" min="0" class="w-full border rounded p-1.5" oninput="calcularNomina()">
-                                </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
                                 <div>
                                     <label class="block text-slate-600 mb-1">Préstamo FONACOT ($)</label>
                                     <input type="number" id="ded-fonacot" value="0" min="0" class="w-full border rounded p-1.5" oninput="calcularNomina()">
@@ -691,6 +814,62 @@
                                 <div>
                                     <label class="block text-slate-600 mb-1">Cuota Sindical / Otras ($)</label>
                                     <input type="number" id="ded-otras" value="0" min="0" class="w-full border rounded p-1.5" oninput="calcularNomina()">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Ajustes fiscales manuales protegidos -->
+                        <div class="manual-override-card rounded-xl p-4 space-y-3">
+                            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
+                                <div>
+                                    <div class="flex items-center gap-2">
+                                        <i data-lucide="shield-alert" class="w-4 h-4 text-amber-700"></i>
+                                        <h4 class="text-xs font-black text-amber-950 uppercase tracking-wide">Ajustes fiscales manuales protegidos</h4>
+                                    </div>
+                                    <p class="text-[10px] text-amber-900/80 mt-1">Permite sustituir únicamente el importe retenido/aplicado en este pago cuando exista soporte documental.</p>
+                                </div>
+                                <span class="manual-status auto" id="manual-global-status">MODO AUTOMÁTICO</span>
+                            </div>
+
+                            <div class="manual-warning rounded-lg p-3 text-[10px] leading-relaxed">
+                                <b>No recomendado para uso ordinario:</b> habilitar un ajuste manual altera el resultado calculado con los parámetros fiscales 2026 y puede generar diferencias frente al cálculo que corresponda al trabajador. Úsalo solo cuando tengas una razón documental, revisión o conciliación que justifique modificar el importe.
+                            </div>
+
+                            <div class="grid grid-cols-1 lg:grid-cols-3 gap-3">
+                                <div id="manual-row-isr" class="manual-override-row rounded-xl p-3 space-y-2">
+                                    <div class="flex items-start justify-between gap-2">
+                                        <label class="flex items-start gap-2 cursor-pointer min-w-0">
+                                            <input id="manual-isr-habilitado" type="checkbox" class="mt-0.5 rounded border-amber-400 text-amber-600 focus:ring-amber-500" onchange="prepararAjusteManual('isr'); actualizarControlesManuales(); calcularNomina();">
+                                            <span><b class="block text-[11px] text-slate-800">Habilitar ISR manual</b><span class="block text-[9px] text-slate-500 mt-0.5">Sustituye solo el ISR retenido de este pago.</span></span>
+                                        </label>
+                                        <span id="manual-isr-status" class="manual-status auto">AUTO</span>
+                                    </div>
+                                    <div class="flex items-center justify-between text-[9px] text-slate-500"><span>Calculado</span><span id="manual-isr-calculado" class="font-mono font-bold">$0.00</span></div>
+                                    <div><label for="manual-isr-importe" class="block text-[9px] font-semibold text-slate-600 mb-1">Importe manual ($)</label><input id="manual-isr-importe" type="number" step="0.01" min="0" value="" disabled class="w-full border rounded-lg p-2 font-mono font-bold text-right" oninput="calcularNomina()"></div>
+                                </div>
+
+                                <div id="manual-row-imss" class="manual-override-row rounded-xl p-3 space-y-2">
+                                    <div class="flex items-start justify-between gap-2">
+                                        <label class="flex items-start gap-2 cursor-pointer min-w-0">
+                                            <input id="manual-imss-habilitado" type="checkbox" class="mt-0.5 rounded border-amber-400 text-amber-600 focus:ring-amber-500" onchange="prepararAjusteManual('imss'); actualizarControlesManuales(); calcularNomina();">
+                                            <span><b class="block text-[11px] text-slate-800">Habilitar IMSS obrero manual</b><span class="block text-[9px] text-slate-500 mt-0.5">Sustituye la cuota obrera calculada para este pago.</span></span>
+                                        </label>
+                                        <span id="manual-imss-status" class="manual-status auto">AUTO</span>
+                                    </div>
+                                    <div class="flex items-center justify-between text-[9px] text-slate-500"><span>Calculado</span><span id="manual-imss-calculado" class="font-mono font-bold">$0.00</span></div>
+                                    <div><label for="manual-imss-importe" class="block text-[9px] font-semibold text-slate-600 mb-1">Importe manual ($)</label><input id="manual-imss-importe" type="number" step="0.01" min="0" value="" disabled class="w-full border rounded-lg p-2 font-mono font-bold text-right" oninput="calcularNomina()"></div>
+                                </div>
+
+                                <div id="manual-row-infonavit" class="manual-override-row rounded-xl p-3 space-y-2">
+                                    <div class="flex items-start justify-between gap-2">
+                                        <label class="flex items-start gap-2 cursor-pointer min-w-0">
+                                            <input id="manual-infonavit-habilitado" type="checkbox" class="mt-0.5 rounded border-amber-400 text-amber-600 focus:ring-amber-500" onchange="prepararAjusteManual('infonavit'); actualizarControlesManuales(); calcularNomina();">
+                                            <span><b class="block text-[11px] text-slate-800">Habilitar Infonavit manual</b><span class="block text-[9px] text-slate-500 mt-0.5">Usa el importe de amortización que captures.</span></span>
+                                        </label>
+                                        <span id="manual-infonavit-status" class="manual-status auto">AUTO</span>
+                                    </div>
+                                    <div class="flex items-center justify-between text-[9px] text-slate-500"><span>Aplicado</span><span id="manual-infonavit-calculado" class="font-mono font-bold">$0.00</span></div>
+                                    <div><label for="ded-infonavit" class="block text-[9px] font-semibold text-slate-600 mb-1">Amortización manual ($)</label><input type="number" id="ded-infonavit" value="0" min="0" step="0.01" disabled class="w-full border rounded-lg p-2 font-mono font-bold text-right" oninput="calcularNomina()"></div>
                                 </div>
                             </div>
                         </div>
@@ -728,7 +907,8 @@
                                 <div class="col-span-2 border-t pt-1 text-slate-700">• Historial ISR previo del mes: <span id="audit-isr-previo" class="font-semibold text-slate-900">$0.00</span></div>
                                 <div class="col-span-2 text-slate-700">• ISR por extraordinarias (Art. 174): <span id="audit-isr-art174" class="font-semibold text-slate-900">$0.00</span></div>
                                 <div class="col-span-2 text-slate-700">• ISR por pagos por separación (Arts. 95/96): <span id="audit-isr-separacion" class="font-semibold text-slate-900">$0.00</span> <span id="audit-isr-separacion-metodo" class="text-[9px] text-slate-500"></span></div>
-                                <div class="col-span-2 text-slate-700">• ISR neto a retener en este pago: <span id="audit-isr-neto-pago" class="font-semibold text-rose-700">$0.00</span></div>
+                                <div class="col-span-2 text-slate-700">• ISR neto calculado: <span id="audit-isr-neto-pago" class="font-semibold text-rose-700">$0.00</span></div>
+                                <div class="col-span-2 text-amber-800">• ISR aplicado al pago: <span id="audit-isr-aplicado" class="font-semibold">$0.00 · Automático</span></div>
                             </div>
                         </div>
 
@@ -741,6 +921,8 @@
                                 <div class="col-span-2 border-t pt-1 font-bold text-indigo-900">
                                     = Cuota CEAV Patronal: <span id="audit-ceav-monto" class="text-indigo-700">$0.00</span>
                                 </div>
+                                <div class="col-span-2 text-amber-800">• IMSS obrero aplicado al pago: <span id="audit-imss-aplicado" class="font-semibold">$0.00 · Automático</span></div>
+                                <div class="col-span-2 text-amber-800">• Infonavit aplicado al pago: <span id="audit-infonavit-aplicado" class="font-semibold">$0.00 · Automático</span></div>
                             </div>
                         </div>
                     </div>
@@ -1002,7 +1184,7 @@
 
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
                 <div class="lg:col-span-7 space-y-6">
-                    <div class="section-card p-4 sm:p-5">
+                    <div id="salida-datos" class="section-card p-4 sm:p-5">
                         <div class="section-head"><div><div class="eyebrow">1. Escenario laboral</div><h3 class="text-sm font-bold text-slate-800 mt-1">¿Qué deseas calcular?</h3></div><span class="read-only-chip"><i data-lucide="help-circle" class="w-3 h-3"></i> Finiquito vs. liquidación</span></div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
                             <label class="cursor-pointer"><input class="peer sr-only" type="radio" name="salida-tipo" id="salida-tipo-finiquito" value="finiquito" checked onchange="actualizarUISalidaTipo(); calcularSalida()"><div class="p-4 rounded-xl border border-slate-200 bg-white peer-checked:border-blue-500 peer-checked:bg-blue-50/70 transition"><div class="flex items-center gap-3"><span class="p-2 rounded-lg bg-blue-100 text-blue-700"><i data-lucide="receipt-text" class="w-5 h-5"></i></span><div><div class="text-sm font-bold">Finiquito</div><div class="text-[10px] text-slate-500">Derechos devengados al terminar la relación</div></div></div></div></label>
@@ -1020,7 +1202,7 @@
                         </div>
                     </div>
 
-                    <div class="section-card p-4 sm:p-5">
+                    <div id="salida-derechos" class="section-card p-4 sm:p-5">
                         <div class="section-head"><div><div class="eyebrow">2. Derechos devengados</div><h3 class="text-sm font-bold text-slate-800 mt-1">Componentes del finiquito</h3></div><span class="read-only-chip">LFT Arts. 76, 80 y 87</span></div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4 text-xs">
                             <div class="input-focus-ring rounded-lg border border-transparent p-1"><label class="block font-medium text-slate-700 mb-1">Días de aguinaldo anual</label><input id="salida-aguinaldo-dias" type="number" step="0.01" min="0" value="15" class="w-full border border-slate-300 rounded-lg p-2" oninput="calcularSalida()"></div>
@@ -1032,7 +1214,8 @@
                         <div class="mt-4 p-3 rounded-lg bg-blue-50 border border-blue-200 text-[10px] text-blue-900 leading-relaxed"><b>Según la guía:</b> aguinaldo proporcional, vacaciones proporcionales, prima vacacional y salarios devengados forman la base del finiquito. Las exenciones se aplican conforme a los topes indicados por la guía.</div>
                     </div>
 
-                    <div id="panel-liquidacion-opciones" class="section-card p-4 sm:p-5">
+                    <div id="salida-liquidacion" class="scroll-anchor"></div>
+                    <div id="panel-liquidacion-opciones" data-anchor="salida-liquidacion" class="section-card p-4 sm:p-5">
                         <div class="section-head"><div><div class="eyebrow">3. Indemnizaciones</div><h3 class="text-sm font-bold text-slate-800 mt-1">Componentes de liquidación</h3></div><span class="read-only-chip" id="salida-legal-chip">Configura el supuesto</span></div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4 text-xs">
                             <label class="flex items-start gap-3 p-3 rounded-lg border border-slate-200 bg-slate-50 cursor-pointer"><input id="salida-incluir-90" type="checkbox" class="mt-1 rounded text-amber-600 focus:ring-amber-500" checked onchange="calcularSalida()"><span><b class="block">Indemnización constitucional</b><span class="text-[10px] text-slate-500">90 días de SDI</span></span></label>
@@ -1046,14 +1229,14 @@
                         <div class="mt-3 subtle-note rounded-lg p-3 text-[10px] leading-relaxed"><b>Según la guía:</b> la liquidación utiliza SDI; la indemnización constitucional se presenta como 90 días y los 20 días por año se activan solo cuando procede. La prima de antigüedad es de 12 días por año y tiene un tope de dos salarios mínimos para su base.</div>
                     </div>
 
-                    <div class="section-card p-4 sm:p-5">
+                    <div id="salida-isr" class="section-card p-4 sm:p-5">
                         <div class="section-head"><div><div class="eyebrow">4. ISR</div><h3 class="text-sm font-bold text-slate-800 mt-1">Tratamiento fiscal de la salida</h3></div><span class="read-only-chip">LISR Arts. 93, 95 y 174</span></div>
                         <label class="flex items-start gap-3 p-3 mt-4 rounded-lg border border-slate-200 bg-white cursor-pointer"><input id="salida-usar-art174" type="checkbox" class="mt-1 rounded text-blue-600 focus:ring-blue-500" checked onchange="calcularSalida()"><span><b class="block text-xs">Aplicar Art. 174 a prestaciones gravadas</b><span class="text-[10px] text-slate-500">La guía lo presenta como opción de tasa efectiva para prestaciones gravadas del finiquito.</span></span></label>
                     </div>
                 </div>
 
                 <div class="lg:col-span-5 space-y-6">
-                    <div class="section-card p-4 sm:p-5 lg:sticky lg:top-24">
+                    <div id="salida-resultado" class="section-card p-4 sm:p-5 lg:sticky lg:top-24">
                         <div class="section-head"><div><div class="eyebrow">Resumen dinámico</div><h3 id="salida-resumen-titulo" class="text-base font-bold text-slate-800 mt-1">Finiquito</h3></div><span id="salida-badge" class="read-only-chip bg-blue-50 text-blue-700">Derechos devengados</span></div>
                         <div class="kpi-grid mt-4">
                             <div class="kpi-card primary"><div class="kpi-label">Finiquito</div><div id="salida-kpi-finiquito" class="kpi-value">$0.00</div></div>
@@ -1080,11 +1263,12 @@
                 </div>
             </div>
         </section>
-
+            </div>
+        </div>
     </main>
 
     <footer class="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 pb-6 text-[10px] text-slate-400 text-center">
-        Nómina MX 2026 · versión profesional <span class="font-mono">1.3.0</span> · Cálculo local en el navegador · Módulo separado de Finiquito/Liquidación · Sin timbrado fiscal.
+        Nómina MX 2026 · versión profesional <span class="font-mono">1.5.0</span> · Cálculo local en el navegador · Módulo separado de Finiquito/Liquidación · Sin timbrado fiscal.
     </footer>
 
     <!-- JAVASCRIPT ENGINE -->
@@ -1201,7 +1385,9 @@
             }
         };
 
-        const APP_VERSION = '1.3.0-profesional';
+        const APP_VERSION = '1.5.0-profesional';
+        const BACKUP_FORMAT = 'nomina-mx-backup';
+        const BACKUP_SCHEMA_VERSION = 2;
 
         function round2(value) {
             return Math.round((Number(value) + Number.EPSILON) * 100) / 100;
@@ -1262,13 +1448,39 @@
             return new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(val || 0);
         }
 
+        const SIDEBAR_TAB_TITLES = {
+            'tab-general':'Empleado y CFDI',
+            'tab-percepciones':'Percepciones y SBC',
+            'tab-deducciones':'Deducciones',
+            'tab-auditoria':'Auditoría ISR / IMSS',
+            'tab-config':'Tablas 2026'
+        };
         function switchTab(tabId) {
             const tabs = ['tab-general','tab-percepciones','tab-deducciones','tab-auditoria','tab-config'];
             if (!tabs.includes(tabId)) return;
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.side-nav-btn[data-side-tab]').forEach(btn => btn.classList.toggle('active', btn.dataset.sideTab === tabId));
             tabs.forEach(id => document.getElementById(id)?.classList.add('hidden'));
             document.getElementById(tabId)?.classList.remove('hidden');
             document.getElementById('btn-' + tabId)?.classList.add('active');
+            const mobileTitle=document.getElementById('mobile-section-title'); if(mobileTitle) mobileTitle.textContent=SIDEBAR_TAB_TITLES[tabId]||'Módulo';
+            try { sessionStorage.setItem('nomina:lastTab', tabId); } catch(e) {}
+            if (window.innerWidth < 1024) toggleSidebar(false);
+        }
+
+        function toggleSidebar(open) {
+            const sidebar=document.getElementById('dashboard-sidebar');
+            if (!sidebar) return;
+            const shouldOpen = open !== false;
+            sidebar.classList.toggle('is-open', shouldOpen);
+            document.body.classList.toggle('sidebar-lock', shouldOpen && window.innerWidth < 1024);
+        }
+
+        function navegarSalida(anchorId) {
+            const el=document.getElementById(anchorId);
+            if(!el) return;
+            if(window.innerWidth<1024) toggleSidebar(false);
+            requestAnimationFrame(()=>el.scrollIntoView({behavior:'smooth', block:'start'}));
         }
 
         function validateRFC(rfc) {
@@ -1336,9 +1548,18 @@
         function alCambiarFechas() {
             const fIngreso = parseDateInput(document.getElementById('tra-fecha-ingreso')?.value);
             const fFin = parseDateInput(document.getElementById('nom-fecha-fin')?.value);
+            if (!fIngreso && !fFin) {
+                document.getElementById('txt-antiguedad-humana').innerText = '—';
+                document.getElementById('txt-antiguedad-sat').innerText = '—';
+                const vac = document.getElementById('cfg-dias-vac-lft'); if (vac) vac.value = '0';
+                actualizarIndicadoresUI();
+                validarInputsCFDI();
+                return;
+            }
             if (!fIngreso || !fFin || fIngreso > fFin) {
-                document.getElementById('txt-antiguedad-humana').innerText = 'Fecha inválida';
-                document.getElementById('txt-antiguedad-sat').innerText = 'P0D';
+                document.getElementById('txt-antiguedad-humana').innerText = 'Pendiente de fechas';
+                document.getElementById('txt-antiguedad-sat').innerText = '—';
+                const vac = document.getElementById('cfg-dias-vac-lft'); if (vac) vac.value = '0';
                 validarInputsCFDI();
                 return;
             }
@@ -1773,7 +1994,7 @@
                 isrCausado:round2(res.isrCausado || 0), isrExtraArt174:round2(extra174), isrIndem:round2(indemISR),
                 isrCausadoTotal:round2((res.isrCausado || 0) + extra174 + indemISR),
                 separacionMetodo: contexto.resIndemISR?.metodo || '',
-                isrOrdinarioRetenido:round2(res.isrRetenido || 0), isrRetenido:round2(contexto.totalISRRetenido || 0), subsidio:round2(res.subsidio || 0),
+                isrOrdinarioRetenido:round2(res.isrRetenido || 0), isrRetenido:round2(contexto.totalISRRetenido || 0), isrRetenidoCalculado:round2(contexto.totalISRCalculado || contexto.totalISRRetenido || 0), subsidio:round2(res.subsidio || 0),
                 metodo, metodoTexto:metodo==='mensual-acumulada'?'Mensual acumulada':(metodo==='mensual-prorrateada'?'Mensual prorrateada':'Tarifa periodo'), extraMetodo
             };
             const duplicado = historial.some(x => x.fecha === entry.fecha && x.metodo === entry.metodo && Math.abs(Number(x.gravadoTotal||0)-entry.gravadoTotal)<0.005 && Math.abs(Number(x.isrRetenido||0)-entry.isrRetenido)<0.005);
@@ -1903,14 +2124,22 @@
             const esSalarioMinimo = sd > 0 && sd <= obtenerSalarioMinimoZona();
             let resIMSS = calcularIMSS(sbc, diasCotizadosIMSS, claseRiesgo, esSalarioMinimo);
 
-            // 7. Other Deductions
-            const dedInfonavit = parseFloat(document.getElementById('ded-infonavit').value) || 0;
-            const dedFonacot = parseFloat(document.getElementById('ded-fonacot').value) || 0;
-            const dedPension = parseFloat(document.getElementById('ded-pension').value) || 0;
-            const dedOtras = parseFloat(document.getElementById('ded-otras').value) || 0;
+            // 7. Other Deductions + protected manual overrides
+            const manualISRActivo = !!document.getElementById('manual-isr-habilitado')?.checked;
+            const manualIMSSActivo = !!document.getElementById('manual-imss-habilitado')?.checked;
+            const manualInfonavitActivo = !!document.getElementById('manual-infonavit-habilitado')?.checked;
+            const isrCalculadoPago = round2(totalISRRetenido);
+            const imssObreroCalculado = round2(resIMSS.obrero);
+            const dedInfonavitCapturado = nonNegative('ded-infonavit');
+            const isrAplicado = manualISRActivo ? round2(nonNegative('manual-isr-importe')) : isrCalculadoPago;
+            const imssObreroAplicado = manualIMSSActivo ? round2(nonNegative('manual-imss-importe')) : imssObreroCalculado;
+            const dedInfonavit = manualInfonavitActivo ? dedInfonavitCapturado : 0;
+            const dedFonacot = nonNegative('ded-fonacot');
+            const dedPension = nonNegative('ded-pension');
+            const dedOtras = nonNegative('ded-otras');
 
             let totalOtrasDeducciones = dedInfonavit + dedFonacot + dedPension + dedOtras;
-            let totalDeducciones = totalISRRetenido + resIMSS.obrero + totalOtrasDeducciones;
+            let totalDeducciones = isrAplicado + imssObreroAplicado + totalOtrasDeducciones;
 
             let netoAPagar = Math.max(0, totalBruto - totalDeducciones);
             let costoTotalPatron = totalBruto + resIMSS.patronal;
@@ -1924,8 +2153,8 @@
             document.getElementById('res-exento').innerText = fmtMXN(totalExento);
             document.getElementById('res-isr-causado').innerText = fmtMXN(totalISRCausado);
             document.getElementById('res-subsidio-causado').innerText = '-' + fmtMXN(resISR.subsidio);
-            document.getElementById('res-isr-retenido').innerText = fmtMXN(totalISRRetenido);
-            document.getElementById('res-imss-obrero').innerText = fmtMXN(resIMSS.obrero);
+            document.getElementById('res-isr-retenido').innerText = fmtMXN(isrAplicado);
+            document.getElementById('res-imss-obrero').innerText = fmtMXN(imssObreroAplicado);
             document.getElementById('res-otras-deducciones').innerText = fmtMXN(totalOtrasDeducciones);
             document.getElementById('res-neto').innerText = fmtMXN(netoAPagar);
             const auditStatus = document.getElementById('audit-status');
@@ -1950,7 +2179,14 @@
             document.getElementById('audit-isr-subsidio').innerText = '-' + fmtMXN(resISR.subsidio);
             document.getElementById('audit-isr-previo').innerText = fmtMXN(resISR.retenidoPrevio || 0);
             document.getElementById('audit-isr-art174').innerText = fmtMXN(resExtraArt174.impuesto || 0);
-            document.getElementById('audit-isr-neto-pago').innerText = fmtMXN(totalISRRetenido);
+            document.getElementById('audit-isr-neto-pago').innerText = fmtMXN(isrCalculadoPago);
+            document.getElementById('audit-isr-aplicado').innerText = `${fmtMXN(isrAplicado)} · ${manualISRActivo ? 'Manual' : 'Automático'}`;
+            document.getElementById('audit-imss-aplicado').innerText = `${fmtMXN(imssObreroAplicado)} · ${manualIMSSActivo ? 'Manual' : 'Automático'}`;
+            document.getElementById('audit-infonavit-aplicado').innerText = `${fmtMXN(dedInfonavit)} · ${manualInfonavitActivo ? 'Manual' : 'Automático'}`;
+            document.getElementById('manual-isr-calculado').innerText = fmtMXN(isrCalculadoPago);
+            document.getElementById('manual-imss-calculado').innerText = fmtMXN(imssObreroCalculado);
+            document.getElementById('manual-infonavit-calculado').innerText = fmtMXN(dedInfonavit);
+            actualizarControlesManuales();
             const auditIndem = document.getElementById('audit-isr-separacion');
             if (auditIndem) auditIndem.innerText = fmtMXN(resIndemISR.isrRetenidoIndem || 0);
             const auditIndemMetodo = document.getElementById('audit-isr-separacion-metodo');
@@ -1963,10 +2199,17 @@
                 resISR,
                 resExtraArt174,
                 resIndemISR,
-                totalISRRetenido: round2(totalISRRetenido),
+                totalISRRetenido: round2(isrAplicado),
+                totalISRCalculado: round2(isrCalculadoPago),
+                manualISR: manualISRActivo,
                 totalISRCausado: round2(totalISRCausado),
                 metodoISR,
-                extraMetodo: document.getElementById('sel-extra-isr')?.value || 'acumulacion'
+                extraMetodo: document.getElementById('sel-extra-isr')?.value || 'acumulacion',
+                imssObreroAplicado: round2(imssObreroAplicado),
+                imssObreroCalculado: round2(imssObreroCalculado),
+                manualIMSS: manualIMSSActivo,
+                infonavitAplicado: round2(dedInfonavit),
+                manualInfonavit: manualInfonavitActivo
             };
             actualizarUIHistorialISR(historialISR);
 
@@ -2017,8 +2260,8 @@
             ].filter(x => (Number(x[1]) + Number(x[2])) > 0);
 
             const deducciones = [];
-            if (totalISRRetenido > 0) deducciones.push(['001 ISR Retenido', totalISRRetenido]);
-            if (resIMSS.obrero > 0) deducciones.push(['002 IMSS Obrero', resIMSS.obrero]);
+            if (isrAplicado > 0) deducciones.push(['001 ISR Retenido', isrAplicado]);
+            if (imssObreroAplicado > 0) deducciones.push(['002 IMSS Obrero', imssObreroAplicado]);
             if (dedInfonavit > 0) deducciones.push(['004 Infonavit', dedInfonavit]);
             if (dedFonacot > 0) deducciones.push(['011 FONACOT', dedFonacot]);
             if (dedPension > 0) deducciones.push(['007 Pensión Alimenticia', dedPension]);
@@ -2059,6 +2302,30 @@
             document.getElementById('rec-total-letras').innerText = numeroALetrasMXN(netoAPagar);
         }
 
+        function limpiarResultadosNominaUI() {
+            const amountIds = [
+                'tag-neto-pagar','res-sueldo-base','res-percepciones-extra','res-total-percepciones','res-gravado','res-exento',
+                'res-isr-causado','res-subsidio-causado','res-isr-retenido','res-imss-obrero','res-otras-deducciones','res-neto',
+                'res-patronal-total','res-patronal-cyv','res-patronal-infonavit','res-patronal-imss-resto','res-costo-total-patron',
+                'nomina-kpi-percepciones','nomina-kpi-retenciones','nomina-kpi-patronal','nomina-kpi-neto',
+                'audit-isr-base','audit-isr-base-tarifa','audit-isr-liminf','audit-isr-excedente','audit-isr-marginal','audit-isr-cuota','audit-isr-causado',
+                'audit-isr-subsidio','audit-isr-previo','audit-isr-art174','audit-isr-neto-pago','audit-isr-aplicado',
+                'audit-ceav-monto','manual-isr-calculado','manual-imss-calculado','manual-infonavit-calculado',
+                'rec-subsidio','rec-total-neto','rec-salario-diario','rec-sbc'
+            ];
+            amountIds.forEach(id => { const el=document.getElementById(id); if(el) el.textContent=(id==='audit-isr-aplicado'||id==='audit-isr-neto-pago')?'$0.00': '$0.00'; });
+            ['rec-emisor-nombre','rec-emisor-rfc','rec-emisor-rp','rec-emisor-cp','rec-tra-nombre','rec-tra-rfc','rec-tra-curp','rec-tra-nss','rec-tra-cp','rec-fecha-ingreso','rec-antiguedad','rec-fecha-pago','rec-periodo'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent='';});
+            ['rec-periodicidad','rec-tipo-nomina','rec-regimen','rec-contrato'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent='';});
+            const letras=document.getElementById('rec-total-letras'); if(letras) letras.textContent='CERO PESOS 00/100 M.N.';
+            const tabla=document.getElementById('rec-tabla-principal'); if(tabla) tabla.innerHTML='';
+            const auditStatus=document.getElementById('audit-status'); if(auditStatus){auditStatus.textContent='Sin datos';auditStatus.className='text-[10px] font-semibold px-2 py-0.5 rounded bg-slate-100 text-slate-600';}
+            const estado=document.getElementById('nomina-estado-pill'); if(estado){estado.textContent='Sin datos';estado.className='read-only-chip bg-slate-100 text-slate-600';}
+            ['nomina-flow-1','nomina-flow-2','nomina-flow-3','nomina-flow-4'].forEach(id=>document.getElementById(id)?.classList.remove('done'));
+            const manualGlobal=document.getElementById('manual-global-status'); if(manualGlobal){manualGlobal.textContent='MODO AUTOMÁTICO';manualGlobal.className='manual-status auto';}
+            ['manual-isr-status','manual-imss-status','manual-infonavit-status'].forEach(id=>{const e=document.getElementById(id);if(e){e.textContent='AUTO';e.className='manual-status auto';}});
+            ['audit-isr-aplicado','audit-imss-aplicado','audit-infonavit-aplicado'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent='$0.00 · Automático';});
+        }
+
         function cargarEjemplo() {
             document.getElementById('emp-nombre-emisor').value = "GRUPO INDUSTRIAL MEXICANO SA DE CV";
             document.getElementById('emp-rfc-emisor').value = "GIM850101XYZ";
@@ -2074,6 +2341,9 @@
             document.getElementById('tra-salario-diario').value = "650.00";
             document.getElementById('sel-periodicidad').value = "quincenal";
             document.getElementById('nom-dias-pagados').value = "15";
+            document.getElementById('nom-fecha-ini').value = "2026-09-01";
+            document.getElementById('nom-fecha-fin').value = "2026-09-15";
+            document.getElementById('tra-fecha-ingreso').value = "2021-03-15";
 
             document.getElementById('he-dobles').value = "4";
             document.getElementById('he-triples').value = "2";
@@ -2083,37 +2353,101 @@
             document.getElementById('chk-calc-primavac').checked = false;
 
             document.getElementById('inc-faltas').value = "0";
-            document.getElementById('ded-infonavit').value = "350.00";
-
-            validarInputsCFDI();
-            alCambiarFechas();
-        }
-
-        function limpiarDatos() {
-            document.getElementById('sel-zona-salarial').value = "general";
-            document.getElementById('sel-periodicidad').value = "quincenal";
-            document.getElementById('tra-salario-diario').value = "300.00";
-            document.getElementById('he-dobles').value = "0";
-            document.getElementById('he-triples').value = "0";
-            document.getElementById('pres-domingos').value = "0";
-            document.getElementById('pres-ptu').value = "0";
-            document.getElementById('indem-monto').value = "0";
-            document.getElementById('indem-anios').value = "5";
-            document.getElementById('indem-ultimo-sueldo').value = "";
-            document.getElementById('inc-faltas').value = "0";
-            document.getElementById('inc-enfermedad').value = "0";
-            document.getElementById('inc-rt').value = "0";
-            document.getElementById('ded-infonavit').value = "0";
             document.getElementById('ded-fonacot').value = "0";
             document.getElementById('ded-pension').value = "0";
             document.getElementById('ded-otras').value = "0";
-
-            document.getElementById('chk-calc-aguinaldo').checked = false;
-            document.getElementById('chk-calc-primavac').checked = false;
+            document.getElementById('manual-infonavit-habilitado').checked = true;
+            document.getElementById('ded-infonavit').disabled = false;
+            document.getElementById('ded-infonavit').value = "350.00";
+            document.getElementById('manual-isr-habilitado').checked = false;
+            document.getElementById('manual-imss-habilitado').checked = false;
+            document.getElementById('manual-isr-importe').value = "0";
+            document.getElementById('manual-imss-importe').value = "0";
 
             validarInputsCFDI();
+            alCambiarFechas();
+            actualizarControlesManuales();
+        }
+
+        function limpiarDatos() {
+            if (!confirm('¿Limpiar todos los datos capturados de Nómina y del módulo Finiquito/Liquidación? También se eliminará el historial ISR del trabajador/mes actual. Las Tablas 2026 no se modifican.')) return;
+
+            // Eliminar únicamente el historial asociado al registro actual antes de borrar RFC/fecha.
+            try { localStorage.removeItem(obtenerClaveHistorialISR()); } catch(e) {}
+
+            const textIds = ['emp-rfc-emisor','emp-nombre-emisor','emp-reg-patronal','emp-cp-expedicion','tra-rfc','tra-curp','tra-nombre','tra-nss','tra-cp','tra-fecha-ingreso','nom-fecha-ini','nom-fecha-fin'];
+            textIds.forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+
+            const zeroIds = ['tra-salario-diario','nom-dias-pagados','tra-sbc','he-dobles','he-triples','pres-dias-aguinaldo-pagar','pres-dias-vac-pagar','pres-domingos','pres-ptu','inc-faltas','inc-enfermedad','inc-rt','ded-fonacot','ded-pension','ded-otras','ded-infonavit','indem-monto','indem-ultimo-sueldo','manual-isr-importe','manual-imss-importe'];
+            zeroIds.forEach(id=>{const e=document.getElementById(id);if(e)e.value=(id==='indem-ultimo-sueldo'||id.startsWith('manual-'))?'':'0';});
+
+            const defaults = {
+                'sel-zona-salarial':'general','sel-periodicidad':'quincenal','sel-metodo-isr':'periodo','sel-base-mensualizacion':'30.4','sel-extra-isr':'acumulacion',
+                'emp-riesgo-puesto':'2','nom-tipo-nomina':'O','tra-tipo-contrato':'01','tra-tipo-regimen':'02',
+                'sbc-dias-aguinaldo':'15','sbc-pct-prima-vac':'25','he-jornada-hrs':'8',
+                'salida-tipo-finiquito':'finiquito','salida-causa':'renuncia','salida-aguinaldo-dias':'15','salida-vac-disfrutadas':'0','salida-prima-vac-pct':'25','salida-ptu':'0','salida-domingos':'0','salida-dias-pendientes':'0','salida-anios-servicio':'','salida-sd':'','salida-sdi':'','salida-fecha-ingreso':'','salida-fecha-baja':''
+            };
+            Object.entries(defaults).forEach(([id,val])=>{const e=document.getElementById(id);if(e)e.value=val;});
+
+            ['chk-isr','chk-subsidio','chk-imss'].forEach(id=>{const e=document.getElementById(id);if(e)e.checked=true;});
+            ['chk-calc-aguinaldo','chk-calc-primavac','manual-isr-habilitado','manual-imss-habilitado','manual-infonavit-habilitado','salida-incluir-90','salida-incluir-20','salida-incluir-prima'].forEach(id=>{const e=document.getElementById(id);if(e)e.checked=false;});
+            document.getElementById('salida-tipo-finiquito').checked=true;
+            document.getElementById('salida-auto-sync').checked=true;
+
+            ['hist-prev-fecha','hist-prev-gravado','hist-prev-isr','hist-prev-subsidio'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+            actualizarUIHistorialISR([]);
+            globalThis.__nominaISRContext = null;
+            globalThis.__salidaContext = null;
+            __backupUnknownFields = {};
+            actualizarControlesManuales();
+            limpiarResultadosNominaUI();
+            validarInputsCFDI();
             calcularSBC();
-            calcularNomina();
+            actualizarUISalidaTipo();
+            calcularSalida();
+            document.getElementById('txt-antiguedad-humana').innerText='—';
+            document.getElementById('txt-antiguedad-sat').innerText='—';
+            const vacReset=document.getElementById('cfg-dias-vac-lft'); if(vacReset) vacReset.value='0';
+            document.getElementById('rec-antiguedad').innerText='';
+            setAppMode('nomina');
+            switchTab('tab-general');
+        }
+
+        function prepararAjusteManual(tipo) {
+            const map = {
+                isr: ['manual-isr-habilitado','manual-isr-importe','manual-isr-calculado'],
+                imss: ['manual-imss-habilitado','manual-imss-importe','manual-imss-calculado'],
+                infonavit: ['manual-infonavit-habilitado','ded-infonavit','manual-infonavit-calculado']
+            };
+            const cfg=map[tipo]; if(!cfg) return;
+            const check=document.getElementById(cfg[0]), input=document.getElementById(cfg[1]), source=document.getElementById(cfg[2]);
+            if(!check || !input || !source || !check.checked) return;
+            if(String(input.value ?? '').trim()!=='') return;
+            const n=Number(String(source.textContent||'').replace(/[^0-9.-]/g,''));
+            input.value=Number.isFinite(n)?n.toFixed(2):'0.00';
+        }
+
+        function actualizarControlesManuales() {
+            const isrCheck=document.getElementById('manual-isr-habilitado');
+            const imssCheck=document.getElementById('manual-imss-habilitado');
+            const infCheck=document.getElementById('manual-infonavit-habilitado');
+            const isrBase=document.getElementById('manual-isr-importe');
+            const imssBase=document.getElementById('manual-imss-importe');
+            const infBase=document.getElementById('ded-infonavit');
+            const chkISR=document.getElementById('chk-isr')?.checked !== false;
+            const chkIMSS=document.getElementById('chk-imss')?.checked !== false;
+            if(isrCheck && !chkISR){isrCheck.checked=false;isrCheck.disabled=true;} else if(isrCheck) isrCheck.disabled=false;
+            if(imssCheck && !chkIMSS){imssCheck.checked=false;imssCheck.disabled=true;} else if(imssCheck) imssCheck.disabled=false;
+            const isrOn=!!isrCheck?.checked, imssOn=!!imssCheck?.checked, infOn=!!infCheck?.checked;
+            if(isrBase)isrBase.disabled=!isrOn;
+            if(imssBase)imssBase.disabled=!imssOn;
+            if(infBase)infBase.disabled=!infOn;
+            const setRow=(rowId,on)=>document.getElementById(rowId)?.classList.toggle('enabled',on);
+            setRow('manual-row-isr',isrOn); setRow('manual-row-imss',imssOn); setRow('manual-row-infonavit',infOn);
+            const setStatus=(id,on)=>{const e=document.getElementById(id);if(!e)return;e.textContent=on?'MANUAL':'AUTO';e.className=`manual-status ${on?'manual':'auto'}`;};
+            setStatus('manual-isr-status',isrOn);setStatus('manual-imss-status',imssOn);setStatus('manual-infonavit-status',infOn);
+            const global=document.getElementById('manual-global-status'); const any=isrOn||imssOn||infOn;
+            if(global){global.textContent=any?'AJUSTE MANUAL ACTIVO':'MODO AUTOMÁTICO';global.className=`manual-status ${any?'manual':'auto'}`;}
         }
 
         function cargarConfiguracionEnUI() {
@@ -2124,13 +2458,16 @@
             actualizarIndicadoresUI();
         }
 
-        function guardarConfiguracionTablas() {
-            CONFIG_NOMINA_2026.UMA.diario = parseFloat(document.getElementById('cfg-uma-val').value) || 117.31;
+        function aplicarConfiguracionDesdeUI() {
+            CONFIG_NOMINA_2026.UMA.diario = parseFloat(document.getElementById('cfg-uma-val')?.value) || 117.31;
             CONFIG_NOMINA_2026.UMA.mensual = round2(CONFIG_NOMINA_2026.UMA.diario * 30.4);
             CONFIG_NOMINA_2026.UMA.anual = round2(CONFIG_NOMINA_2026.UMA.mensual * 12);
-            CONFIG_NOMINA_2026.SMI.general = parseFloat(document.getElementById('cfg-smi-val').value) || 315.04;
-            CONFIG_NOMINA_2026.UMI = parseFloat(document.getElementById('cfg-umi-val').value) || 100.81;
+            CONFIG_NOMINA_2026.SMI.general = parseFloat(document.getElementById('cfg-smi-val')?.value) || 315.04;
+            CONFIG_NOMINA_2026.UMI = parseFloat(document.getElementById('cfg-umi-val')?.value) || 100.81;
+        }
 
+        function guardarConfiguracionTablas() {
+            aplicarConfiguracionDesdeUI();
             cargarConfiguracionEnUI();
             calcularSBC();
             calcularNomina();
@@ -2147,6 +2484,141 @@
             cargarConfiguracionEnUI();
             calcularSBC();
             calcularNomina();
+        }
+
+
+        /* ===== v1.5 JSON BACKUP / RESTORE ===== */
+        let __backupUnknownFields = {};
+        const BACKUP_FIELD_ALIASES = {
+            // Compatibilidad futura: si algún ID cambia, agrega aquí el nuevo ID como clave y el ID anterior como valor.
+        };
+
+        function collectFormState() {
+            const fields = {};
+            document.querySelectorAll('input[id], select[id], textarea[id]').forEach(el => {
+                if (el.id === 'import-json-file') return;
+                if (el.type === 'file') return;
+                if (el.type === 'radio' || el.type === 'checkbox') fields[el.id] = !!el.checked;
+                else fields[el.id] = el.value;
+            });
+            return fields;
+        }
+
+        function collectISRHistoryStore() {
+            const history = {};
+            try {
+                for(let i=0;i<localStorage.length;i++){
+                    const key=localStorage.key(i);
+                    if(key && key.startsWith('nominaISR:')){
+                        try { history[key]=JSON.parse(localStorage.getItem(key)||'[]'); }
+                        catch(e) { history[key]=[]; }
+                    }
+                }
+            } catch(e) {}
+            return history;
+        }
+
+        function exportarRespaldoJSON() {
+            const payload = {
+                format: BACKUP_FORMAT,
+                schemaVersion: BACKUP_SCHEMA_VERSION,
+                appVersion: APP_VERSION,
+                fiscalYear: 2026,
+                exportedAt: new Date().toISOString(),
+                state: {
+                    fields: collectFormState(),
+                    ui: {
+                        mode: __appMode || 'nomina',
+                        tab: document.querySelector('.side-nav-btn[data-side-tab].active')?.dataset.sideTab || 'tab-general'
+                    }
+                },
+                history: collectISRHistoryStore(),
+                legacy: { unknownFields: __backupUnknownFields }
+            };
+            const blob = new Blob([JSON.stringify(payload,null,2)],{type:'application/json;charset=utf-8'});
+            const a=document.createElement('a');
+            const rfc=(document.getElementById('tra-rfc')?.value||'SIN_RFC').trim().replace(/[^A-Z0-9_-]/gi,'_');
+            const date=getLocalDateISO().replace(/-/g,'');
+            a.href=URL.createObjectURL(blob); a.download=`NominaMX_Respaldo_${rfc}_${date}.json`; document.body.appendChild(a); a.click(); a.remove();
+            setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+            showToast('Respaldo JSON generado correctamente.');
+        }
+
+        function normalizeBackupPayload(raw) {
+            if (!raw || typeof raw !== 'object') throw new Error('El archivo JSON no contiene un objeto válido.');
+            if (raw.format === BACKUP_FORMAT && raw.state) return raw;
+            // Compatibilidad con una versión futura/antigua que use directamente "fields".
+            if (raw.fields && typeof raw.fields === 'object') {
+                return {format:BACKUP_FORMAT,schemaVersion:Number(raw.schemaVersion||1),appVersion:raw.appVersion||'desconocida',fiscalYear:raw.fiscalYear||2026,exportedAt:raw.exportedAt||null,state:{fields:raw.fields,ui:raw.ui||{}},history:raw.history||{},legacy:{unknownFields:raw.legacy?.unknownFields||{}}};
+            }
+            throw new Error('Formato de respaldo no reconocido. Se esperaba un respaldo de Nómina MX.');
+        }
+
+        function resolveBackupFieldId(id) {
+            if(document.getElementById(id)) return id;
+            for(const [current, aliases] of Object.entries(BACKUP_FIELD_ALIASES)){
+                const list=Array.isArray(aliases)?aliases:[aliases];
+                if(list.includes(id) && document.getElementById(current)) return current;
+            }
+            return null;
+        }
+
+        function applyBackupFields(fields) {
+            const unknown={};
+            Object.entries(fields||{}).forEach(([id,val])=>{
+                const targetId=resolveBackupFieldId(id);
+                const el=targetId?document.getElementById(targetId):null;
+                if(!el){ unknown[id]=val; return; }
+                if(el.type==='checkbox' || el.type==='radio') el.checked=!!val;
+                else if(el.type!=='file') el.value=val ?? '';
+            });
+            __backupUnknownFields={...(__backupUnknownFields||{}),...unknown};
+        }
+
+        function applyBackupHistory(history) {
+            try {
+                Object.entries(history||{}).forEach(([key,val])=>{ if(key.startsWith('nominaISR:')) localStorage.setItem(key,JSON.stringify(Array.isArray(val)?val:[])); });
+            } catch(e) { console.warn('No se pudo restaurar historial ISR',e); }
+        }
+
+        async function importarRespaldoJSON(event) {
+            const file=event?.target?.files?.[0];
+            if(!file) return;
+            try{
+                const raw=JSON.parse(await file.text());
+                const payload=normalizeBackupPayload(raw);
+                const incomingVersion=Number(payload.schemaVersion||1);
+                const warning=incomingVersion>BACKUP_SCHEMA_VERSION?`El respaldo proviene de un esquema más reciente (${incomingVersion}). Se cargarán todos los campos conocidos y se conservarán los desconocidos para no perder información.`:`Se cargará el respaldo creado por ${payload.appVersion||'otra versión'}.`;
+                if(!confirm(`${warning}\n\n¿Deseas reemplazar la captura actual con la información del respaldo?`)) return;
+                __backupUnknownFields={...(payload.legacy?.unknownFields||{}),...(__backupUnknownFields||{})};
+                applyBackupFields(payload.state?.fields||{});
+                applyBackupHistory(payload.history||{});
+                aplicarConfiguracionDesdeUI();
+                cargarConfiguracionEnUI();
+                actualizarControlesManuales();
+                validarInputsCFDI();
+                actualizarIndicadoresUI();
+                calcularSBC();
+                alCambiarFechas();
+                actualizarUISalidaTipo();
+                syncSalidaFromNomina(true);
+                calcularNomina();
+                calcularSalida();
+                setAppMode(payload.state?.ui?.mode==='salida'?'salida':'nomina');
+                switchTab(payload.state?.ui?.tab||'tab-general');
+                actualizarUIHistorialISR();
+                showToast(`Respaldo importado. Esquema ${incomingVersion}.`);
+            } catch(err){
+                alert(`No se pudo importar el respaldo JSON.\n\n${err?.message||err}`);
+            } finally {
+                if(event?.target) event.target.value='';
+            }
+        }
+
+        function showToast(message) {
+            let el=document.getElementById('app-toast');
+            if(!el){ el=document.createElement('div'); el.id='app-toast'; el.className='app-toast'; document.body.appendChild(el); }
+            el.textContent=message; el.classList.add('show'); clearTimeout(showToast._t); showToast._t=setTimeout(()=>el.classList.remove('show'),2600);
         }
 
         function numeroALetrasMXN(valor) {
@@ -2194,11 +2666,21 @@
         }
 
         function imprimirRecibo() {
+            const receipt=document.getElementById('printable-receipt');
+            if(!receipt){alert('No se encontró el recibo de nómina.');return;}
+            const existing=document.getElementById('print-only-root'); if(existing) existing.remove();
+            const root=document.createElement('div'); root.id='print-only-root'; root.innerHTML=receipt.outerHTML;
+            document.body.appendChild(root);
+            document.body.classList.add('printing-receipt');
+            let cleaned=false;
+            const cleanup=()=>{if(cleaned)return;cleaned=true;document.body.classList.remove('printing-receipt');root.remove();window.removeEventListener('afterprint',cleanup);};
+            window.addEventListener('afterprint',cleanup);
             window.print();
+            setTimeout(cleanup,60000);
         }
 
 
-        /* ===== v1.3 WORKSPACE ENGINE ===== */
+        /* ===== WORKSPACE ENGINE ===== */
         let __appMode = 'nomina';
 
         function setAppMode(mode='nomina') {
@@ -2207,10 +2689,14 @@
             document.getElementById('workspace-salida')?.classList.toggle('hidden', __appMode !== 'salida');
             document.getElementById('mode-btn-nomina')?.classList.toggle('active', __appMode === 'nomina');
             document.getElementById('mode-btn-salida')?.classList.toggle('active', __appMode === 'salida');
+            document.getElementById('sidebar-nav-nomina')?.classList.toggle('hidden', __appMode !== 'nomina');
+            document.getElementById('sidebar-nav-salida')?.classList.toggle('hidden', __appMode !== 'salida');
+            const mt=document.getElementById('mobile-mode-title'); if(mt) mt.textContent=__appMode==='salida'?'Finiquito / Liquidación':'Nómina';
             if (__appMode === 'salida') { syncSalidaFromNomina(); actualizarUISalidaTipo(); calcularSalida(); }
             else { calcularNomina(); }
             globalThis.lucide?.createIcons?.();
-            window.scrollTo({top:0,behavior:'smooth'});
+            try { sessionStorage.setItem('nomina:lastMode', __appMode); } catch(e) {}
+            if (window.innerWidth < 1024) toggleSidebar(false);
         }
 
         function setMetric(id,value,formatter=fmtMXN){
@@ -2292,6 +2778,7 @@
         window.addEventListener('DOMContentLoaded', () => {
             if (globalThis.lucide?.createIcons) lucide.createIcons();
             cargarConfiguracionEnUI();
+            actualizarControlesManuales();
             actualizarUIBaseMensualizacion();
             actualizarUIHistorialISR();
             alCambiarFechas();
@@ -2300,6 +2787,9 @@
             actualizarUISalidaTipo();
             calcularSalida();
             setAppMode('nomina');
+            try { const lastTab=sessionStorage.getItem('nomina:lastTab'); if(lastTab) switchTab(lastTab); } catch(e) { switchTab('tab-general'); }
+            switchTab(document.querySelector('.side-nav-btn.active')?.dataset.sideTab || 'tab-general');
+            toggleSidebar(false);
         });
     </script>
 </body>
