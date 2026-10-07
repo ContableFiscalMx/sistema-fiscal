@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora de Nómina 2026 CFDI 4.0 (México)</title>
+    <title>Calculadora de Nómina 2026 CFDI 4.0 (México) · v1.3.0</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Lucide Icons -->
@@ -113,6 +113,49 @@
             .payroll-receipt .receipt-table td,
             .payroll-receipt .receipt-table th { page-break-inside: avoid; }
         }
+
+        /* ===== v1.3 - Dynamic workspaces ===== */
+        .workspace-panel { animation: workspaceIn .24s ease-out; }
+        @keyframes workspaceIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:none; } }
+        .mode-switcher { position:sticky; top:4.2rem; z-index:35; }
+        .mode-btn { position:relative; transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease, background-color .18s ease; }
+        .mode-btn:hover { transform:translateY(-1px); }
+        .mode-btn.active { border-color:#2563eb; background:linear-gradient(135deg,#eff6ff,#fff); box-shadow:0 8px 24px rgba(37,99,235,.12); }
+        .mode-btn.active .mode-accent { opacity:1; transform:scaleX(1); }
+        .mode-accent { position:absolute; left:0; right:0; bottom:-1px; height:3px; background:#2563eb; border-radius:999px; opacity:0; transform:scaleX(.35); transition:all .18s ease; }
+        .mode-btn.exit.active { border-color:#f59e0b; background:linear-gradient(135deg,#fffbeb,#fff); box-shadow:0 8px 24px rgba(245,158,11,.13); }
+        .mode-btn.exit.active .mode-accent { background:#f59e0b; }
+        .context-bar { background:linear-gradient(135deg,#0f172a,#1e293b); color:#fff; }
+        .section-card { background:#fff; border:1px solid #e2e8f0; border-radius:1rem; box-shadow:0 6px 20px rgba(15,23,42,.05); }
+        .section-head { display:flex; align-items:center; justify-content:space-between; gap:.75rem; padding-bottom:.75rem; border-bottom:1px solid #e2e8f0; }
+        .eyebrow { font-size:10px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; color:#64748b; }
+        .kpi-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:.75rem; }
+        @media (min-width:768px){ .kpi-grid { grid-template-columns:repeat(4,minmax(0,1fr)); } }
+        .kpi-card { border:1px solid #e2e8f0; border-radius:.85rem; padding:.85rem; background:linear-gradient(180deg,#fff,#f8fafc); min-height:92px; }
+        .kpi-card .kpi-label { font-size:10px; color:#64748b; font-weight:700; text-transform:uppercase; letter-spacing:.04em; }
+        .kpi-card .kpi-value { font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace; font-weight:900; font-size:1.1rem; color:#0f172a; margin-top:.3rem; }
+        .kpi-card.primary { border-color:#bfdbfe; background:linear-gradient(180deg,#eff6ff,#fff); }
+        .kpi-card.primary .kpi-value { color:#1d4ed8; }
+        .kpi-card.success { border-color:#bbf7d0; background:linear-gradient(180deg,#f0fdf4,#fff); }
+        .kpi-card.success .kpi-value { color:#047857; }
+        .kpi-card.warn { border-color:#fde68a; background:linear-gradient(180deg,#fffbeb,#fff); }
+        .kpi-card.warn .kpi-value { color:#b45309; }
+        .kpi-card.rose { border-color:#fecdd3; background:linear-gradient(180deg,#fff1f2,#fff); }
+        .kpi-card.rose .kpi-value { color:#be123c; }
+        .metric-highlight.flash { animation:metricFlash .55s ease; }
+        @keyframes metricFlash { 0%{transform:scale(1);background:transparent;} 45%{transform:scale(1.03);background:#eff6ff;} 100%{transform:scale(1);background:transparent;} }
+        .flow-step { display:flex; align-items:center; gap:.45rem; }
+        .flow-dot { width:26px; height:26px; border-radius:999px; display:grid; place-items:center; font-size:11px; font-weight:800; background:#e2e8f0; color:#475569; }
+        .flow-step.done .flow-dot { background:#dcfce7; color:#15803d; }
+        .flow-step.current .flow-dot { background:#dbeafe; color:#1d4ed8; box-shadow:0 0 0 4px rgba(37,99,235,.08); }
+        .flow-line { height:2px; flex:1; background:#e2e8f0; }
+        .formula-row { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:.75rem; align-items:center; padding:.6rem 0; border-bottom:1px dashed #e2e8f0; }
+        .formula-row:last-child { border-bottom:0; }
+        .read-only-chip { display:inline-flex; align-items:center; gap:.35rem; padding:.25rem .5rem; border-radius:999px; background:#f1f5f9; color:#475569; font-size:10px; font-weight:700; }
+        .subtle-note { background:#f8fafc; border:1px solid #e2e8f0; color:#64748b; }
+        .input-focus-ring:focus-within { border-color:#93c5fd; box-shadow:0 0 0 4px rgba(37,99,235,.08); }
+        .sticky-action { position:sticky; bottom:.75rem; z-index:25; }
+        @media (max-width:767px){ .mode-switcher{top:4rem;} .sticky-action{bottom:.5rem;} }
     </style>
 </head>
 <body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col">
@@ -135,7 +178,7 @@
             <!-- 2026 Indicators Quick View Header -->
             <div class="hidden md:flex items-center space-x-3 text-xs">
                 <div class="bg-slate-800/80 px-3 py-1.5 rounded-md border border-slate-700/80 flex items-center">
-                    <span class="text-slate-400 mr-1.5">UMA 2026:</span>
+                    <span class="text-slate-400 mr-1.5">UMA vigente:</span>
                     <span class="font-semibold text-blue-400" id="lbl-uma">$117.31</span>
                 </div>
                 <div class="bg-slate-800/80 px-3 py-1.5 rounded-md border border-slate-700/80 flex items-center">
@@ -153,8 +196,23 @@
         </div>
     </header>
 
+
+    <!-- WORKSPACE SWITCHER -->
+    <div class="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 pt-4 mode-switcher">
+        <div class="bg-white/95 backdrop-blur border border-slate-200 rounded-2xl shadow-sm p-1.5 grid grid-cols-2 gap-1">
+            <button id="mode-btn-nomina" type="button" onclick="setAppMode('nomina')" class="mode-btn active rounded-xl px-4 py-3 text-left border border-transparent bg-slate-50">
+                <span class="flex items-center gap-3"><span class="bg-blue-600 text-white p-2 rounded-lg shadow-sm"><i data-lucide="wallet-cards" class="w-5 h-5"></i></span><span class="min-w-0"><span class="block text-xs font-bold text-slate-900">Nómina</span><span class="block text-[10px] text-slate-500 truncate">Pago ordinario, ISR, IMSS y CFDI</span></span></span>
+                <span class="mode-accent"></span>
+            </button>
+            <button id="mode-btn-salida" type="button" onclick="setAppMode('salida')" class="mode-btn exit rounded-xl px-4 py-3 text-left border border-transparent bg-slate-50">
+                <span class="flex items-center gap-3"><span class="bg-amber-500 text-white p-2 rounded-lg shadow-sm"><i data-lucide="file-warning" class="w-5 h-5"></i></span><span class="min-w-0"><span class="block text-xs font-bold text-slate-900">Finiquito / Liquidación</span><span class="block text-[10px] text-slate-500 truncate">Separación laboral, indemnización e ISR</span></span></span>
+                <span class="mode-accent"></span>
+            </button>
+        </div>
+    </div>
     <!-- MAIN CONTAINER -->
-    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col gap-6">
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <section id="workspace-nomina" class="workspace-panel space-y-6">
 
         <!-- GLOBAL CONTROL BAR -->
         <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-wrap items-center justify-between gap-4">
@@ -278,6 +336,15 @@
             </div>
         </div>
 
+        <!-- DYNAMIC PAYROLL DASHBOARD -->
+        <div class="section-card p-4 sm:p-5">
+            <div class="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-4">
+                <div><div class="eyebrow">Vista dinámica</div><div class="flex items-center gap-2 mt-1"><h2 class="text-base font-black text-slate-900">Nómina del periodo</h2><span id="nomina-estado-pill" class="read-only-chip bg-emerald-50 text-emerald-700">Cálculo listo</span></div><p class="text-[10px] text-slate-500 mt-1">Los cuatro indicadores principales quedan visibles antes de entrar al detalle.</p></div>
+                <div class="flex items-center gap-2 text-[10px] font-bold text-slate-500"><div id="nomina-flow-1" class="flow-step current"><span class="flow-dot">1</span><span>Datos</span></div><div class="flow-line"></div><div id="nomina-flow-2" class="flow-step"><span class="flow-dot">2</span><span>Percepciones</span></div><div class="flow-line"></div><div id="nomina-flow-3" class="flow-step"><span class="flow-dot">3</span><span>Deducciones</span></div><div class="flow-line"></div><div id="nomina-flow-4" class="flow-step"><span class="flow-dot">4</span><span>Neto</span></div></div>
+            </div>
+            <div class="kpi-grid mt-4"><div class="kpi-card primary"><div class="kpi-label">Percepciones</div><div id="nomina-kpi-percepciones" class="kpi-value">$0.00</div></div><div class="kpi-card rose"><div class="kpi-label">Retenciones</div><div id="nomina-kpi-retenciones" class="kpi-value">$0.00</div></div><div class="kpi-card warn"><div class="kpi-label">Carga patronal</div><div id="nomina-kpi-patronal" class="kpi-value">$0.00</div></div><div class="kpi-card success"><div class="kpi-label">Neto</div><div id="nomina-kpi-neto" class="kpi-value">$0.00</div></div></div>
+        </div>
+
         <!-- FORM TABS & CONTENT -->
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
             
@@ -380,6 +447,7 @@
                                 <div>
                                     <label class="block font-medium text-slate-700 mb-1">C.P. Domicilio Fiscal*</label>
                                     <input type="text" id="tra-cp" value="06600" maxlength="5" class="w-full font-mono border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500" oninput="validarInputsCFDI()">
+                                    <span id="val-cp-receptor" class="text-[10px] font-semibold mt-1 block"></span>
                                 </div>
                                 <div>
                                     <label class="block font-medium text-slate-700 mb-1">Tipo Contrato (c_TipoContrato)</label>
@@ -505,7 +573,7 @@
                                         <span class="text-slate-500">Días:</span>
                                         <input type="number" id="pres-dias-aguinaldo-pagar" value="15" class="w-full border rounded p-1 text-right" oninput="calcularNomina()">
                                     </div>
-                                    <p class="text-[10px] text-slate-400">Exención: 30 UMAs ($3,394.20)</p>
+                                    <p class="text-[10px] text-slate-400">Exención: 30 UMA (vigente al pago)</p>
                                 </div>
 
                                 <!-- Prima Vacacional -->
@@ -519,7 +587,7 @@
                                         <span class="text-slate-500">Días Vac:</span>
                                         <input type="number" id="pres-dias-vac-pagar" value="12" class="w-full border rounded p-1 text-right" oninput="calcularNomina()">
                                     </div>
-                                    <p class="text-[10px] text-slate-400">Exención: 15 UMAs ($1,697.10)</p>
+                                    <p class="text-[10px] text-slate-400">Exención: 15 UMA (vigente al pago)</p>
                                 </div>
 
                                 <!-- Prima Dominical -->
@@ -529,7 +597,7 @@
                                         <span class="text-slate-500">Domingos:</span>
                                         <input type="number" id="pres-domingos" value="0" min="0" class="w-full border rounded p-1 text-right" oninput="calcularNomina()">
                                     </div>
-                                    <p class="text-[10px] text-slate-400">Exención: 1 UMA ($113.14) por domingo</p>
+                                    <p class="text-[10px] text-slate-400">Exención: 1 UMA (vigente al pago) por domingo</p>
                                 </div>
 
                                 <!-- PTU -->
@@ -539,7 +607,7 @@
                                         <span class="text-slate-500">Monto $:</span>
                                         <input type="number" id="pres-ptu" value="0" min="0" class="w-full border rounded p-1 text-right" oninput="calcularNomina()">
                                     </div>
-                                    <p class="text-[10px] text-slate-400">Exención: 15 UMAs ($1,697.10)</p>
+                                    <p class="text-[10px] text-slate-400">Exención: 15 UMA (vigente al pago)</p>
                                 </div>
                             </div>
                         </div>
@@ -567,23 +635,12 @@
                             </div>
                             <p class="text-[11px] text-slate-500">Dobles: 50% exento topado a 5 UMAs semanales. Triples: 100% gravadas para ISR.</p>
                         </div>
-
-                        <!-- Liquidadora & Finiquito Art. 174 RLISR -->
+                        <!-- Dedicated workspace bridge -->
                         <div class="p-4 bg-amber-50/70 rounded-lg border border-amber-200 space-y-3">
-                            <h4 class="text-xs font-bold text-amber-900 uppercase flex items-center">
-                                <i data-lucide="shield-alert" class="w-4 h-4 mr-1 text-amber-700"></i> Finiquito / Liquidación & Art. 174 RLISR
-                            </h4>
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-                                <div>
-                                    <label class="block text-amber-900 mb-1">Monto Indemnización / Prima Antigüedad ($)</label>
-                                    <input type="number" id="indem-monto" value="0" min="0" class="w-full border rounded p-1.5 focus:ring-2 focus:ring-amber-500" oninput="calcularNomina()">
-                                </div>
-                                <div>
-                                    <label class="block text-amber-900 mb-1">Años de Servicio Exención (90 UMAs/año)</label>
-                                    <input type="number" id="indem-anios" value="5" min="0" class="w-full border rounded p-1.5 focus:ring-2 focus:ring-amber-500" oninput="calcularNomina()">
-                                </div>
+                            <div class="flex items-center justify-between gap-3">
+                                <div><h4 class="text-xs font-bold text-amber-900 uppercase flex items-center"><i data-lucide="file-warning" class="w-4 h-4 mr-1 text-amber-700"></i> Finiquito / Liquidación</h4><p class="text-[11px] text-amber-800 mt-1">Se separó del cálculo ordinario para que la información sea más clara y el expediente de salida tenga sus propios conceptos.</p></div>
+                                <button type="button" onclick="setAppMode('salida')" class="shrink-0 px-3 py-2 bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold rounded-lg shadow-sm">Abrir módulo</button>
                             </div>
-                            <p class="text-[11px] text-amber-800">Aplica exención de 90 UMAs ($10,182.60) por cada año de servicio. El gravado se procesa con la tasa efectiva del Art. 174 RLISR.</p>
                         </div>
 
                     </div>
@@ -646,7 +703,7 @@
                             <h3 class="font-bold text-slate-800 text-sm flex items-center">
                                 <i data-lucide="binary" class="w-4 h-4 mr-1.5 text-blue-600"></i> Desglose Matemático de Auditoría Fiscal
                             </h3>
-                            <span class="text-[10px] bg-slate-200 text-slate-700 font-mono px-2 py-0.5 rounded">LISR/LSS 2026</span>
+                            <div class="flex items-center gap-2"><span id="audit-status" class="text-[10px] bg-emerald-100 text-emerald-700 font-semibold px-2 py-0.5 rounded">Cálculo listo</span><span class="text-[10px] bg-slate-200 text-slate-700 font-mono px-2 py-0.5 rounded">LISR/LSS 2026</span></div>
                         </div>
 
                         <!-- ISR Step breakdown -->
@@ -670,6 +727,7 @@
                                 </div>
                                 <div class="col-span-2 border-t pt-1 text-slate-700">• Historial ISR previo del mes: <span id="audit-isr-previo" class="font-semibold text-slate-900">$0.00</span></div>
                                 <div class="col-span-2 text-slate-700">• ISR por extraordinarias (Art. 174): <span id="audit-isr-art174" class="font-semibold text-slate-900">$0.00</span></div>
+                                <div class="col-span-2 text-slate-700">• ISR por pagos por separación (Arts. 95/96): <span id="audit-isr-separacion" class="font-semibold text-slate-900">$0.00</span> <span id="audit-isr-separacion-metodo" class="text-[9px] text-slate-500"></span></div>
                                 <div class="col-span-2 text-slate-700">• ISR neto a retener en este pago: <span id="audit-isr-neto-pago" class="font-semibold text-rose-700">$0.00</span></div>
                             </div>
                         </div>
@@ -713,7 +771,7 @@
 
                         <p class="text-[11px] text-slate-500">Nota: Al guardar cambios aquí se recalculan de forma automática todas las exenciones y retenciones del sistema.</p>
                         <p class="text-[10px] text-slate-500 mt-1">
-                            Valores 2026: UMA $117.31 diaria / $3,566.22 mensual / $42,794.64 anual; salario mínimo general $315.04 diaria; ZLFN $440.87 diaria (solo municipios ZLFN); UMI $100.81 diaria. La UMA usada para IMSS en enero de 2026 es $113.14 y desde febrero $117.31.
+                            Valores 2026: UMA $117.31 diaria / $3,566.22 mensual / $42,794.64 anual; salario mínimo general $315.04 diaria; ZLFN $440.87 diaria; UMI $100.81 diaria. Para enero de 2026 se conserva la UMA 2025 ($113.14 diaria) en los cálculos cuya vigencia depende de la UMA anterior. El Decreto de Subsidio 2026 establece 15.02% de UMA mensual y un límite de $11,492.66; su considerando reporta un monto de referencia de $536.22. El motor conserva el cálculo operativo por porcentaje.
                         </p>
 
                         <div class="flex justify-end pt-2">
@@ -727,7 +785,7 @@
             </div>
 
             <!-- RIGHT COLUMN: RESULTS, COST SUMMARY & CFDI RECEIPT (5 cols) -->
-            <div class="lg:col-span-5 space-y-6">
+            <div class="lg:col-span-5 space-y-6 lg:sticky lg:top-20 lg:self-start">
                 
                 <!-- EXECUTIVE SUMMARY CARD -->
                 <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 space-y-4">
@@ -906,7 +964,7 @@
                     <div class="receipt-info mt-4 pt-3 border-t border-slate-200 grid grid-cols-2 gap-x-10 gap-y-1">
                         <div><span class="receipt-label">Régimen fiscal trabajador:</span> <span id="rec-regimen">02 - Sueldos y Salarios</span></div>
                         <div><span class="receipt-label">Tipo de contrato:</span> <span id="rec-contrato">01 - Tiempo indeterminado</span></div>
-                        <div><span class="receipt-label">UUID:</span> <span id="rec-uuid" class="font-mono">4A8E9B12-901B-41C2-887E-892312A30F92</span></div>
+                        <div><span class="receipt-label">Estado CFDI:</span> <span id="rec-uuid" class="font-mono">SIN TIMBRAR</span></div>
                         <div><span class="receipt-label">CFDI:</span> 4.0 / Complemento Nómina 1.2</div>
                     </div>
 
@@ -919,7 +977,115 @@
 
             </div>
         </div>
+
+        </section>
+
+        <!-- WORKSPACE: FINIQUITO / LIQUIDACIÓN -->
+        <section id="workspace-salida" class="workspace-panel hidden space-y-6">
+            <div class="context-bar rounded-2xl p-5 shadow-md">
+                <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                    <div><div class="text-[10px] uppercase tracking-[.14em] text-blue-200 font-extrabold">Módulo de terminación laboral</div><h2 class="text-xl sm:text-2xl font-black mt-1">Finiquito y Liquidación</h2><p class="text-xs sm:text-sm text-slate-300 mt-1 max-w-3xl">Un espacio separado para derechos devengados, indemnizaciones y retención de ISR. Los datos comunes pueden sincronizarse con la Nómina.</p></div>
+                    <div class="flex items-center gap-2"><span class="read-only-chip bg-white/10 text-slate-200 border border-white/10"><i data-lucide="shield-check" class="w-3 h-3"></i> Cálculo local</span><span id="salida-status" class="read-only-chip bg-emerald-500/10 text-emerald-200 border border-emerald-400/20">Listo</span></div>
+                </div>
+            </div>
+
+            <div class="section-card p-4 sm:p-5">
+                <div class="section-head"><div><div class="eyebrow">Datos compartidos</div><h3 class="text-sm font-bold text-slate-800 mt-1">Trabajador y salario</h3></div><label class="inline-flex items-center gap-2 text-[10px] font-semibold text-slate-600 cursor-pointer"><input id="salida-auto-sync" type="checkbox" checked onchange="syncSalidaFromNomina(); calcularSalida()" class="rounded border-slate-300 text-blue-600 focus:ring-blue-500"> Sincronizar con Nómina</label></div>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mt-4 text-xs">
+                    <div class="p-3 rounded-lg bg-slate-50 border border-slate-200"><div class="text-[9px] uppercase font-bold text-slate-500">Empleado</div><div id="salida-res-nombre" class="font-bold text-slate-900 mt-1 truncate">-</div></div>
+                    <div class="p-3 rounded-lg bg-slate-50 border border-slate-200"><div class="text-[9px] uppercase font-bold text-slate-500">RFC</div><div id="salida-res-rfc" class="font-mono font-bold text-slate-900 mt-1">-</div></div>
+                    <div class="p-3 rounded-lg bg-slate-50 border border-slate-200"><div class="text-[9px] uppercase font-bold text-slate-500">Salario diario</div><div id="salida-res-sd" class="font-mono font-bold text-blue-700 mt-1">$0.00</div></div>
+                    <div class="p-3 rounded-lg bg-slate-50 border border-slate-200"><div class="text-[9px] uppercase font-bold text-slate-500">Antigüedad</div><div id="salida-res-antiguedad" class="font-bold text-slate-900 mt-1">-</div></div>
+                </div>
+                <div class="subtle-note rounded-lg p-3 mt-3 text-[10px] leading-relaxed"><b>Base de diseño:</b> la guía adjunta separa el finiquito (derechos devengados) de la liquidación (finiquito más indemnizaciones) y distingue el Salario Diario Ordinario del SDI utilizado para la liquidación.</div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <div class="lg:col-span-7 space-y-6">
+                    <div class="section-card p-4 sm:p-5">
+                        <div class="section-head"><div><div class="eyebrow">1. Escenario laboral</div><h3 class="text-sm font-bold text-slate-800 mt-1">¿Qué deseas calcular?</h3></div><span class="read-only-chip"><i data-lucide="help-circle" class="w-3 h-3"></i> Finiquito vs. liquidación</span></div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
+                            <label class="cursor-pointer"><input class="peer sr-only" type="radio" name="salida-tipo" id="salida-tipo-finiquito" value="finiquito" checked onchange="actualizarUISalidaTipo(); calcularSalida()"><div class="p-4 rounded-xl border border-slate-200 bg-white peer-checked:border-blue-500 peer-checked:bg-blue-50/70 transition"><div class="flex items-center gap-3"><span class="p-2 rounded-lg bg-blue-100 text-blue-700"><i data-lucide="receipt-text" class="w-5 h-5"></i></span><div><div class="text-sm font-bold">Finiquito</div><div class="text-[10px] text-slate-500">Derechos devengados al terminar la relación</div></div></div></div></label>
+                            <label class="cursor-pointer"><input class="peer sr-only" type="radio" name="salida-tipo" id="salida-tipo-liquidacion" value="liquidacion" onchange="actualizarUISalidaTipo(); calcularSalida()"><div class="p-4 rounded-xl border border-slate-200 bg-white peer-checked:border-amber-500 peer-checked:bg-amber-50/70 transition"><div class="flex items-center gap-3"><span class="p-2 rounded-lg bg-amber-100 text-amber-700"><i data-lucide="gavel" class="w-5 h-5"></i></span><div><div class="text-sm font-bold">Liquidación</div><div class="text-[10px] text-slate-500">Finiquito + indemnizaciones aplicables</div></div></div></div></label>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-4 text-xs">
+                            <div><label class="block font-medium text-slate-700 mb-1">Fecha de ingreso</label><input id="salida-fecha-ingreso" type="date" class="w-full border border-slate-300 rounded-lg p-2" onchange="calcularSalida()"></div>
+                            <div><label class="block font-medium text-slate-700 mb-1">Fecha de baja</label><input id="salida-fecha-baja" type="date" class="w-full border border-slate-300 rounded-lg p-2" onchange="calcularSalida()"></div>
+                            <div><label class="block font-medium text-slate-700 mb-1">Causa de separación</label><select id="salida-causa" class="w-full border border-slate-300 rounded-lg p-2" onchange="actualizarUISalidaTipo(); calcularSalida()"><option value="renuncia">Renuncia voluntaria</option><option value="despido-justificado">Despido justificado</option><option value="despido-injustificado">Despido injustificado</option><option value="terminacion-contrato">Terminación de contrato</option><option value="otra">Otra causa</option></select></div>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-3 text-xs">
+                            <div><label class="block font-medium text-slate-700 mb-1">Salario diario ordinario ($)</label><input id="salida-sd" type="number" step="0.01" min="0" class="w-full border border-slate-300 rounded-lg p-2 font-semibold" oninput="calcularSalida()"></div>
+                            <div><label class="block font-medium text-slate-700 mb-1">Días pendientes de pago</label><input id="salida-dias-pendientes" type="number" step="0.5" min="0" value="0" class="w-full border border-slate-300 rounded-lg p-2" oninput="calcularSalida()"></div>
+                            <div><label class="block font-medium text-slate-700 mb-1">Años de servicio</label><input id="salida-anios-servicio" type="number" step="0.01" min="0" class="w-full border border-slate-300 rounded-lg p-2 bg-slate-50" readonly></div>
+                        </div>
+                    </div>
+
+                    <div class="section-card p-4 sm:p-5">
+                        <div class="section-head"><div><div class="eyebrow">2. Derechos devengados</div><h3 class="text-sm font-bold text-slate-800 mt-1">Componentes del finiquito</h3></div><span class="read-only-chip">LFT Arts. 76, 80 y 87</span></div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4 text-xs">
+                            <div class="input-focus-ring rounded-lg border border-transparent p-1"><label class="block font-medium text-slate-700 mb-1">Días de aguinaldo anual</label><input id="salida-aguinaldo-dias" type="number" step="0.01" min="0" value="15" class="w-full border border-slate-300 rounded-lg p-2" oninput="calcularSalida()"></div>
+                            <div class="input-focus-ring rounded-lg border border-transparent p-1"><label class="block font-medium text-slate-700 mb-1">Vacaciones ya disfrutadas en el año</label><input id="salida-vac-disfrutadas" type="number" step="0.01" min="0" value="0" class="w-full border border-slate-300 rounded-lg p-2" oninput="calcularSalida()"></div>
+                            <div class="input-focus-ring rounded-lg border border-transparent p-1"><label class="block font-medium text-slate-700 mb-1">Prima vacacional (%)</label><input id="salida-prima-vac-pct" type="number" step="0.01" min="0" value="25" class="w-full border border-slate-300 rounded-lg p-2" oninput="calcularSalida()"></div>
+                            <div class="input-focus-ring rounded-lg border border-transparent p-1"><label class="block font-medium text-slate-700 mb-1">PTU pendiente ($)</label><input id="salida-ptu" type="number" step="0.01" min="0" value="0" class="w-full border border-slate-300 rounded-lg p-2" oninput="calcularSalida()"></div>
+                            <div class="input-focus-ring rounded-lg border border-transparent p-1 sm:col-span-2"><label class="block font-medium text-slate-700 mb-1">Domingos con prima dominical pendientes</label><input id="salida-domingos" type="number" step="1" min="0" value="0" class="w-full border border-slate-300 rounded-lg p-2" oninput="calcularSalida()"></div>
+                        </div>
+                        <div class="mt-4 p-3 rounded-lg bg-blue-50 border border-blue-200 text-[10px] text-blue-900 leading-relaxed"><b>Según la guía:</b> aguinaldo proporcional, vacaciones proporcionales, prima vacacional y salarios devengados forman la base del finiquito. Las exenciones se aplican conforme a los topes indicados por la guía.</div>
+                    </div>
+
+                    <div id="panel-liquidacion-opciones" class="section-card p-4 sm:p-5">
+                        <div class="section-head"><div><div class="eyebrow">3. Indemnizaciones</div><h3 class="text-sm font-bold text-slate-800 mt-1">Componentes de liquidación</h3></div><span class="read-only-chip" id="salida-legal-chip">Configura el supuesto</span></div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4 text-xs">
+                            <label class="flex items-start gap-3 p-3 rounded-lg border border-slate-200 bg-slate-50 cursor-pointer"><input id="salida-incluir-90" type="checkbox" class="mt-1 rounded text-amber-600 focus:ring-amber-500" checked onchange="calcularSalida()"><span><b class="block">Indemnización constitucional</b><span class="text-[10px] text-slate-500">90 días de SDI</span></span></label>
+                            <label class="flex items-start gap-3 p-3 rounded-lg border border-slate-200 bg-slate-50 cursor-pointer"><input id="salida-incluir-20" type="checkbox" class="mt-1 rounded text-amber-600 focus:ring-amber-500" onchange="calcularSalida()"><span><b class="block">20 días por año</b><span class="text-[10px] text-slate-500">Act. 50 LFT; depende del supuesto</span></span></label>
+                            <label class="flex items-start gap-3 p-3 rounded-lg border border-slate-200 bg-slate-50 cursor-pointer sm:col-span-2"><input id="salida-incluir-prima" type="checkbox" class="mt-1 rounded text-amber-600 focus:ring-amber-500" checked onchange="calcularSalida()"><span><b class="block">Prima de antigüedad</b><span id="salida-prima-regla" class="text-[10px] text-slate-500">12 días por año con el tope legal de salario indicado por la guía</span></span></label>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3 text-xs">
+                            <div><label class="block font-medium text-slate-700 mb-1">SDI para liquidación ($)</label><input id="salida-sdi" type="number" step="0.01" min="0" class="w-full border border-slate-300 rounded-lg p-2 font-semibold" oninput="calcularSalida()"><div class="text-[9px] text-slate-400 mt-1">Por defecto: salario diario × factor de integración; puedes capturarlo.</div></div>
+                            <div><label class="block font-medium text-slate-700 mb-1">Último sueldo mensual ordinario ISR ($)</label><input id="salida-ultimo-sueldo" type="number" step="0.01" min="0" class="w-full border border-slate-300 rounded-lg p-2" oninput="calcularSalida()"><div class="text-[9px] text-slate-400 mt-1">Se usa para el tratamiento fiscal del pago por separación.</div></div>
+                        </div>
+                        <div class="mt-3 subtle-note rounded-lg p-3 text-[10px] leading-relaxed"><b>Según la guía:</b> la liquidación utiliza SDI; la indemnización constitucional se presenta como 90 días y los 20 días por año se activan solo cuando procede. La prima de antigüedad es de 12 días por año y tiene un tope de dos salarios mínimos para su base.</div>
+                    </div>
+
+                    <div class="section-card p-4 sm:p-5">
+                        <div class="section-head"><div><div class="eyebrow">4. ISR</div><h3 class="text-sm font-bold text-slate-800 mt-1">Tratamiento fiscal de la salida</h3></div><span class="read-only-chip">LISR Arts. 93, 95 y 174</span></div>
+                        <label class="flex items-start gap-3 p-3 mt-4 rounded-lg border border-slate-200 bg-white cursor-pointer"><input id="salida-usar-art174" type="checkbox" class="mt-1 rounded text-blue-600 focus:ring-blue-500" checked onchange="calcularSalida()"><span><b class="block text-xs">Aplicar Art. 174 a prestaciones gravadas</b><span class="text-[10px] text-slate-500">La guía lo presenta como opción de tasa efectiva para prestaciones gravadas del finiquito.</span></span></label>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-5 space-y-6">
+                    <div class="section-card p-4 sm:p-5 lg:sticky lg:top-24">
+                        <div class="section-head"><div><div class="eyebrow">Resumen dinámico</div><h3 id="salida-resumen-titulo" class="text-base font-bold text-slate-800 mt-1">Finiquito</h3></div><span id="salida-badge" class="read-only-chip bg-blue-50 text-blue-700">Derechos devengados</span></div>
+                        <div class="kpi-grid mt-4">
+                            <div class="kpi-card primary"><div class="kpi-label">Finiquito</div><div id="salida-kpi-finiquito" class="kpi-value">$0.00</div></div>
+                            <div class="kpi-card warn"><div class="kpi-label">Indemnizaciones</div><div id="salida-kpi-indemnizacion" class="kpi-value">$0.00</div></div>
+                            <div class="kpi-card rose"><div class="kpi-label">ISR estimado</div><div id="salida-kpi-isr" class="kpi-value">$0.00</div></div>
+                            <div class="kpi-card success"><div class="kpi-label">Neto salida</div><div id="salida-kpi-neto" class="kpi-value">$0.00</div></div>
+                        </div>
+                        <div class="mt-5 flex items-center gap-2 text-[10px] font-bold text-slate-500"><div id="salida-flow-1" class="flow-step current"><span class="flow-dot">1</span><span>Derechos</span></div><div class="flow-line"></div><div id="salida-flow-2" class="flow-step"><span class="flow-dot">2</span><span>Indemn.</span></div><div class="flow-line"></div><div id="salida-flow-3" class="flow-step"><span class="flow-dot">3</span><span>ISR</span></div><div class="flow-line"></div><div id="salida-flow-4" class="flow-step"><span class="flow-dot">4</span><span>Neto</span></div></div>
+                        <div class="mt-5 divide-y divide-slate-100">
+                            <div class="formula-row"><span class="text-slate-600">Salarios devengados</span><span id="salida-det-salarios" class="font-mono font-semibold">$0.00</span></div>
+                            <div class="formula-row"><span class="text-slate-600">Aguinaldo proporcional</span><span id="salida-det-agui" class="font-mono font-semibold">$0.00</span></div>
+                            <div class="formula-row"><span class="text-slate-600">Vacaciones proporcionales</span><span id="salida-det-vac" class="font-mono font-semibold">$0.00</span></div>
+                            <div class="formula-row"><span class="text-slate-600">Prima vacacional</span><span id="salida-det-prima" class="font-mono font-semibold">$0.00</span></div>
+                            <div class="formula-row"><span class="text-slate-600">PTU / Prima dominical</span><span id="salida-det-otros" class="font-mono font-semibold">$0.00</span></div>
+                            <div class="formula-row font-bold"><span>Total finiquito</span><span id="salida-det-total-finiquito" class="font-mono text-blue-700">$0.00</span></div>
+                        </div>
+                        <div id="salida-det-liquidacion-wrap" class="mt-4 pt-4 border-t border-slate-200"><div class="text-[10px] uppercase font-extrabold text-amber-800 mb-2">Liquidación</div><div class="formula-row"><span class="text-slate-600">90 días constitucionales</span><span id="salida-det-90" class="font-mono font-semibold">$0.00</span></div><div class="formula-row"><span class="text-slate-600">20 días por año</span><span id="salida-det-20" class="font-mono font-semibold">$0.00</span></div><div class="formula-row"><span class="text-slate-600">Prima de antigüedad</span><span id="salida-det-antig" class="font-mono font-semibold">$0.00</span></div><div class="formula-row font-bold"><span>Total indemnizaciones</span><span id="salida-det-total-indem" class="font-mono text-amber-700">$0.00</span></div></div>
+                        <div class="mt-4 pt-4 border-t border-slate-200"><div class="formula-row"><span class="text-slate-600">Exento finiquito</span><span id="salida-det-exento-finiquito" class="font-mono">$0.00</span></div><div class="formula-row"><span class="text-slate-600">Gravado finiquito</span><span id="salida-det-gravado-finiquito" class="font-mono">$0.00</span></div><div class="formula-row"><span class="text-slate-600">Exento separación</span><span id="salida-det-exento-sep" class="font-mono">$0.00</span></div><div class="formula-row"><span class="text-slate-600">Gravado separación</span><span id="salida-det-gravado-sep" class="font-mono">$0.00</span></div><div class="formula-row font-bold"><span>ISR total estimado</span><span id="salida-det-isr" class="font-mono text-rose-700">$0.00</span></div></div>
+                        <div class="mt-5 bg-slate-900 text-white rounded-xl p-4 text-center"><div class="text-[10px] uppercase tracking-[.12em] text-slate-300 font-extrabold">Neto estimado a pagar</div><div id="salida-neto-grande" class="font-mono text-2xl sm:text-3xl font-black mt-1">$0.00</div><div id="salida-neto-letras" class="text-[9px] text-slate-400 uppercase mt-1">CERO PESOS 00/100 M.N.</div></div>
+                        <div class="grid grid-cols-2 gap-2 mt-4 sticky-action"><button type="button" onclick="exportarSalidaExcel()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold py-2.5 rounded-lg flex items-center justify-center"><i data-lucide="file-spreadsheet" class="w-4 h-4 mr-1.5"></i> Excel salida</button><button type="button" onclick="imprimirSalida()" class="bg-slate-800 hover:bg-slate-900 text-white text-xs font-semibold py-2.5 rounded-lg flex items-center justify-center"><i data-lucide="printer" class="w-4 h-4 mr-1.5"></i> Imprimir salida</button></div>
+                    </div>
+
+                    <div class="section-card p-4 sm:p-5"><div class="section-head"><div><div class="eyebrow">Auditoría visible</div><h3 class="text-sm font-bold text-slate-800 mt-1">Trazabilidad del cálculo</h3></div><span class="read-only-chip">Paso a paso</span></div><div class="text-[10px] mt-4 text-slate-600"><div class="formula-row"><span>Días laborados en el año</span><span id="audit-salida-dias-anio" class="font-mono">0</span></div><div class="formula-row"><span>Días vacaciones anuales aplicables</span><span id="audit-salida-vac-anuales" class="font-mono">0</span></div><div class="formula-row"><span>Días vacaciones proporcionales</span><span id="audit-salida-vac-prop" class="font-mono">0.00</span></div><div class="formula-row"><span>SDI usado</span><span id="audit-salida-sdi" class="font-mono">$0.00</span></div><div class="formula-row"><span>Tope salarial prima de antigüedad</span><span id="audit-salida-tope-antig" class="font-mono">$0.00</span></div><div class="formula-row"><span>Tasa ISR separación</span><span id="audit-salida-tasa-sep" class="font-mono">0.00%</span></div><div class="formula-row"><span>Método ISR prestaciones</span><span id="audit-salida-metodo-prest" class="font-mono">Art. 174</span></div></div><div class="subtle-note rounded-lg p-3 mt-3 text-[9px] leading-relaxed">Este módulo es deliberadamente transparente: los conceptos de indemnización se activan de forma explícita para que el cálculo no los mezcle automáticamente con una nómina ordinaria.</div></div>
+                </div>
+            </div>
+        </section>
+
     </main>
+
+    <footer class="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 pb-6 text-[10px] text-slate-400 text-center">
+        Nómina MX 2026 · versión profesional <span class="font-mono">1.3.0</span> · Cálculo local en el navegador · Módulo separado de Finiquito/Liquidación · Sin timbrado fiscal.
+    </footer>
 
     <!-- JAVASCRIPT ENGINE -->
     <script>
@@ -931,7 +1097,9 @@
             UMA: {
                 diario: 117.31,
                 mensual: 3566.22,
-                anual: 42794.64
+                anual: 42794.64,
+                diarioAnterior: 113.14,
+                mensualAnterior: 3439.46
             },
             SMI: {
                 general: 315.04,
@@ -1033,18 +1201,74 @@
             }
         };
 
+        const APP_VERSION = '1.3.0-profesional';
+
+        function round2(value) {
+            return Math.round((Number(value) + Number.EPSILON) * 100) / 100;
+        }
+
+        function num(id, fallback = 0) {
+            const el = document.getElementById(id);
+            if (!el) return fallback;
+            const raw = String(el.value ?? '').trim();
+            if (raw === '') return fallback;
+            const n = Number(raw);
+            return Number.isFinite(n) ? n : fallback;
+        }
+
+        function nonNegative(id, fallback = 0) {
+            return Math.max(0, num(id, fallback));
+        }
+
+        function parseDateInput(value) {
+            const m = String(value || '').match(/^(\d{4})-(\d{2})-(\d{2})$/);
+            if (!m) return null;
+            const d = new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
+            if (d.getFullYear() !== Number(m[1]) || d.getMonth() !== Number(m[2]) - 1 || d.getDate() !== Number(m[3])) return null;
+            return d;
+        }
+
+        function getLocalDateISO(date = new Date()) {
+            const y = date.getFullYear();
+            const m = String(date.getMonth() + 1).padStart(2, '0');
+            const d = String(date.getDate()).padStart(2, '0');
+            return `${y}-${m}-${d}`;
+        }
+
+        function escapeHtml(value) {
+            const map = {'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;',"\"":'&quot;'};
+            return String(value ?? '').replace(/[&<>'"]/g, ch => map[ch]);
+        }
+
+        function getUMAFiscalVigente() {
+            const fecha = parseDateInput(document.getElementById('nom-fecha-fin')?.value);
+            if (fecha && fecha.getFullYear() === 2026 && fecha.getMonth() === 0) return CONFIG_NOMINA_2026.UMA.diarioAnterior;
+            return CONFIG_NOMINA_2026.UMA.diario;
+        }
+
+        function getUMAMensualFiscalVigente() {
+            const fecha = parseDateInput(document.getElementById('nom-fecha-fin')?.value);
+            if (fecha && fecha.getFullYear() === 2026 && fecha.getMonth() === 0) return CONFIG_NOMINA_2026.UMA.mensualAnterior;
+            return CONFIG_NOMINA_2026.UMA.mensual;
+        }
+
+        function actualizarIndicadoresUI() {
+            document.getElementById('lbl-uma').innerText = fmtMXN(getUMAFiscalVigente());
+            document.getElementById('lbl-smi').innerText = fmtMXN(obtenerSalarioMinimoZona());
+            document.getElementById('lbl-umi').innerText = fmtMXN(CONFIG_NOMINA_2026.UMI);
+        }
+
         function fmtMXN(val) {
             return new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(val || 0);
         }
 
         function switchTab(tabId) {
+            const tabs = ['tab-general','tab-percepciones','tab-deducciones','tab-auditoria','tab-config'];
+            if (!tabs.includes(tabId)) return;
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            ['tab-general', 'tab-percepciones', 'tab-deducciones', 'tab-auditoria', 'tab-config'].forEach(id => {
-                document.getElementById(id).classList.add('hidden');
-            });
-
-            document.getElementById(tabId).classList.remove('hidden');
-            document.getElementById('btn-' + tabId).classList.add('active');
+            tabs.forEach(id => document.getElementById(id)?.classList.add('hidden'));
+            document.getElementById(tabId)?.classList.remove('hidden');
+            document.getElementById('btn-' + tabId)?.classList.add('active');
         }
 
         function validateRFC(rfc) {
@@ -1058,47 +1282,36 @@
         }
 
         function validarInputsCFDI() {
-            const rfcE = document.getElementById('emp-rfc-emisor').value.trim();
-            const rfcR = document.getElementById('tra-rfc').value.trim();
-            const curpR = document.getElementById('tra-curp').value.trim();
-            const cpE = document.getElementById('emp-cp-expedicion').value.trim();
-            const cpR = document.getElementById('tra-cp').value.trim();
+            const rfcE = (document.getElementById('emp-rfc-emisor')?.value || '').trim().toUpperCase();
+            const rfcR = (document.getElementById('tra-rfc')?.value || '').trim().toUpperCase();
+            const curpR = (document.getElementById('tra-curp')?.value || '').trim().toUpperCase();
+            const cpE = (document.getElementById('emp-cp-expedicion')?.value || '').trim();
+            const cpR = (document.getElementById('tra-cp')?.value || '').trim();
+            const nombreE = (document.getElementById('emp-nombre-emisor')?.value || '').trim();
+            const nombreR = (document.getElementById('tra-nombre')?.value || '').trim();
 
-            const lblRfcE = document.getElementById('val-rfc-emisor');
-            if(validateRFC(rfcE)) {
-                lblRfcE.innerText = "✓ RFC Emisor Válido";
-                lblRfcE.className = "text-[10px] font-semibold text-emerald-600 mt-1 block";
-            } else {
-                lblRfcE.innerText = "✕ RFC Inválido (Ej: GIM850101XYZ)";
-                lblRfcE.className = "text-[10px] font-semibold text-rose-600 mt-1 block";
-            }
+            const setValidation = (id, ok, good, bad) => {
+                const el = document.getElementById(id);
+                if (!el) return;
+                el.innerText = ok ? good : bad;
+                el.className = `text-[10px] font-semibold mt-1 block ${ok ? 'text-emerald-600' : 'text-rose-600'}`;
+            };
+            setValidation('val-rfc-emisor', validateRFC(rfcE), '✓ RFC Emisor Válido', '✕ RFC Inválido');
+            setValidation('val-rfc-receptor', validateRFC(rfcR), '✓ RFC Trabajador Válido', '✕ RFC Inválido');
+            setValidation('val-curp-receptor', validateCURP(curpR), '✓ CURP con estructura válida', '✕ CURP inválida');
+            setValidation('val-cp-emisor', /^\d{5}$/.test(cpE), '✓ C.P. Válido', '✕ C.P. Debe ser 5 dígitos');
+            setValidation('val-cp-receptor', /^\d{5}$/.test(cpR), '✓ C.P. Válido', '✕ C.P. Debe ser 5 dígitos');
 
-            const lblRfcR = document.getElementById('val-rfc-receptor');
-            if(validateRFC(rfcR)) {
-                lblRfcR.innerText = "✓ RFC Trabajador Válido";
-                lblRfcR.className = "text-[10px] font-semibold text-emerald-600 mt-1 block";
-            } else {
-                lblRfcR.innerText = "✕ RFC Inválido (Ej: GARM900412AB3)";
-                lblRfcR.className = "text-[10px] font-semibold text-rose-600 mt-1 block";
+            const ini = parseDateInput(document.getElementById('nom-fecha-ini')?.value);
+            const fin = parseDateInput(document.getElementById('nom-fecha-fin')?.value);
+            const periodoValido = !!ini && !!fin && ini <= fin;
+            const requiredOk = validateRFC(rfcE) && validateRFC(rfcR) && validateCURP(curpR) && /^\d{5}$/.test(cpE) && /^\d{5}$/.test(cpR) && !!nombreE && !!nombreR && periodoValido;
+            const status = document.getElementById('audit-status');
+            if (status) {
+                status.textContent = requiredOk ? 'Datos base válidos' : 'Revisar datos';
+                status.className = `text-[10px] font-semibold px-2 py-0.5 rounded ${requiredOk ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'}`;
             }
-
-            const lblCurpR = document.getElementById('val-curp-receptor');
-            if(validateCURP(curpR)) {
-                lblCurpR.innerText = "✓ CURP Válida (18 Caracteres)";
-                lblCurpR.className = "text-[10px] font-semibold text-emerald-600 mt-1 block";
-            } else {
-                lblCurpR.innerText = "✕ CURP Inválida";
-                lblCurpR.className = "text-[10px] font-semibold text-rose-600 mt-1 block";
-            }
-
-            const lblCpE = document.getElementById('val-cp-emisor');
-            if(/^\d{5}$/.test(cpE)) {
-                lblCpE.innerText = "✓ C.P. Válido";
-                lblCpE.className = "text-[10px] font-semibold text-emerald-600 mt-1 block";
-            } else {
-                lblCpE.innerText = "✕ C.P. Debe ser 5 dígitos";
-                lblCpE.className = "text-[10px] font-semibold text-rose-600 mt-1 block";
-            }
+            return requiredOk;
         }
 
         /**
@@ -1121,38 +1334,32 @@
         }
 
         function alCambiarFechas() {
-            const fIngreso = new Date(document.getElementById('tra-fecha-ingreso').value);
-            const fFin = new Date(document.getElementById('nom-fecha-fin').value);
-
-            if (isNaN(fIngreso) || isNaN(fFin) || fIngreso > fFin) {
-                document.getElementById('txt-antiguedad-humana').innerText = "Fecha inválida";
-                document.getElementById('txt-antiguedad-sat').innerText = "P0D";
+            const fIngreso = parseDateInput(document.getElementById('tra-fecha-ingreso')?.value);
+            const fFin = parseDateInput(document.getElementById('nom-fecha-fin')?.value);
+            if (!fIngreso || !fFin || fIngreso > fFin) {
+                document.getElementById('txt-antiguedad-humana').innerText = 'Fecha inválida';
+                document.getElementById('txt-antiguedad-sat').innerText = 'P0D';
+                validarInputsCFDI();
                 return;
             }
 
             let years = fFin.getFullYear() - fIngreso.getFullYear();
             let months = fFin.getMonth() - fIngreso.getMonth();
             let days = fFin.getDate() - fIngreso.getDate();
-
             if (days < 0) {
                 months--;
-                const lastMonth = new Date(fFin.getFullYear(), fFin.getMonth(), 0);
-                days += lastMonth.getDate();
+                days += new Date(fFin.getFullYear(), fFin.getMonth(), 0).getDate();
             }
-            if (months < 0) {
-                years--;
-                months += 12;
-            }
+            if (months < 0) { years--; months += 12; }
 
             document.getElementById('txt-antiguedad-humana').innerText = `${years} años, ${months} meses, ${days} días`;
             document.getElementById('txt-antiguedad-sat').innerText = `P${years}Y${months}M${days}D`;
+            document.getElementById('cfg-dias-vac-lft').value = calcularVacacionesLFT(Math.max(0, years));
 
-            // Auto update vacation days field
-            let diasVac = calcularVacacionesLFT(years);
-            document.getElementById('cfg-dias-vac-lft').value = diasVac;
-
+            actualizarIndicadoresUI();
             calcularSBC();
             calcularNomina();
+            validarInputsCFDI();
         }
 
         function obtenerSalarioMinimoZona() {
@@ -1196,24 +1403,20 @@
         }
 
         function calcularSBC() {
-            const sd = parseFloat(document.getElementById('tra-salario-diario').value) || 0;
-            const diasVac = parseFloat(document.getElementById('cfg-dias-vac-lft').value) || 12;
-            const diasAguinaldo = parseFloat(document.getElementById('sbc-dias-aguinaldo').value) || 15;
-            const pctPrimaVac = (parseFloat(document.getElementById('sbc-pct-prima-vac').value) || 25) / 100;
-
-            let factorIntegracion = 1 + (diasAguinaldo / 365) + ((diasVac * pctPrimaVac) / 365);
+            const sd = nonNegative('tra-salario-diario');
+            const diasVac = nonNegative('cfg-dias-vac-lft', 12);
+            const diasAguinaldo = nonNegative('sbc-dias-aguinaldo', 15);
+            const pctPrimaVac = nonNegative('sbc-pct-prima-vac', 25) / 100;
+            const factorIntegracion = 1 + (diasAguinaldo / 365) + ((diasVac * pctPrimaVac) / 365);
             document.getElementById('txt-factor-integracion').value = factorIntegracion.toFixed(4);
 
             let sbc = sd * factorIntegracion;
-
-            // Ceil and Floor boundaries
-            const smiGral = obtenerSalarioMinimoZona();
-            const tope25Uma = CONFIG_NOMINA_2026.UMA.diario * 25;
-
-            if (sbc < smiGral && sbc > 0) sbc = smiGral;
+            const smiZona = obtenerSalarioMinimoZona();
+            const tope25Uma = getUMAIMSSVigente() * 25;
+            if (sbc > 0 && sbc < smiZona) sbc = smiZona;
             if (sbc > tope25Uma) sbc = tope25Uma;
-
-            document.getElementById('tra-sbc').value = sbc.toFixed(2);
+            document.getElementById('tra-sbc').value = round2(sbc).toFixed(2);
+            actualizarIndicadoresUI();
         }
 
         function calcularISR(baseGravable, periodicidad, opciones = {}) {
@@ -1248,14 +1451,14 @@
                 const fechaFin = document.getElementById('nom-fecha-fin')?.value || '';
                 const esEnero2026 = /^2026-01-/.test(fechaFin);
                 const porcentajeUma = esEnero2026 ? CONFIG_NOMINA_2026.subsidio2026.porcentajeUmaEnero : CONFIG_NOMINA_2026.subsidio2026.porcentajeUma;
-                const umaMensualSubsidio = esEnero2026 ? CONFIG_NOMINA_2026.subsidio2026.umaMensualEnero : CONFIG_NOMINA_2026.UMA.mensual;
+                const umaMensualSubsidio = esEnero2026 ? CONFIG_NOMINA_2026.subsidio2026.umaMensualEnero : getUMAMensualFiscalVigente();
                 const limiteMensual = CONFIG_NOMINA_2026.subsidio2026.limiteIngresoMensual;
                 if (document.getElementById('chk-subsidio').checked && baseMensualAcumulada <= limiteMensual) {
                     subsidio = umaMensualSubsidio * porcentajeUma;
                 }
 
                 // Retención acumulada: impuesto neto del mes menos lo ya retenido en pagos anteriores.
-                const retenidoPrevio = historial.reduce((a, x) => a + Number(x.isrRetenido || 0), 0);
+                const retenidoPrevio = historial.reduce((a, x) => a + Number(x.isrOrdinarioRetenido ?? x.isrRetenido ?? 0), 0);
                 const netoMensual = Math.max(0, isrCausado - subsidio);
                 const isrRetenido = Math.max(0, netoMensual - retenidoPrevio);
                 const subsidioPrevio = historial.reduce((a, x) => a + Number(x.subsidio || 0), 0);
@@ -1303,7 +1506,7 @@
                 const fechaFin = document.getElementById('nom-fecha-fin')?.value || '';
                 const esEnero2026 = /^2026-01-/.test(fechaFin);
                 const porcentajeUma = esEnero2026 ? CONFIG_NOMINA_2026.subsidio2026.porcentajeUmaEnero : CONFIG_NOMINA_2026.subsidio2026.porcentajeUma;
-                const umaMensualSubsidio = esEnero2026 ? CONFIG_NOMINA_2026.subsidio2026.umaMensualEnero : CONFIG_NOMINA_2026.UMA.mensual;
+                const umaMensualSubsidio = esEnero2026 ? CONFIG_NOMINA_2026.subsidio2026.umaMensualEnero : getUMAMensualFiscalVigente();
                 const limitePeriodo = (limiteMensual / 30.4) * factorDias;
                 if (usaMensualProrrateada) {
                     if (baseISR <= limiteMensual) subsidio = (umaMensualSubsidio * porcentajeUma) / factorProrrateo;
@@ -1327,100 +1530,141 @@
             return { impuesto, tasa, mensualizada, impuestoOrdinario: ordinario.isrCausado, impuestoConExtra: conExtra.isrCausado };
         }
 
-        function calcularISRSeparacionArt174(montoGravado, sd) {
-            if (montoGravado <= 0) return { isrRetenidoIndem: 0, tasaEfectivaPct: 0 };
+        /**
+         * Retención por pagos por separación.
+         * Art. 95 LISR: separa una cantidad igual al último sueldo mensual ordinario
+         * y al excedente aplica la tasa derivada del impuesto de ese sueldo.
+         * Art. 96 LISR: para la retención, esa tasa se obtiene como impuesto del
+         * último sueldo mensual ordinario / dicho sueldo; si el pago es inferior,
+         * se utiliza la tarifa ordinaria.
+         *
+         * El último sueldo mensual puede capturarse manualmente. Si se deja vacío,
+         * se estima como salario diario × 30.4 para mantener consistencia con la
+         * mensualización utilizada en esta aplicación.
+         */
+        function calcularISRSeparacionArt95(montoGravado, sd) {
+            if (montoGravado <= 0) {
+                return {
+                    isrRetenidoIndem: 0,
+                    tasaEfectivaPct: 0,
+                    ultimoSueldoMensual: 0,
+                    impuestoUltimoSueldo: 0,
+                    parteAcumulable: 0,
+                    parteNoAcumulable: 0,
+                    metodo: 'Sin retención'
+                };
+            }
 
-            let ultimoSueldoMensual = sd * 30.4;
-            let resUsmoBase = calcularISR(ultimoSueldoMensual, 'mensual');
+            const inputUltimo = document.getElementById('indem-ultimo-sueldo');
+            const capturado = inputUltimo ? Number(String(inputUltimo.value || '').trim()) : 0;
+            const ultimoSueldoMensual = capturado > 0 ? capturado : Math.max(0, sd * 30.4);
 
-            // Proporción mensualizada de indemnización
-            let anios = parseFloat(document.getElementById('indem-anios').value) || 1;
-            let fraccionAnualizada = montoGravado / Math.max(1, anios);
+            if (ultimoSueldoMensual <= 0) {
+                const fallback = calcularISR(montoGravado, 'mensual', { metodo: 'periodo' });
+                return {
+                    isrRetenidoIndem: round2(fallback.isrCausado),
+                    tasaEfectivaPct: 0,
+                    ultimoSueldoMensual: 0,
+                    impuestoUltimoSueldo: 0,
+                    parteAcumulable: round2(montoGravado),
+                    parteNoAcumulable: 0,
+                    metodo: 'Tarifa mensual (sin sueldo ordinario)'
+                };
+            }
 
-            let resAcumulado = calcularISR(ultimoSueldoMensual + fraccionAnualizada, 'mensual');
+            // Si el pago por separación es inferior al último sueldo ordinario,
+            // Art. 96 manda aplicar la tarifa al propio pago.
+            if (montoGravado < ultimoSueldoMensual) {
+                const resMenor = calcularISR(montoGravado, 'mensual', { metodo: 'periodo' });
+                return {
+                    isrRetenidoIndem: round2(resMenor.isrCausado),
+                    tasaEfectivaPct: montoGravado > 0 ? (resMenor.isrCausado / montoGravado) * 100 : 0,
+                    ultimoSueldoMensual: round2(ultimoSueldoMensual),
+                    impuestoUltimoSueldo: 0,
+                    parteAcumulable: round2(montoGravado),
+                    parteNoAcumulable: 0,
+                    metodo: 'Tarifa mensual por pago inferior al sueldo ordinario'
+                };
+            }
 
-            let difImpuesto = Math.max(0, resAcumulado.isrCausado - resUsmoBase.isrCausado);
-            let tasaEfectiva = fraccionAnualizada > 0 ? (difImpuesto / fraccionAnualizada) : 0;
+            const resUltimoSueldo = calcularISR(ultimoSueldoMensual, 'mensual', { metodo: 'periodo' });
+            const tasaEfectiva = ultimoSueldoMensual > 0 ? resUltimoSueldo.isrCausado / ultimoSueldoMensual : 0;
+            const isrRetenidoIndem = montoGravado * tasaEfectiva;
 
-            let isrRetenidoIndem = montoGravado * tasaEfectiva;
+            return {
+                isrRetenidoIndem: round2(isrRetenidoIndem),
+                tasaEfectivaPct: tasaEfectiva * 100,
+                ultimoSueldoMensual: round2(ultimoSueldoMensual),
+                impuestoUltimoSueldo: round2(resUltimoSueldo.isrCausado),
+                parteAcumulable: round2(Math.min(montoGravado, ultimoSueldoMensual)),
+                parteNoAcumulable: round2(Math.max(0, montoGravado - ultimoSueldoMensual)),
+                metodo: 'Art. 95/96 LISR'
+            };
+        }
 
-            return { isrRetenidoIndem, tasaEfectivaPct: tasaEfectiva * 100 };
+        function aniosServicioParaExencion(valor) {
+            const years = Math.max(0, Number(valor) || 0);
+            const completos = Math.floor(years);
+            const fraccion = years - completos;
+            return completos + (fraccion > 0.5 ? 1 : 0);
         }
 
         function getUMAIMSSVigente() {
-            const fechaFin = document.getElementById('nom-fecha-fin')?.value || '';
-            // La UMA 2025 ($113.14) continúa vigente en enero de 2026;
-            // la UMA 2026 ($117.31) entra en vigor el 1 de febrero de 2026.
-            return /^2026-01-/.test(fechaFin) ? 113.14 : CONFIG_NOMINA_2026.UMA.diario;
+            return getUMAFiscalVigente();
         }
 
         function calcularIMSS(sbc, diasCotizados, claseRiesgo, esSalarioMinimo) {
-            if (!document.getElementById('chk-imss').checked || diasCotizados <= 0) {
+            if (!document.getElementById('chk-imss')?.checked || diasCotizados <= 0 || sbc <= 0) {
                 return { obrero: 0, patronal: 0, desglosePatronal: { cyvPatronal: 0, infonavitPatronal: 0, resto: 0 }, vecesUma: 0, tasaCEAV: 0 };
             }
 
             const uma = getUMAIMSSVigente();
-            // Art. 28 LSS: SBC máximo = 25 UMA.
-            const sbcCotizacion = Math.min(sbc, uma * 25);
-            sbc = sbcCotizacion;
-            
-            // Cuotas Obrero
-            let eymExcedenteObrero = Math.max(0, sbc - (3 * uma)) * 0.004 * diasCotizados;
-            let eymDineroObrero = sbc * 0.0025 * diasCotizados;
-            let eymPensionadosObrero = sbc * 0.00375 * diasCotizados;
-            let invVidaObrero = sbc * 0.00625 * diasCotizados;
-            let cesantiaObrero = sbc * 0.01125 * diasCotizados;
+            const smiZona = obtenerSalarioMinimoZona();
+            const sbcCotizacion = Math.min(Math.max(sbc, smiZona), uma * 25);
+            const dias = Math.max(0, Number(diasCotizados) || 0);
 
+            const eymExcedenteObrero = Math.max(0, sbcCotizacion - (3 * uma)) * 0.004 * dias;
+            const eymDineroObrero = sbcCotizacion * 0.0025 * dias;
+            const eymPensionadosObrero = sbcCotizacion * 0.00375 * dias;
+            const invVidaObrero = sbcCotizacion * 0.00625 * dias;
+            const cesantiaObrero = sbcCotizacion * 0.01125 * dias;
             let totalObrero = eymExcedenteObrero + eymDineroObrero + eymPensionadosObrero + invVidaObrero + cesantiaObrero;
+            if (esSalarioMinimo) totalObrero = 0;
 
-            // Protection Art. 36 LSS: Si gana salario mínimo, el patrón paga la cuota obrera
-            if (esSalarioMinimo) {
-                totalObrero = 0;
+            const eymFijaPatronal = uma * 0.2040 * dias;
+            const eymExcedentePatronal = Math.max(0, sbcCotizacion - (3 * uma)) * 0.011 * dias;
+            const eymDineroPatronal = sbcCotizacion * 0.007 * dias;
+            const eymPensionadosPatronal = sbcCotizacion * 0.0105 * dias;
+            const invVidaPatronal = sbcCotizacion * 0.0175 * dias;
+            const guarderiasPatronal = sbcCotizacion * 0.0100 * dias;
+            const retiroPatronal = sbcCotizacion * 0.0200 * dias;
+            const infonavitPatronal = sbcCotizacion * 0.0500 * dias;
+            const primasRiesgo = { '1':0.0054355, '2':0.0113065, '3':0.0259840, '4':0.0465325, '5':0.0758875 };
+            const riesgoPatronal = sbcCotizacion * (primasRiesgo[String(claseRiesgo)] ?? primasRiesgo['1']) * dias;
+
+            const vecesUma = sbcCotizacion / uma;
+            let tasaCEAV;
+            if (sbcCotizacion <= smiZona + 0.005) {
+                tasaCEAV = 0.03150;
+            } else {
+                const tramoCEAV = CONFIG_NOMINA_2026.cesantiaVejezPatronal.find(c => vecesUma <= c.maxUma) || CONFIG_NOMINA_2026.cesantiaVejezPatronal.at(-1);
+                tasaCEAV = tramoCEAV?.tasa ?? 0.07513;
             }
-
-            // Cuotas Patronales
-            let eymFijaPatronal = uma * 0.2040 * diasCotizados;
-            let eymExcedentePatronal = Math.max(0, sbc - (3 * uma)) * 0.011 * diasCotizados;
-            let eymDineroPatronal = sbc * 0.007 * diasCotizados;
-            let eymPensionadosPatronal = sbc * 0.0105 * diasCotizados;
-            let invVidaPatronal = sbc * 0.0175 * diasCotizados;
-            let guarderiasPatronal = sbc * 0.0100 * diasCotizados;
-            let retiroPatronal = sbc * 0.0200 * diasCotizados;
-            let infonavitPatronal = sbc * 0.0500 * diasCotizados;
-
-            // Riesgo de Trabajo
-            let primaRiesgo = 0.0113065;
-            if (claseRiesgo === '1') primaRiesgo = 0.0054355;
-            if (claseRiesgo === '2') primaRiesgo = 0.0113065;
-            if (claseRiesgo === '3') primaRiesgo = 0.0259840;
-            if (claseRiesgo === '4') primaRiesgo = 0.0465325;
-            if (claseRiesgo === '5') primaRiesgo = 0.0758875;
-            let riesgoPatronal = sbc * primaRiesgo * diasCotizados;
-
-            // Cesantía y Vejez Patronal (Tabla 2026)
-            let vecesUma = sbc / uma;
-            let tramoCEAV = CONFIG_NOMINA_2026.cesantiaVejezPatronal.find(c => vecesUma <= c.maxUma);
-            if (!tramoCEAV) tramoCEAV = CONFIG_NOMINA_2026.cesantiaVejezPatronal[CONFIG_NOMINA_2026.cesantiaVejezPatronal.length - 1];
-            
-            let tasaCEAV = tramoCEAV.tasa;
-            let cyvPatronal = sbc * tasaCEAV * diasCotizados;
-
-            let totalPatronal = eymFijaPatronal + eymExcedentePatronal + eymDineroPatronal + eymPensionadosPatronal +
-                                invVidaPatronal + guarderiasPatronal + retiroPatronal + infonavitPatronal + riesgoPatronal + cyvPatronal;
+            const cyvPatronal = sbcCotizacion * tasaCEAV * dias;
+            const totalPatronal = eymFijaPatronal + eymExcedentePatronal + eymDineroPatronal + eymPensionadosPatronal + invVidaPatronal + guarderiasPatronal + retiroPatronal + infonavitPatronal + riesgoPatronal + cyvPatronal;
 
             return {
-                obrero: totalObrero,
-                patronal: totalPatronal,
-                desglosePatronal: { cyvPatronal, infonavitPatronal, resto: totalPatronal - cyvPatronal - infonavitPatronal },
-                vecesUma,
-                tasaCEAV
+                obrero: round2(totalObrero),
+                patronal: round2(totalPatronal),
+                desglosePatronal: { cyvPatronal: round2(cyvPatronal), infonavitPatronal: round2(infonavitPatronal), resto: round2(totalPatronal - cyvPatronal - infonavitPatronal) },
+                vecesUma, tasaCEAV
             };
         }
 
         function obtenerClaveHistorialISR() {
             const rfc = (document.getElementById('tra-rfc')?.value || 'SINRFC').trim().toUpperCase();
             const fecha = document.getElementById('nom-fecha-fin')?.value || '';
-            const mes = fecha ? fecha.slice(0, 7) : new Date().toISOString().slice(0, 7);
+            const mes = fecha ? fecha.slice(0, 7) : getLocalDateISO().slice(0, 7);
             return `nominaISR:${rfc}:${mes}`;
         }
 
@@ -1439,54 +1683,71 @@
             const tbody = document.getElementById('tbody-historial-isr');
             const resumen = document.getElementById('historial-isr-resumen');
             if (!tabla || !tbody || !resumen) return;
-            historial.sort((a,b) => String(a.fecha).localeCompare(String(b.fecha)) || Number(a.id)-Number(b.id));
-            tbody.innerHTML = historial.map((x,i) => `<tr class="border-b border-slate-100"><td class="py-1">${x.fecha}</td><td class="py-1">${fmtMXN(x.gravadoTotal || 0)}</td><td class="py-1">${fmtMXN(x.isrCausado || 0)}</td><td class="py-1">${fmtMXN(x.subsidio || 0)}</td><td class="py-1">${fmtMXN(x.isrRetenido || 0)}</td><td class="py-1">${x.metodoTexto || 'Periodo'}</td><td class="py-1 text-right"><button type="button" class="text-rose-600" onclick="eliminarPagoISR(${Number(x.id)})">×</button></td></tr>`).join('');
-            tabla.classList.toggle('hidden', historial.length === 0);
-            const gravado = historial.reduce((a,x)=>a+Number(x.gravadoTotal||0),0);
-            const isr = historial.reduce((a,x)=>a+Number(x.isrRetenido||0),0);
-            resumen.innerText = historial.length ? `${historial.length} pago(s) registrado(s) · Gravado acumulado: ${fmtMXN(gravado)} · ISR retenido acumulado: ${fmtMXN(isr)}` : 'Sin pagos registrados para este trabajador/mes.';
+            const sorted = [...historial].sort((a,b) => String(a.fecha).localeCompare(String(b.fecha)) || String(a.id).localeCompare(String(b.id)));
+            tbody.innerHTML = sorted.map(x => `<tr class="border-b border-slate-100"><td class="py-1">${escapeHtml(x.fecha)}</td><td class="py-1">${fmtMXN(x.gravadoTotal || 0)}</td><td class="py-1">${fmtMXN(x.isrCausadoTotal ?? x.isrCausado ?? 0)}</td><td class="py-1">${fmtMXN(x.subsidio || 0)}</td><td class="py-1">${fmtMXN(x.isrRetenido || 0)}</td><td class="py-1">${escapeHtml(x.metodoTexto || 'Periodo')}</td><td class="py-1 text-right"><button type="button" class="text-rose-600" onclick="eliminarPagoISR('${String(x.id).replace(/'/g,"\'")}')" aria-label="Eliminar pago">×</button></td></tr>`).join('');
+            tabla.classList.toggle('hidden', sorted.length === 0);
+            const gravado = sorted.reduce((a,x)=>a+Number(x.gravadoTotal||0),0);
+            const isr = sorted.reduce((a,x)=>a+Number(x.isrRetenido||0),0);
+            resumen.innerText = sorted.length ? `${sorted.length} pago(s) registrado(s) · Gravado acumulado: ${fmtMXN(gravado)} · ISR retenido acumulado: ${fmtMXN(isr)}` : 'Sin pagos registrados para este trabajador/mes.';
         }
 
         function agregarPagoPrevioManual() {
             const fecha = document.getElementById('hist-prev-fecha')?.value || '';
-            const gravado = parseFloat(document.getElementById('hist-prev-gravado')?.value || '0') || 0;
-            const isr = parseFloat(document.getElementById('hist-prev-isr')?.value || '0') || 0;
-            const subsidio = parseFloat(document.getElementById('hist-prev-subsidio')?.value || '0') || 0;
-            if (!fecha || gravado < 0 || isr < 0 || subsidio < 0) { alert('Captura fecha y cantidades válidas para el pago previo.'); return; }
+            const gravado = nonNegative('hist-prev-gravado');
+            const isr = nonNegative('hist-prev-isr');
+            const subsidio = nonNegative('hist-prev-subsidio');
+            const fechaActual = document.getElementById('nom-fecha-fin')?.value || '';
+            if (!parseDateInput(fecha)) { alert('Captura una fecha válida para el pago previo.'); return; }
+            if (fechaActual && fecha.slice(0,7) !== fechaActual.slice(0,7)) { alert('El pago previo debe pertenecer al mismo mes del pago actual.'); return; }
             const historial = leerHistorialISR();
-            historial.push({ id: Date.now(), fecha, rfc: (document.getElementById('tra-rfc')?.value || '').trim().toUpperCase(), periodicidad: 'manual', dias: 0, sd: 0, gravadoTotal: gravado, gravadoOrdinario: gravado, extraGravadoAcumulado: 0, isrRetenido: isr, isrCausado: isr + subsidio, subsidio, metodo: 'manual', metodoTexto: 'Pago previo manual', extraMetodo: 'acumulacion', manual: true });
+            historial.push({
+                id: globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(16).slice(2)}`,
+                fecha, rfc: (document.getElementById('tra-rfc')?.value || '').trim().toUpperCase(), periodicidad:'manual', dias:0, sd:0,
+                gravadoTotal:round2(gravado), gravadoOrdinario:round2(gravado), extraGravadoAcumulado:0,
+                isrRetenido:round2(isr), isrCausado:round2(isr + subsidio), isrCausadoTotal:round2(isr + subsidio),
+                isrOrdinarioRetenido:round2(isr), subsidio:round2(subsidio), metodo:'manual', metodoTexto:'Pago previo manual', extraMetodo:'acumulacion', manual:true
+            });
             guardarHistorialISR(historial);
-            document.getElementById('hist-prev-gravado').value = '';
-            document.getElementById('hist-prev-isr').value = '';
-            document.getElementById('hist-prev-subsidio').value = '';
+            ['hist-prev-gravado','hist-prev-isr','hist-prev-subsidio'].forEach(id => document.getElementById(id).value = '');
             calcularNomina();
         }
 
         function recalcularHistorialAcumulado() {
-            const historial = leerHistorialISR().sort((a,b)=>String(a.fecha).localeCompare(String(b.fecha)) || Number(a.id)-Number(b.id));
+            const historial = leerHistorialISR().sort((a,b)=>String(a.fecha).localeCompare(String(b.fecha)) || String(a.id).localeCompare(String(b.id)));
             if (!historial.length) { actualizarUIHistorialISR([]); return; }
-            // Solo recalcula registros generados por esta herramienta con método mensual acumulado.
-            const base = historial.filter(x => x.metodo === 'mensual-acumulada');
-            if (!base.length) { alert('No hay pagos registrados con el método Mensual acumulada para recalcular. Los pagos previos manuales se conservan sin modificar.'); return; }
-            let retenidoPrevio = 0, subsidioPrevio = 0, gravadoPrevio = 0;
+            if (!historial.some(x => x.metodo === 'mensual-acumulada')) { alert('No hay pagos registrados con el método Mensual acumulada para recalcular.'); return; }
+
+            let retenidoOrdinarioPrevio = 0, subsidioPrevio = 0, gravadoPrevio = 0;
+            const limiteMensual = CONFIG_NOMINA_2026.subsidio2026.limiteIngresoMensual;
+            const fechaActual = parseDateInput(document.getElementById('nom-fecha-fin')?.value);
+            const esEnero = fechaActual?.getFullYear() === 2026 && fechaActual.getMonth() === 0;
+            const porcentajeUma = esEnero ? CONFIG_NOMINA_2026.subsidio2026.porcentajeUmaEnero : CONFIG_NOMINA_2026.subsidio2026.porcentajeUma;
+            const umaMensualSubsidio = esEnero ? CONFIG_NOMINA_2026.subsidio2026.umaMensualEnero : getUMAMensualFiscalVigente();
+
             for (const x of historial) {
                 if (x.manual || x.metodo !== 'mensual-acumulada') {
-                    retenidoPrevio += Number(x.isrRetenido||0);
+                    retenidoOrdinarioPrevio += Number(x.isrOrdinarioRetenido ?? x.isrRetenido ?? 0);
                     subsidioPrevio += Number(x.subsidio||0);
-                    gravadoPrevio += Number(x.gravadoOrdinario||x.gravadoTotal||0);
+                    gravadoPrevio += Number(x.gravadoOrdinario ?? x.gravadoTotal ?? 0) + Number(x.extraGravadoAcumulado||0);
                     continue;
                 }
                 const gravadoActual = Number(x.gravadoOrdinario||0) + Number(x.extraGravadoAcumulado||0);
                 const acumulado = gravadoPrevio + gravadoActual;
                 const tabla = CONFIG_NOMINA_2026.tablasISR.mensual;
-                const tramo = tabla.find(t=>acumulado>=t.limInf && acumulado<=t.limSup) || tabla[tabla.length-1];
+                const tramo = tabla.find(t=>acumulado>=t.limInf && acumulado<=t.limSup) || tabla.at(-1);
                 const causado = tramo.cuotaFija + Math.max(0, acumulado-tramo.limInf)*tramo.pct;
-                const neto = Math.max(0, causado - subsidioPrevio);
-                const nuevoRetenido = Math.max(0, neto - retenidoPrevio);
-                x.isrCausado = causado;
-                x.isrRetenido = nuevoRetenido;
-                x.subsidio = 0;
-                retenidoPrevio += nuevoRetenido;
+                const subsidioMensual = document.getElementById('chk-subsidio')?.checked && acumulado <= limiteMensual ? umaMensualSubsidio * porcentajeUma : 0;
+                const subsidioPeriodo = Math.max(0, subsidioMensual - subsidioPrevio);
+                const nuevoRetenidoOrdinario = Math.max(0, Math.max(0, causado - subsidioMensual) - retenidoOrdinarioPrevio);
+
+                x.isrCausado = round2(causado);
+                x.isrCausadoTotal = round2(causado + Number(x.isrExtraArt174||0) + Number(x.isrIndem||0));
+                x.isrOrdinarioRetenido = round2(nuevoRetenidoOrdinario);
+                x.isrRetenido = round2(nuevoRetenidoOrdinario + Number(x.isrExtraArt174||0) + Number(x.isrIndem||0));
+                x.subsidio = round2(subsidioPeriodo);
+
+                retenidoOrdinarioPrevio += nuevoRetenidoOrdinario;
+                subsidioPrevio += subsidioPeriodo;
                 gravadoPrevio += gravadoActual;
             }
             guardarHistorialISR(historial);
@@ -1495,26 +1756,35 @@
 
         function registrarPagoISR() {
             const fecha = document.getElementById('nom-fecha-fin')?.value || '';
-            if (!fecha) { alert('Captura primero la fecha de fin del periodo.'); return; }
+            const contexto = window.__nominaISRContext;
+            if (!parseDateInput(fecha) || !contexto) { alert('Captura una fecha válida y calcula la nómina antes de registrar el pago.'); return; }
             const historial = leerHistorialISR();
-            const rfc = (document.getElementById('tra-rfc')?.value || '').trim().toUpperCase();
-            const periodicidad = document.getElementById('sel-periodicidad').value;
             const metodo = document.getElementById('sel-metodo-isr')?.value || 'periodo';
             const extraMetodo = document.getElementById('sel-extra-isr')?.value || 'acumulacion';
-            const sd = parseFloat(document.getElementById('tra-salario-diario').value)||0;
-            const dias = parseFloat(document.getElementById('nom-dias-pagados').value)||0;
-            const gravadoTotal = Number(window.__nominaISRContext?.gravadoTotal || 0);
-            const gravadoOrdinario = Number(window.__nominaISRContext?.gravadoOrdinario || 0);
-            const extraGravado = Number(window.__nominaISRContext?.extraGravado || 0);
-            const res = window.__nominaISRContext?.resISR || {};
-            const entry = { id: Date.now(), fecha, rfc, periodicidad, dias, sd, gravadoTotal, gravadoOrdinario, extraGravadoAcumulado: extraMetodo==='acumulacion' ? extraGravado : 0, isrRetenido: Number(res.isrRetenido||0), isrCausado: Number(res.isrCausado||0), subsidio: Number(res.subsidio||0), metodo: metodo, metodoTexto: metodo==='mensual-acumulada'?'Mensual acumulada':(metodo==='mensual-prorrateada'?'Mensual prorrateada':'Tarifa periodo'), extraMetodo };
+            const res = contexto.resISR || {};
+            const extra174 = Number(contexto.resExtraArt174?.impuesto || 0);
+            const indemISR = Number(contexto.resIndemISR?.isrRetenidoIndem || 0);
+            const entry = {
+                id: globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(16).slice(2)}`,
+                fecha, rfc:(document.getElementById('tra-rfc')?.value || '').trim().toUpperCase(), periodicidad:document.getElementById('sel-periodicidad').value,
+                dias:nonNegative('nom-dias-pagados'), sd:nonNegative('tra-salario-diario'),
+                gravadoTotal:round2(contexto.gravadoTotal || 0), gravadoOrdinario:round2(contexto.gravadoOrdinario || 0),
+                extraGravadoAcumulado:extraMetodo === 'acumulacion' ? round2(contexto.extraGravado || 0) : 0,
+                isrCausado:round2(res.isrCausado || 0), isrExtraArt174:round2(extra174), isrIndem:round2(indemISR),
+                isrCausadoTotal:round2((res.isrCausado || 0) + extra174 + indemISR),
+                separacionMetodo: contexto.resIndemISR?.metodo || '',
+                isrOrdinarioRetenido:round2(res.isrRetenido || 0), isrRetenido:round2(contexto.totalISRRetenido || 0), subsidio:round2(res.subsidio || 0),
+                metodo, metodoTexto:metodo==='mensual-acumulada'?'Mensual acumulada':(metodo==='mensual-prorrateada'?'Mensual prorrateada':'Tarifa periodo'), extraMetodo
+            };
+            const duplicado = historial.some(x => x.fecha === entry.fecha && x.metodo === entry.metodo && Math.abs(Number(x.gravadoTotal||0)-entry.gravadoTotal)<0.005 && Math.abs(Number(x.isrRetenido||0)-entry.isrRetenido)<0.005);
+            if (duplicado) { alert('Este pago ya parece estar registrado. Revisa el historial antes de duplicarlo.'); return; }
             historial.push(entry);
             guardarHistorialISR(historial);
             calcularNomina();
         }
 
         function eliminarPagoISR(id) {
-            const historial = leerHistorialISR().filter(x => Number(x.id) !== Number(id));
+            const historial = leerHistorialISR().filter(x => String(x.id) !== String(id));
             guardarHistorialISR(historial);
             calcularNomina();
         }
@@ -1527,17 +1797,24 @@
         }
 
         function calcularNomina() {
+            const fechaIni = parseDateInput(document.getElementById('nom-fecha-ini')?.value);
+            const fechaFin = parseDateInput(document.getElementById('nom-fecha-fin')?.value);
+            if (!fechaIni || !fechaFin || fechaIni > fechaFin) {
+                const status = document.getElementById('audit-status');
+                if (status) { status.textContent = 'Periodo inválido'; status.className = 'text-[10px] font-semibold px-2 py-0.5 rounded bg-rose-100 text-rose-700'; }
+                return;
+            }
             // Read Inputs
-            const sd = parseFloat(document.getElementById('tra-salario-diario').value) || 0;
-            const diasPagados = parseFloat(document.getElementById('nom-dias-pagados').value) || 0;
-            const sbc = parseFloat(document.getElementById('tra-sbc').value) || 0;
+            const sd = nonNegative('tra-salario-diario');
+            const diasPagados = nonNegative('nom-dias-pagados');
+            const sbc = nonNegative('tra-sbc');
             const periodicidad = document.getElementById('sel-periodicidad').value;
-            const uma = CONFIG_NOMINA_2026.UMA.diario;
+            const uma = getUMAFiscalVigente();
 
             // Absences & Incapacities
-            const faltas = parseFloat(document.getElementById('inc-faltas').value) || 0;
-            const incEgp = parseFloat(document.getElementById('inc-enfermedad').value) || 0;
-            const incRt = parseFloat(document.getElementById('inc-rt').value) || 0;
+            const faltas = nonNegative('inc-faltas');
+            const incEgp = nonNegative('inc-enfermedad');
+            const incRt = nonNegative('inc-rt');
             const diasEfectivos = Math.max(0, diasPagados - faltas);
             const diasCotizadosIMSS = Math.max(0, diasPagados - faltas - incEgp - incRt);
 
@@ -1585,9 +1862,10 @@
             let gravadoPtu = Math.max(0, montoPtu - exentoPtu);
 
             // 4. Severance / Liquidation (Art. 174 RLISR)
-            const montoIndem = parseFloat(document.getElementById('indem-monto').value) || 0;
-            const aniosIndem = parseFloat(document.getElementById('indem-anios').value) || 0;
-            let exentoIndem = Math.min(montoIndem, uma * 90 * Math.max(1, aniosIndem));
+            const montoIndem = nonNegative('indem-monto');
+            const aniosIndem = nonNegative('indem-anios');
+            const aniosIndemExentos = aniosServicioParaExencion(aniosIndem);
+            let exentoIndem = Math.min(montoIndem, uma * 90 * aniosIndemExentos);
             let gravadoIndem = Math.max(0, montoIndem - exentoIndem);
 
             // Totals
@@ -1616,12 +1894,13 @@
                 resExtraArt174 = calcularISRArt174(extraGravadoArt174, ingresoOrdinarioMensual);
             }
 
-            let resIndemISR = calcularISRSeparacionArt174(gravadoIndem, sd);
-            let totalISRRetenido = resISR.isrRetenido + resExtraArt174.impuesto + resIndemISR.isrRetenidoIndem;
+            let resIndemISR = calcularISRSeparacionArt95(gravadoIndem, sd);
+            let totalISRCausado = resISR.isrCausado + resExtraArt174.impuesto + resIndemISR.isrRetenidoIndem;
+            let totalISRRetenido = totalISRCausado;
 
             // 6. IMSS Calculation
             const claseRiesgo = document.getElementById('emp-riesgo-puesto').value;
-            const esSalarioMinimo = sd <= CONFIG_NOMINA_2026.SMI.general; // Zona general; si se habilita ZLFN deberá usar $440.87.
+            const esSalarioMinimo = sd > 0 && sd <= obtenerSalarioMinimoZona();
             let resIMSS = calcularIMSS(sbc, diasCotizadosIMSS, claseRiesgo, esSalarioMinimo);
 
             // 7. Other Deductions
@@ -1633,7 +1912,7 @@
             let totalOtrasDeducciones = dedInfonavit + dedFonacot + dedPension + dedOtras;
             let totalDeducciones = totalISRRetenido + resIMSS.obrero + totalOtrasDeducciones;
 
-            let netoAPagar = totalBruto - totalDeducciones;
+            let netoAPagar = Math.max(0, totalBruto - totalDeducciones);
             let costoTotalPatron = totalBruto + resIMSS.patronal;
 
             // UPDATE UI CARDS
@@ -1643,12 +1922,14 @@
             document.getElementById('res-total-percepciones').innerText = fmtMXN(totalBruto);
             document.getElementById('res-gravado').innerText = fmtMXN(totalGravado);
             document.getElementById('res-exento').innerText = fmtMXN(totalExento);
-            document.getElementById('res-isr-causado').innerText = fmtMXN(resISR.isrCausado);
+            document.getElementById('res-isr-causado').innerText = fmtMXN(totalISRCausado);
             document.getElementById('res-subsidio-causado').innerText = '-' + fmtMXN(resISR.subsidio);
             document.getElementById('res-isr-retenido').innerText = fmtMXN(totalISRRetenido);
             document.getElementById('res-imss-obrero').innerText = fmtMXN(resIMSS.obrero);
             document.getElementById('res-otras-deducciones').innerText = fmtMXN(totalOtrasDeducciones);
             document.getElementById('res-neto').innerText = fmtMXN(netoAPagar);
+            const auditStatus = document.getElementById('audit-status');
+            if (auditStatus) { auditStatus.textContent = 'Cálculo listo'; auditStatus.className = 'text-[10px] font-semibold px-2 py-0.5 rounded bg-emerald-100 text-emerald-700'; }
 
             document.getElementById('res-patronal-total').innerText = fmtMXN(resIMSS.patronal);
             document.getElementById('res-patronal-cyv').innerText = fmtMXN(resIMSS.desglosePatronal.cyvPatronal);
@@ -1670,18 +1951,33 @@
             document.getElementById('audit-isr-previo').innerText = fmtMXN(resISR.retenidoPrevio || 0);
             document.getElementById('audit-isr-art174').innerText = fmtMXN(resExtraArt174.impuesto || 0);
             document.getElementById('audit-isr-neto-pago').innerText = fmtMXN(totalISRRetenido);
+            const auditIndem = document.getElementById('audit-isr-separacion');
+            if (auditIndem) auditIndem.innerText = fmtMXN(resIndemISR.isrRetenidoIndem || 0);
+            const auditIndemMetodo = document.getElementById('audit-isr-separacion-metodo');
+            if (auditIndemMetodo) auditIndemMetodo.innerText = resIndemISR.metodo || 'Art. 95/96 LISR';
 
             window.__nominaISRContext = {
-                gravadoTotal: totalGravado,
-                gravadoOrdinario,
-                extraGravado: extraGravadoArt174,
+                gravadoTotal: round2(totalGravado),
+                gravadoOrdinario: round2(gravadoOrdinario),
+                extraGravado: round2(extraGravadoArt174),
                 resISR,
-                totalISRRetenido,
+                resExtraArt174,
+                resIndemISR,
+                totalISRRetenido: round2(totalISRRetenido),
+                totalISRCausado: round2(totalISRCausado),
                 metodoISR,
                 extraMetodo: document.getElementById('sel-extra-isr')?.value || 'acumulacion'
             };
             actualizarUIHistorialISR(historialISR);
 
+            setMetric('nomina-kpi-percepciones', totalBruto);
+            setMetric('nomina-kpi-retenciones', totalDeducciones);
+            setMetric('nomina-kpi-patronal', resIMSS.patronal);
+            setMetric('nomina-kpi-neto', netoAPagar);
+            document.getElementById('nomina-flow-1')?.classList.add('done');
+            document.getElementById('nomina-flow-2')?.classList.add('done');
+            document.getElementById('nomina-flow-3')?.classList.add('done');
+            document.getElementById('nomina-flow-4')?.classList.add('done');
             document.getElementById('audit-ceav-veces').innerText = resIMSS.vecesUma.toFixed(2) + ' UMAs';
             document.getElementById('audit-ceav-tasa').innerText = (resIMSS.tasaCEAV * 100).toFixed(3) + '%';
             document.getElementById('audit-ceav-monto').innerText = fmtMXN(resIMSS.desglosePatronal.cyvPatronal);
@@ -1802,6 +2098,8 @@
             document.getElementById('pres-domingos').value = "0";
             document.getElementById('pres-ptu').value = "0";
             document.getElementById('indem-monto').value = "0";
+            document.getElementById('indem-anios').value = "5";
+            document.getElementById('indem-ultimo-sueldo').value = "";
             document.getElementById('inc-faltas').value = "0";
             document.getElementById('inc-enfermedad').value = "0";
             document.getElementById('inc-rt').value = "0";
@@ -1823,13 +2121,13 @@
             document.getElementById('cfg-smi-val').value = CONFIG_NOMINA_2026.SMI.general;
             document.getElementById('cfg-umi-val').value = CONFIG_NOMINA_2026.UMI;
 
-            document.getElementById('lbl-uma').innerText = fmtMXN(CONFIG_NOMINA_2026.UMA.diario);
-            document.getElementById('lbl-smi').innerText = fmtMXN(CONFIG_NOMINA_2026.SMI.general);
-            document.getElementById('lbl-umi').innerText = fmtMXN(CONFIG_NOMINA_2026.UMI);
+            actualizarIndicadoresUI();
         }
 
         function guardarConfiguracionTablas() {
             CONFIG_NOMINA_2026.UMA.diario = parseFloat(document.getElementById('cfg-uma-val').value) || 117.31;
+            CONFIG_NOMINA_2026.UMA.mensual = round2(CONFIG_NOMINA_2026.UMA.diario * 30.4);
+            CONFIG_NOMINA_2026.UMA.anual = round2(CONFIG_NOMINA_2026.UMA.mensual * 12);
             CONFIG_NOMINA_2026.SMI.general = parseFloat(document.getElementById('cfg-smi-val').value) || 315.04;
             CONFIG_NOMINA_2026.UMI = parseFloat(document.getElementById('cfg-umi-val').value) || 100.81;
 
@@ -1841,6 +2139,8 @@
 
         function restaurarValoresPorDefecto() {
             CONFIG_NOMINA_2026.UMA.diario = 117.31;
+            CONFIG_NOMINA_2026.UMA.mensual = 3566.22;
+            CONFIG_NOMINA_2026.UMA.anual = 42794.64;
             CONFIG_NOMINA_2026.SMI.general = 315.04;
             CONFIG_NOMINA_2026.UMI = 100.81;
 
@@ -1851,8 +2151,9 @@
 
         function numeroALetrasMXN(valor) {
             const n = Math.max(0, Number(valor) || 0);
-            const entero = Math.floor(n + 0.000001);
-            const centavos = Math.round((n - entero) * 100);
+            const totalCentavos = Math.round(n * 100);
+            const entero = Math.floor(totalCentavos / 100);
+            const centavos = totalCentavos % 100;
             const unidades = ['','UNO','DOS','TRES','CUATRO','CINCO','SEIS','SIETE','OCHO','NUEVE','DIEZ','ONCE','DOCE','TRECE','CATORCE','QUINCE','DIECISÉIS','DIECISIETE','DIECIOCHO','DIECINUEVE','VEINTE','VEINTIUNO','VEINTIDÓS','VEINTITRÉS','VEINTICUATRO','VEINTICINCO','VEINTISÉIS','VEINTISIETE','VEINTIOCHO','VEINTINUEVE'];
             const decenas = ['','','TREINTA','CUARENTA','CINCUENTA','SESENTA','SETENTA','OCHENTA','NOVENTA'];
             const centenas = ['','CIENTO','DOSCIENTOS','TRESCIENTOS','CUATROCIENTOS','QUINIENTOS','SEISCIENTOS','SETECIENTOS','OCHOCIENTOS','NOVECIENTOS'];
@@ -1863,67 +2164,143 @@
                 if (x < 100) return decenas[Math.floor(x/10)] + (x%10 ? ' Y ' + unidades[x%10] : '');
                 if (x === 100) return 'CIEN';
                 if (x < 1000) return centenas[Math.floor(x/100)] + (x%100 ? ' ' + seccion(x%100) : '');
-                if (x < 1000000) {
-                    const miles = Math.floor(x/1000);
-                    const resto = x%1000;
-                    return (miles === 1 ? 'MIL' : seccion(miles) + ' MIL') + (resto ? ' ' + seccion(resto) : '');
-                }
-                const millones = Math.floor(x/1000000);
-                const resto = x%1000000;
-                return (millones === 1 ? 'UN MILLÓN' : seccion(millones) + ' MILLONES') + (resto ? ' ' + seccion(resto) : '');
+                if (x < 1000000) { const miles=Math.floor(x/1000), resto=x%1000; return (miles===1?'MIL':seccion(miles)+' MIL')+(resto?' '+seccion(resto):''); }
+                const millones=Math.floor(x/1000000), resto=x%1000000;
+                return (millones===1?'UN MILLÓN':seccion(millones)+' MILLONES')+(resto?' '+seccion(resto):'');
             }
-            const texto = entero === 0 ? 'CERO' : seccion(entero);
-            return `${texto} PESOS ${String(centavos).padStart(2,'0')}/100 M.N.`;
+            return `${entero===0?'CERO':seccion(entero)} PESOS ${String(centavos).padStart(2,'0')}/100 M.N.`;
         }
 
         function exportarExcel() {
+            if (typeof XLSX === 'undefined') { alert('No se pudo cargar el módulo de Excel. Revisa la conexión o el recurso externo.'); return; }
             const wb = XLSX.utils.book_new();
-            
+            const c = window.__nominaISRContext || {};
+            const moneyFromText = id => Number(String(document.getElementById(id)?.innerText || '').replace(/[^0-9.-]/g,'')) || 0;
             const wsData = [
-                ["CÁLCULO DE NÓMINA CFDI 4.0 - EJERCICIO 2026"],
-                [""],
-                ["PATRÓN (EMISOR)", document.getElementById('emp-nombre-emisor').value],
-                ["RFC PATRÓN", document.getElementById('emp-rfc-emisor').value],
-                ["REGISTRO PATRONAL", document.getElementById('emp-reg-patronal').value],
-                [""],
-                ["TRABAJADOR (RECEPTOR)", document.getElementById('tra-nombre').value],
-                ["RFC TRABAJADOR", document.getElementById('tra-rfc').value],
-                ["CURP", document.getElementById('tra-curp').value],
-                ["NSS", document.getElementById('tra-nss').value],
-                ["SBC INTEGRADO", document.getElementById('tra-sbc').value],
-                ["DÍAS PAGADOS", document.getElementById('nom-dias-pagados').value],
-                [""],
-                ["CONCEPTO FISCAL", "MONTO MXN"],
-                ["Total Percepciones Brutas", document.getElementById('res-total-percepciones').innerText],
-                ["• Ingreso Gravado ISR", document.getElementById('res-gravado').innerText],
-                ["• Ingreso Exento ISR", document.getElementById('res-exento').innerText],
-                ["ISR Causado", document.getElementById('res-isr-causado').innerText],
-                ["Subsidio al Empleo Aplicado", document.getElementById('res-subsidio-causado').innerText],
-                ["ISR Retenido Neto", document.getElementById('res-isr-retenido').innerText],
-                ["IMSS Cuota Obrero", document.getElementById('res-imss-obrero').innerText],
-                ["Otras Deducciones", document.getElementById('res-otras-deducciones').innerText],
-                ["NETO EFECTIVO A PAGAR", document.getElementById('res-neto').innerText],
-                [""],
-                ["CARGA PATRONAL TOTAL", document.getElementById('res-patronal-total').innerText],
-                ["COSTO TOTAL PATRÓN", document.getElementById('res-costo-total-patron').innerText]
+                ['CÁLCULO DE NÓMINA CFDI 4.0 - EJERCICIO 2026'],['Versión',APP_VERSION],[''],
+                ['PATRÓN (EMISOR)',document.getElementById('emp-nombre-emisor').value],['RFC PATRÓN',document.getElementById('emp-rfc-emisor').value],['REGISTRO PATRONAL',document.getElementById('emp-reg-patronal').value],[''],
+                ['TRABAJADOR (RECEPTOR)',document.getElementById('tra-nombre').value],['RFC TRABAJADOR',document.getElementById('tra-rfc').value],['CURP',document.getElementById('tra-curp').value],['NSS',document.getElementById('tra-nss').value],
+                ['SBC INTEGRADO',num('tra-sbc')],['DÍAS PAGADOS',num('nom-dias-pagados')],[''],['CONCEPTO FISCAL','MONTO MXN'],
+                ['Total Percepciones Brutas',moneyFromText('res-total-percepciones')],['Ingreso Gravado ISR',c.gravadoTotal||0],['Ingreso Exento ISR',moneyFromText('res-exento')],['ISR Causado Total',c.totalISRCausado||c.resISR?.isrCausado||0],
+                ['Subsidio al Empleo Aplicado',c.resISR?.subsidio||0],['ISR Retenido Neto',c.totalISRRetenido||0],['IMSS Cuota Obrero',moneyFromText('res-imss-obrero')],['Otras Deducciones',moneyFromText('res-otras-deducciones')],['NETO EFECTIVO A PAGAR',moneyFromText('res-neto')],[''],
+                ['CARGA PATRONAL TOTAL',moneyFromText('res-patronal-total')],['COSTO TOTAL PATRÓN',moneyFromText('res-costo-total-patron')]
             ];
-
-            const ws = XLSX.utils.aoa_to_sheet(wsData);
-            XLSX.utils.book_append_sheet(wb, ws, "Nomina CFDI 4.0");
-            XLSX.writeFile(wb, `Nomina_2026_${document.getElementById('tra-rfc').value}.xlsx`);
+            const ws=XLSX.utils.aoa_to_sheet(wsData);
+            ws['!cols']=[{wch:34},{wch:22}];
+            for(let r=14;r<wsData.length;r++){const cell=ws[XLSX.utils.encode_cell({r,c:1})]; if(cell&&typeof cell.v==='number') cell.z='$#,##0.00';}
+            XLSX.utils.book_append_sheet(wb,ws,'Nomina CFDI 4.0');
+            const rfc=(document.getElementById('tra-rfc').value||'SIN_RFC').replace(/[^A-Z0-9_-]/gi,'_');
+            XLSX.writeFile(wb,`Nomina_2026_${rfc}.xlsx`);
         }
 
         function imprimirRecibo() {
             window.print();
         }
 
-        window.onload = function() {
-            lucide.createIcons();
+
+        /* ===== v1.3 WORKSPACE ENGINE ===== */
+        let __appMode = 'nomina';
+
+        function setAppMode(mode='nomina') {
+            __appMode = mode === 'salida' ? 'salida' : 'nomina';
+            document.getElementById('workspace-nomina')?.classList.toggle('hidden', __appMode !== 'nomina');
+            document.getElementById('workspace-salida')?.classList.toggle('hidden', __appMode !== 'salida');
+            document.getElementById('mode-btn-nomina')?.classList.toggle('active', __appMode === 'nomina');
+            document.getElementById('mode-btn-salida')?.classList.toggle('active', __appMode === 'salida');
+            if (__appMode === 'salida') { syncSalidaFromNomina(); actualizarUISalidaTipo(); calcularSalida(); }
+            else { calcularNomina(); }
+            globalThis.lucide?.createIcons?.();
+            window.scrollTo({top:0,behavior:'smooth'});
+        }
+
+        function setMetric(id,value,formatter=fmtMXN){
+            const el=document.getElementById(id); if(!el) return;
+            const next=typeof value==='string'?value:formatter(value);
+            if(el.textContent!==next){el.textContent=next; el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash');}
+        }
+
+        function syncSalidaFromNomina(force=false){
+            const auto=document.getElementById('salida-auto-sync')?.checked;
+            if(!auto && !force) return;
+            const ingreso=document.getElementById('tra-fecha-ingreso')?.value || '';
+            const baja=document.getElementById('nom-fecha-fin')?.value || '';
+            const sd=num('tra-salario-diario');
+            const nombre=document.getElementById('tra-nombre')?.value || '-';
+            const rfc=document.getElementById('tra-rfc')?.value || '-';
+            const antig=document.getElementById('txt-antiguedad-humana')?.textContent || '-';
+            const setVal=(id,v)=>{const e=document.getElementById(id); if(e)e.value=v;};
+            setVal('salida-fecha-ingreso',ingreso); if(baja)setVal('salida-fecha-baja',baja); setVal('salida-sd',sd.toFixed(2));
+            setMetric('salida-res-nombre',nombre,x=>String(x)); setMetric('salida-res-rfc',rfc,x=>String(x)); setMetric('salida-res-sd',sd); setMetric('salida-res-antiguedad',antig,x=>String(x));
+            const f=parseDateInput(ingreso), b=parseDateInput(baja); const years=yearsFromDates(f,b); setVal('salida-anios-servicio',years.toFixed(2));
+            const factor=Number(document.getElementById('txt-factor-integracion')?.value||1)||1;
+            const sdi=document.getElementById('salida-sdi'); const prevSDI=Number(sdi?.dataset.source||0);
+            if(sdi && (!sdi.value || Math.abs(Number(sdi.value)-prevSDI)<0.005)){sdi.value=(sd*factor).toFixed(2); sdi.dataset.source=(sd*factor).toFixed(2);}
+            const ultimo=document.getElementById('salida-ultimo-sueldo'); const prevUlt=Number(ultimo?.dataset.source||0); const defaultUlt=sd*30.4;
+            if(ultimo && (!ultimo.value || Math.abs(Number(ultimo.value)-prevUlt)<0.005)){ultimo.value=defaultUlt.toFixed(2); ultimo.dataset.source=defaultUlt.toFixed(2);}
+        }
+
+        function actualizarUISalidaTipo(){
+            const tipo=document.querySelector('input[name="salida-tipo"]:checked')?.value||'finiquito';
+            const liquidacion=tipo==='liquidacion';
+            document.getElementById('panel-liquidacion-opciones')?.classList.toggle('hidden',!liquidacion);
+            document.getElementById('salida-det-liquidacion-wrap')?.classList.toggle('hidden',!liquidacion);
+            const t=document.getElementById('salida-resumen-titulo'); if(t)t.textContent=liquidacion?'Liquidación + Finiquito':'Finiquito';
+            const badge=document.getElementById('salida-badge'); if(badge)badge.textContent=liquidacion?'Separación + indemnizaciones':'Derechos devengados';
+            const causa=document.getElementById('salida-causa')?.value||'renuncia';
+            const reg=document.getElementById('salida-prima-regla');
+            if(reg)reg.textContent=causa==='renuncia'?'12 días por año; en separación voluntaria requiere al menos 15 años según la guía':'12 días por año; en despido se considera sin importar los años de servicio según la guía';
+            const show20=liquidacion && (causa==='despido-injustificado'||causa==='terminacion-contrato');
+            const cb=document.getElementById('salida-incluir-20'); if(cb && !show20)cb.checked=false;
+            const chip=document.getElementById('salida-legal-chip'); if(chip)chip.textContent=liquidacion?'Configura los conceptos aplicables':'No aplica en finiquito';
+        }
+
+        function yearsFromDates(inicio,fin){return inicio&&fin&&fin>=inicio?(fin-inicio)/(365*86400000):0;}
+        function daysInclusive(inicio,fin){return inicio&&fin&&fin>=inicio?Math.floor((fin-inicio)/86400000)+1:0;}
+
+        function calcularSalida(){
+            const fi=parseDateInput(document.getElementById('salida-fecha-ingreso')?.value); const fb=parseDateInput(document.getElementById('salida-fecha-baja')?.value); const sd=nonNegative('salida-sd');
+            if(!fi||!fb||fb<fi||sd<=0){const s=document.getElementById('salida-status');if(s){s.textContent='Captura fechas y salario';s.className='read-only-chip bg-rose-500/10 text-rose-200 border border-rose-400/20';}return;}
+            const anios=yearsFromDates(fi,fb), diasAnio=(()=>{const ia=new Date(fb.getFullYear(),0,1);return daysInclusive(fi>ia?fi:ia,fb);})();
+            document.getElementById('salida-anios-servicio').value=anios.toFixed(2);
+            const vacAnuales=calcularVacacionesLFT(Math.floor(anios)); const vacUsadas=nonNegative('salida-vac-disfrutadas'); const aguDias=nonNegative('salida-aguinaldo-dias'); const primaPct=nonNegative('salida-prima-vac-pct')/100; const diasPend=nonNegative('salida-dias-pendientes'); const ptu=nonNegative('salida-ptu'); const domingos=nonNegative('salida-domingos'); const uma=getUMAFiscalVigente();
+            const agu=(aguDias/365)*diasAnio*sd; const vacDias=Math.max(0,(vacAnuales/365)*diasAnio-vacUsadas); const vac=vacDias*sd; const primaVac=vac*primaPct; const salarios=diasPend*sd; const primaDom=domingos*(sd*0.25);
+            const exAgui=Math.min(agu,uma*30), exPrimaVac=Math.min(primaVac,uma*15), exPtu=Math.min(ptu,uma*15), exPrimaDom=Math.min(primaDom,domingos*uma); const grossFiniquito=salarios+agu+vac+primaVac+ptu+primaDom; const exentoFiniquito=exAgui+exPrimaVac+exPtu+exPrimaDom; const gravadoFiniquito=Math.max(0,grossFiniquito-exentoFiniquito); const gravadoPrest=Math.max(0,gravadoFiniquito-salarios);
+            const tipo=document.querySelector('input[name="salida-tipo"]:checked')?.value||'finiquito'; const causa=document.getElementById('salida-causa')?.value||'renuncia';
+            let sdi=nonNegative('salida-sdi'); if(!sdi){const factor=Number(document.getElementById('txt-factor-integracion')?.value||1)||1;sdi=sd*factor;document.getElementById('salida-sdi').value=sdi.toFixed(2);document.getElementById('salida-sdi').dataset.source=sdi.toFixed(2);}
+            const ultimoSueldo=nonNegative('salida-ultimo-sueldo')||sd*30.4;
+            const include90=tipo==='liquidacion'&&document.getElementById('salida-incluir-90')?.checked; const include20=tipo==='liquidacion'&&document.getElementById('salida-incluir-20')?.checked; let includePrima=tipo==='liquidacion'&&document.getElementById('salida-incluir-prima')?.checked; if(causa==='renuncia'&&anios<15)includePrima=false;
+            const indemn90=include90?sdi*90:0; const indemn20=include20?sdi*20*anios:0; const smi=obtenerSalarioMinimoZona(); const topePrima=smi*2; const primaAnt=includePrima?Math.min(sd,topePrima)*12*anios:0; const separacionTotal=indemn90+indemn20+primaAnt; const aniosEx=aniosServicioParaExencion(anios); const exentoSeparacion=Math.min(separacionTotal,uma*90*aniosEx); const gravadoSeparacion=Math.max(0,separacionTotal-exentoSeparacion);
+            let isrSal=0,isrPrest=0,resArt174={impuesto:0,tasa:0}; if(salarios>0)isrSal=calcularISR(salarios,'mensual',{metodo:'periodo'}).isrCausado||0; const usar174=document.getElementById('salida-usar-art174')?.checked; if(gravadoPrest>0){if(usar174){resArt174=calcularISRArt174(gravadoPrest,ultimoSueldo);isrPrest=resArt174.impuesto||0;}else{isrPrest=calcularISR(gravadoPrest,'mensual',{metodo:'periodo'}).isrCausado||0;}}
+            const resSep=calcularISRSeparacionArt95(gravadoSeparacion,sd); const isrTotal=isrSal+isrPrest+(resSep.isrRetenidoIndem||0); const totalBruto=grossFiniquito+separacionTotal; const neto=Math.max(0,totalBruto-isrTotal);
+            [['salida-kpi-finiquito',grossFiniquito],['salida-kpi-indemnizacion',separacionTotal],['salida-kpi-isr',isrTotal],['salida-kpi-neto',neto],['salida-det-salarios',salarios],['salida-det-agui',agu],['salida-det-vac',vac],['salida-det-prima',primaVac],['salida-det-otros',ptu+primaDom],['salida-det-total-finiquito',grossFiniquito],['salida-det-90',indemn90],['salida-det-20',indemn20],['salida-det-antig',primaAnt],['salida-det-total-indem',separacionTotal],['salida-det-exento-finiquito',exentoFiniquito],['salida-det-gravado-finiquito',gravadoFiniquito],['salida-det-exento-sep',exentoSeparacion],['salida-det-gravado-sep',gravadoSeparacion],['salida-det-isr',isrTotal],['salida-neto-grande',neto],['audit-salida-sdi',sdi],['audit-salida-tope-antig',topePrima]].forEach(([id,v])=>setMetric(id,v));
+            setMetric('salida-neto-letras',numeroALetrasMXN(neto),x=>String(x)); setMetric('audit-salida-dias-anio',diasAnio,x=>String(x)); setMetric('audit-salida-vac-anuales',vacAnuales,x=>String(x)); setMetric('audit-salida-vac-prop',vacDias.toFixed(2),x=>String(x)); setMetric('audit-salida-tasa-sep',(resSep.tasaEfectivaPct||0).toFixed(2)+'%',x=>String(x)); setMetric('audit-salida-metodo-prest',usar174?'Art. 174':'Tarifa mensual',x=>String(x));
+            document.getElementById('salida-flow-1')?.classList.add('done'); document.getElementById('salida-flow-2')?.classList.toggle('done',tipo==='liquidacion'); document.getElementById('salida-flow-3')?.classList.add('done'); document.getElementById('salida-flow-4')?.classList.add('done');
+            const st=document.getElementById('salida-status'); if(st){st.textContent=tipo==='liquidacion'?'Liquidación calculada':'Finiquito calculado';st.className='read-only-chip bg-emerald-500/10 text-emerald-200 border border-emerald-400/20';}
+            globalThis.__salidaContext={tipo,causa,fi,fb,sd,anios,diasAnio,vacAnuales,vacDias,agu,vac,primaVac,salarios,ptu,primaDom,grossFiniquito,exentoFiniquito,gravadoFiniquito,indemn90,indemn20,primaAnt,separacionTotal,exentoSeparacion,gravadoSeparacion,isrSal,isrPrest,isrSep:resSep,isrTotal,totalBruto,neto,sdi,ultimoSueldo,uma};
+        }
+
+        function exportarSalidaExcel(){
+            if(typeof XLSX==='undefined'){alert('No se pudo cargar Excel.');return;}
+            const c=globalThis.__salidaContext||{}; const money=v=>round2(v||0); const wb=XLSX.utils.book_new(); const data=[['FINIQUITO / LIQUIDACION 2026'],['Versión',APP_VERSION],['Tipo',c.tipo||''],['Causa',c.causa||''],['Empleado',document.getElementById('tra-nombre')?.value||''],['RFC',document.getElementById('tra-rfc')?.value||''],['Fecha ingreso',document.getElementById('salida-fecha-ingreso')?.value||''],['Fecha baja',document.getElementById('salida-fecha-baja')?.value||''],['Salario diario',money(c.sd)],['SDI',money(c.sdi)],[''],['CONCEPTO','IMPORTE'],['Salarios devengados',money(c.salarios)],['Aguinaldo proporcional',money(c.agu)],['Vacaciones proporcionales',money(c.vac)],['Prima vacacional',money(c.primaVac)],['PTU',money(c.ptu)],['Prima dominical',money(c.primaDom)],['Total finiquito',money(c.grossFiniquito)],['Indemnización 90 días',money(c.indemn90)],['20 días por año',money(c.indemn20)],['Prima de antigüedad',money(c.primaAnt)],['Total indemnizaciones',money(c.separacionTotal)],['Exento finiquito',money(c.exentoFiniquito)],['Gravado finiquito',money(c.gravadoFiniquito)],['Exento separación',money(c.exentoSeparacion)],['Gravado separación',money(c.gravadoSeparacion)],['ISR salarios',money(c.isrSal)],['ISR prestaciones',money(c.isrPrest)],['ISR separación',money(c.isrSep?.isrRetenidoIndem)],['ISR total',money(c.isrTotal)],['NETO ESTIMADO',money(c.neto)]]; const ws=XLSX.utils.aoa_to_sheet(data); ws['!cols']=[{wch:34},{wch:22}]; XLSX.utils.book_append_sheet(wb,ws,'Salida'); XLSX.writeFile(wb,`Salida_2026_${(document.getElementById('tra-rfc')?.value||'SIN_RFC').replace(/[^A-Z0-9_-]/gi,'_')}.xlsx`);
+        }
+
+        function imprimirSalida(){
+            const c=globalThis.__salidaContext||{}; const popup=window.open('','_blank'); if(!popup){window.print();return;} const esc=s=>escapeHtml(s??'');
+            popup.document.write(`<!doctype html><html lang="es"><head><meta charset="utf-8"><title>Salida laboral 2026</title><style>body{font-family:Arial,sans-serif;color:#0f172a;padding:24px;max-width:900px;margin:auto}h1{margin-bottom:4px}.muted{color:#64748b;font-size:12px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px 24px}.box{border:1px solid #cbd5e1;padding:12px;border-radius:8px;margin:14px 0}.row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #e5e7eb}.row:last-child{border-bottom:0}.total{font-weight:800;font-size:16px}.net{background:#0f172a;color:#fff;padding:18px;border-radius:10px;text-align:center;margin-top:20px}.net strong{font-size:26px}.mutedLight{color:#cbd5e1;font-size:10px}@media print{body{padding:0}}</style></head><body><h1>${esc(c.tipo==='liquidacion'?'Liquidación + Finiquito':'Finiquito')}</h1><div class="muted">Cálculo de trabajo · 2026 · Sin timbrado</div><div class="box"><div class="grid"><div><b>Empleado:</b> ${esc(document.getElementById('tra-nombre')?.value||'')}</div><div><b>RFC:</b> ${esc(document.getElementById('tra-rfc')?.value||'')}</div><div><b>Fecha ingreso:</b> ${esc(document.getElementById('salida-fecha-ingreso')?.value||'')}</div><div><b>Fecha baja:</b> ${esc(document.getElementById('salida-fecha-baja')?.value||'')}</div><div><b>Salario diario:</b> ${fmtMXN(c.sd)}</div><div><b>SDI:</b> ${fmtMXN(c.sdi)}</div></div></div><div class="box"><div class="row"><span>Salarios devengados</span><span>${fmtMXN(c.salarios)}</span></div><div class="row"><span>Aguinaldo proporcional</span><span>${fmtMXN(c.agu)}</span></div><div class="row"><span>Vacaciones proporcionales</span><span>${fmtMXN(c.vac)}</span></div><div class="row"><span>Prima vacacional</span><span>${fmtMXN(c.primaVac)}</span></div><div class="row"><span>PTU / Prima dominical</span><span>${fmtMXN((c.ptu||0)+(c.primaDom||0))}</span></div><div class="row total"><span>Total finiquito</span><span>${fmtMXN(c.grossFiniquito)}</span></div></div>${c.tipo==='liquidacion'?`<div class="box"><div class="row"><span>Indemnización 90 días</span><span>${fmtMXN(c.indemn90)}</span></div><div class="row"><span>20 días por año</span><span>${fmtMXN(c.indemn20)}</span></div><div class="row"><span>Prima de antigüedad</span><span>${fmtMXN(c.primaAnt)}</span></div><div class="row total"><span>Total indemnizaciones</span><span>${fmtMXN(c.separacionTotal)}</span></div></div>`:''}<div class="box"><div class="row"><span>ISR salarios</span><span>${fmtMXN(c.isrSal)}</span></div><div class="row"><span>ISR prestaciones</span><span>${fmtMXN(c.isrPrest)}</span></div><div class="row"><span>ISR separación</span><span>${fmtMXN(c.isrSep?.isrRetenidoIndem||0)}</span></div><div class="row total"><span>ISR total</span><span>${fmtMXN(c.isrTotal)}</span></div></div><div class="net"><div>Neto estimado a pagar</div><strong>${fmtMXN(c.neto)}</strong><div class="mutedLight">${numeroALetrasMXN(c.neto)}</div></div></body></html>`); popup.document.close(); popup.focus(); popup.print();
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            if (globalThis.lucide?.createIcons) lucide.createIcons();
             cargarConfiguracionEnUI();
+            actualizarUIBaseMensualizacion();
             actualizarUIHistorialISR();
-            validarInputsCFDI();
             alCambiarFechas();
-        };
+            validarInputsCFDI();
+            syncSalidaFromNomina(true);
+            actualizarUISalidaTipo();
+            calcularSalida();
+            setAppMode('nomina');
+        });
     </script>
 </body>
 </html>
