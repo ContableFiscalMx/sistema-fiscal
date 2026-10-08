@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora de Nómina 2026 CFDI 4.0 (México) · v1.5.0</title>
+    <title>Calculadora de Nómina 2026 CFDI 4.0 (México) · v2.3.7 Dashboard consolidado + módulo de salida por vistas</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Lucide Icons -->
@@ -220,9 +220,7 @@
         .sidebar-tool:hover { background:#fff; border-color:#cbd5e1; color:#0f172a; }
         .sidebar-tool.backup { background:#f8fafc; border-color:#c7d2fe; color:#3730a3; }
         .sidebar-note { display:flex; align-items:flex-start; gap:.45rem; margin-top:.75rem; padding:.6rem; border:1px dashed #cbd5e1; border-radius:.65rem; background:#f8fafc; color:#64748b; font-size:8px; line-height:1.4; }
-        .dashboard-content { min-width:0; }
-        .scroll-anchor { scroll-margin-top:6rem; }
-        #salida-datos,#salida-derechos,#salida-liquidacion,#salida-isr,#salida-resultado { scroll-margin-top:6rem; }
+        .dashboard-content { min-width:0; overflow-x:hidden; }
         .mobile-dashboard-bar { position:sticky; top:4.25rem; z-index:30; display:flex; align-items:center; gap:.55rem; padding:.55rem .65rem; margin-bottom:.7rem; border:1px solid #e2e8f0; background:rgba(255,255,255,.96); backdrop-filter:blur(8px); border-radius:.8rem; box-shadow:0 8px 20px rgba(15,23,42,.06); }
         .mobile-dashboard-bar>div { flex:1; }
         .mobile-menu-btn { display:inline-flex; align-items:center; gap:.35rem; border:1px solid #e2e8f0; background:#f8fafc; color:#334155; border-radius:.55rem; padding:.45rem .55rem; font-size:9px; font-weight:800; }
@@ -237,11 +235,160 @@
         @media (min-width:1024px){ .mobile-dashboard-bar{display:none;} }
         .app-toast { position:fixed; right:1rem; bottom:1rem; z-index:100; transform:translateY(12px); opacity:0; pointer-events:none; background:#0f172a; color:#fff; border:1px solid #334155; border-radius:.75rem; box-shadow:0 18px 40px rgba(15,23,42,.24); padding:.65rem .8rem; font-size:10px; font-weight:800; transition:.22s ease; max-width:min(380px,calc(100vw - 2rem)); }
         .app-toast.show { opacity:1; transform:none; }
+
+        /* ===== v2.3.7 · módulo de Finiquito/Liquidación como workspace independiente ===== */
+        .salida-subnav { position: sticky; top: 4.5rem; z-index: 28; }
+        .salida-subnav-btn { display:inline-flex; align-items:center; gap:.45rem; padding:.58rem .72rem; border:1px solid #e2e8f0; border-radius:.7rem; background:#f8fafc; color:#475569; font-size:10px; font-weight:800; transition:.18s ease; cursor:pointer; }
+        .salida-subnav-btn:hover { background:#fff; border-color:#cbd5e1; color:#1d4ed8; transform:translateY(-1px); }
+        .salida-subnav-btn.active { background:#eff6ff; color:#1d4ed8; border-color:#bfdbfe; box-shadow:0 5px 16px rgba(37,99,235,.10); }
+        .salida-subnav-btn[data-salida-nav="salida-liquidacion"].active { background:#fffbeb; color:#b45309; border-color:#fde68a; box-shadow:0 5px 16px rgba(245,158,11,.10); }
+        .salida-subnav-btn[data-salida-nav="salida-resultado"].active { background:#f0fdf4; color:#047857; border-color:#bbf7d0; }
+        [data-salida-panel].salida-panel-in { animation: salidaPanelIn .2s ease-out; }
+        @keyframes salidaPanelIn { from { opacity:0; transform:translateY(5px);} to {opacity:1; transform:none;} }
         @media (max-width:767px){ .dashboard-content .bg-white.p-4.rounded-xl{padding:.8rem;} }
+
+        /* ===== v1.6 visual theme system ===== */
+        .theme-toggle { min-width:92px; justify-content:center; }
+        body[data-theme="dark"] { background:#020617 !important; color:#e2e8f0 !important; }
+        body[data-theme="dark"] .dashboard-sidebar,
+        body[data-theme="dark"] .mobile-dashboard-bar,
+        body[data-theme="dark"] .section-card,
+        body[data-theme="dark"] .bg-white { background:#0f172a !important; color:#e2e8f0 !important; }
+        body[data-theme="dark"] .bg-slate-50 { background:#111827 !important; }
+        body[data-theme="dark"] .bg-slate-100 { background:#0b1220 !important; }
+        body[data-theme="dark"] .bg-slate-200 { background:#1e293b !important; }
+        body[data-theme="dark"] .bg-slate-300 { background:#334155 !important; }
+        body[data-theme="dark"] .text-slate-900,
+        body[data-theme="dark"] .text-slate-800,
+        body[data-theme="dark"] .text-slate-700 { color:#f1f5f9 !important; }
+        body[data-theme="dark"] .text-slate-600 { color:#cbd5e1 !important; }
+        body[data-theme="dark"] .text-slate-500 { color:#94a3b8 !important; }
+        body[data-theme="dark"] .text-slate-400 { color:#94a3b8 !important; }
+        body[data-theme="dark"] .border-slate-200,
+        body[data-theme="dark"] .border-slate-300 { border-color:#334155 !important; }
+        body[data-theme="dark"] input:not([type="checkbox"]),
+        body[data-theme="dark"] select,
+        body[data-theme="dark"] textarea { background:#0b1220 !important; color:#e2e8f0 !important; border-color:#475569 !important; }
+        body[data-theme="dark"] input::placeholder,
+        body[data-theme="dark"] textarea::placeholder { color:#64748b !important; }
+        body[data-theme="dark"] .sidebar-module,
+        body[data-theme="dark"] .sidebar-tool,
+        body[data-theme="dark"] .subtle-note,
+        body[data-theme="dark"] .read-only-chip,
+        body[data-theme="dark"] .formula-row { background:#111827 !important; border-color:#334155 !important; color:#cbd5e1 !important; }
+        body[data-theme="dark"] .sidebar-module.active { background:#172554 !important; border-color:#2563eb !important; }
+        body[data-theme="dark"] .sidebar-module.exit.active { background:#451a03 !important; border-color:#f59e0b !important; }
+        body[data-theme="dark"] .sidebar-tool:hover { background:#1e293b !important; color:#fff !important; }
+        body[data-theme="dark"] .manual-override-card { background:linear-gradient(180deg,#24140a,#1c120b) !important; border-color:#9a3412 !important; }
+        body[data-theme="dark"] .manual-override-row { background:#111827 !important; border-color:#334155 !important; }
+        body[data-theme="dark"] .kpi-card { background:linear-gradient(180deg,#111827,#0f172a) !important; border-color:#334155 !important; }
+        body[data-theme="dark"] .kpi-card.primary { background:linear-gradient(180deg,#172554,#0f172a) !important; border-color:#1d4ed8 !important; }
+        body[data-theme="dark"] .kpi-card.success { background:linear-gradient(180deg,#052e16,#0f172a) !important; border-color:#166534 !important; }
+        body[data-theme="dark"] .kpi-card.warn { background:linear-gradient(180deg,#451a03,#0f172a) !important; border-color:#a16207 !important; }
+        body[data-theme="dark"] .kpi-card.rose { background:linear-gradient(180deg,#4c0519,#0f172a) !important; border-color:#9f1239 !important; }
+        body[data-theme="dark"] .kpi-card .kpi-value { color:#f8fafc !important; }
+        body[data-theme="dark"] .kpi-card.primary .kpi-value { color:#93c5fd !important; }
+        body[data-theme="dark"] .kpi-card.success .kpi-value { color:#86efac !important; }
+        body[data-theme="dark"] .kpi-card.warn .kpi-value { color:#fcd34d !important; }
+        body[data-theme="dark"] .kpi-card.rose .kpi-value { color:#fda4af !important; }
+        body[data-theme="dark"] .flow-line { background:#334155; }
+        body[data-theme="dark"] .flow-dot { background:#334155; color:#cbd5e1; }
+        body[data-theme="dark"] .sidebar-note { background:#111827 !important; border-color:#475569 !important; color:#94a3b8 !important; }
+        body[data-theme="dark"] .sidebar-divider { background:#334155; }
+        body[data-theme="dark"] .tab-btn.active { background:#0f172a !important; }
+        body[data-theme="dark"] .bg-blue-50 { background:#172554 !important; }
+        body[data-theme="dark"] .bg-emerald-50 { background:#052e16 !important; }
+        body[data-theme="dark"] .bg-amber-50,
+        body[data-theme="dark"] .bg-amber-50\/70 { background:#451a03 !important; }
+        body[data-theme="dark"] .bg-rose-50 { background:#4c0519 !important; }
+        body[data-theme="dark"] .border-blue-200 { border-color:#1e40af !important; }
+        body[data-theme="dark"] .border-emerald-200 { border-color:#166534 !important; }
+        body[data-theme="dark"] .border-amber-200 { border-color:#92400e !important; }
+        body[data-theme="dark"] .border-rose-200 { border-color:#9f1239 !important; }
+        body[data-theme="dark"] .payroll-receipt { background:#fff !important; color:#1f2937 !important; }
+        @media (max-width:767px){ .theme-toggle span{display:none;} .theme-toggle{min-width:36px;} }
+
+        /* ===== v1.8 · RECIBO EN DASHBOARD + RESPONSIVE HARDENING ===== */
+        html, body { max-width:100%; overflow-x:hidden; }
+        body { overscroll-behavior-x:none; }
+        .dashboard-shell, .dashboard-content, .workspace-panel, .section-card { min-width:0; max-width:100%; }
+        .dashboard-content { overflow:visible; }
+        .dashboard-action-btn { display:inline-flex; align-items:center; justify-content:center; border-radius:.65rem; padding:.55rem .75rem; font-size:10px; font-weight:800; box-shadow:0 4px 12px rgba(15,23,42,.10); transition:transform .18s ease, box-shadow .18s ease; }
+        .dashboard-action-btn:hover { transform:translateY(-1px); box-shadow:0 8px 18px rgba(15,23,42,.13); }
+        .receipt-stage { width:100%; min-width:0; display:flex; justify-content:center; align-items:flex-start; overflow:hidden; }
+        .receipt-stage > .payroll-receipt { width:min(100%, 1120px); max-width:1120px; min-width:0; margin:0 auto; }
+        .receipt-placeholder { width:min(100%,1120px); border:1px dashed #cbd5e1; background:#f8fafc; color:#64748b; border-radius:.8rem; padding:2rem 1rem; text-align:center; font-size:12px; }
+        .receipt-two-col { display:grid; grid-template-columns:minmax(0,1.35fr) minmax(0,1fr); gap:1rem; align-items:start; }
+        .receipt-section-card { border:1px solid #cbd5e1; border-radius:.7rem; overflow:hidden; background:#fff; min-width:0; }
+        .receipt-section-title { padding:.55rem .7rem; text-align:center; font-weight:900; font-size:11px; letter-spacing:.04em; color:#0f172a; background:#e2e8f0; border-bottom:1px solid #cbd5e1; }
+        .payroll-receipt .receipt-table tfoot td { border-bottom:0; }
+        .payroll-receipt .receipt-table td:first-child { text-align:left; }
+        body[data-theme="dark"] .receipt-section-card { background:#fff !important; border-color:#cbd5e1 !important; }
+        body[data-theme="dark"] .receipt-section-title { color:#0f172a !important; background:#e2e8f0 !important; }
+        @media (max-width:900px){ .receipt-two-col { grid-template-columns:1fr; } }
+
+        .receipt-table { table-layout:fixed; width:100%; max-width:100%; }
+        .receipt-table th, .receipt-table td { overflow-wrap:anywhere; word-break:break-word; }
+        #tab-recibo .receipt-info { min-width:0; }
+        #tab-recibo .receipt-info > div { min-width:0; }
+        #tab-recibo .receipt-info span { overflow-wrap:anywhere; }
+        body[data-theme="dark"] #tab-recibo { background:#0f172a !important; border-color:#334155 !important; }
+        body[data-theme="dark"] .receipt-placeholder { background:#111827; border-color:#475569; color:#94a3b8; }
+        body[data-theme="dark"] #tab-recibo .section-head { border-color:#334155; }
+        body[data-theme="dark"] #tab-recibo .eyebrow { color:#94a3b8; }
+        body[data-theme="dark"] .dashboard-action-btn.bg-slate-900 { background:#1e293b !important; }
+        @media (max-width:1023px){
+            .dashboard-shell { gap:.65rem; }
+            .dashboard-content { width:100%; }
+            .workspace-panel { width:100%; }
+        }
+        @media (max-width:767px){
+            .receipt-stage > .payroll-receipt { width:100%; border-radius:.7rem; padding:.75rem !important; }
+            #tab-recibo { padding:.75rem !important; }
+            #tab-recibo .section-head { align-items:flex-start; flex-direction:column; }
+            #tab-recibo .section-head > div:last-child { width:100%; }
+            #tab-recibo .dashboard-action-btn { flex:1 1 140px; }
+            .payroll-receipt .receipt-info { grid-template-columns:1fr !important; gap:.35rem !important; }
+            .payroll-receipt .receipt-two-col { grid-template-columns:1fr !important; gap:.65rem !important; }
+            .payroll-receipt .receipt-table { font-size:8px !important; }
+            .payroll-receipt .receipt-table th, .payroll-receipt .receipt-table td { padding:4px 3px !important; }
+            .payroll-receipt .grid.grid-cols-2.gap-12 { grid-template-columns:1fr !important; gap:2rem !important; padding-left:1rem !important; padding-right:1rem !important; }
+            .payroll-receipt .receipt-title { font-size:17px !important; }
+        }
+        @media (max-width:420px){
+            .payroll-receipt .receipt-table { font-size:7px !important; }
+            .payroll-receipt .receipt-table th, .payroll-receipt .receipt-table td { padding:3px 2px !important; }
+            .payroll-receipt .net-amount { font-size:18px !important; }
+        }
+
+        /* ===== v2.0 · NAVEGACIÓN CONSOLIDADA ===== */
+        #nomina-view-host{min-width:0;width:100%;}
+        #tab-resumen .summary-card-anchor{width:100%;}
+        #tab-resumen #nomina-dynamic-dashboard{margin:0;}
+        #tab-resumen #nomina-executive-summary-card{width:100%;}
+        #tab-resumen,#tab-recibo{width:100%;max-width:100%;}
+        #summary-card-anchor{min-width:0;width:100%;}
+        #tab-recibo .payroll-receipt{width:min(100%,1120px);}
+        body[data-theme="dark"] #tab-resumen .section-head{border-color:#334155;}
+        body[data-theme="dark"] #tab-resumen .read-only-chip{color:#bbf7d0 !important;background:#052e16 !important;border-color:#166534 !important;}
+        body[data-theme="dark"] #tab-resumen .eyebrow{color:#93c5fd !important;}
+        body[data-theme="dark"] #nomina-executive-summary-card{background:#0f172a !important;border-color:#334155 !important;color:#e5e7eb !important;}
+        body[data-theme="dark"] #nomina-executive-summary-card .border-slate-100{border-color:#1e293b !important;}
+        body[data-theme="dark"] #nomina-executive-summary-card .bg-slate-50{background:#111827 !important;border-color:#334155 !important;}
+        body[data-theme="dark"] #nomina-executive-summary-card .text-indigo-900{color:#c7d2fe !important;}
+        body[data-theme="dark"] #nomina-executive-summary-card .text-slate-900{color:#f8fafc !important;}
+        body[data-theme="dark"] #nomina-executive-summary-card .text-slate-800{color:#f1f5f9 !important;}
+        @media(max-width:767px){
+            #tab-resumen #nomina-executive-summary-card .grid-cols-2{grid-template-columns:1fr;}
+            #tab-resumen #nomina-dynamic-dashboard .kpi-grid{grid-template-columns:repeat(2,minmax(0,1fr));}
+        }
+        @media(max-width:420px){
+            #tab-resumen #nomina-dynamic-dashboard .kpi-grid{grid-template-columns:1fr;}
+        }
 
     </style>
 </head>
-<body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col">
+<body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col" data-theme="light">
 
     <!-- TOP NAVBAR -->
     <header class="bg-slate-900 text-white shadow-md sticky top-0 z-40 border-b border-slate-800">
@@ -272,8 +419,11 @@
                     <span class="text-slate-400 mr-1.5">UMI Infonavit:</span>
                     <span class="font-semibold text-purple-400" id="lbl-umi">$100.81</span>
                 </div>
-                <button onclick="switchTab('tab-config')" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1.5 rounded-md border border-slate-700 flex items-center transition">
+                <button type="button" onclick="setAppMode('nomina'); switchTab('tab-config')" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1.5 rounded-md border border-slate-700 flex items-center transition">
                     <i data-lucide="settings-2" class="w-3.5 h-3.5 mr-1 text-blue-400"></i> Tablas 2026
+                </button>
+                <button type="button" id="theme-toggle" onclick="toggleTheme()" class="theme-toggle bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1.5 rounded-md border border-slate-700 flex items-center transition" aria-pressed="false" title="Cambiar entre modo claro y oscuro">
+                    <i data-lucide="moon" class="w-3.5 h-3.5 mr-1.5"></i><span id="theme-toggle-label">Oscuro</span>
                 </button>
             </div>
         </div>
@@ -302,45 +452,55 @@
                 <div id="sidebar-nav-nomina">
                     <div class="sidebar-section-label">Nómina</div>
                     <nav class="sidebar-nav">
-                        <button type="button" data-side-tab="tab-general" class="side-nav-btn active" onclick="switchTab('tab-general')"><i data-lucide="user-round" class="w-4 h-4"></i><span>Empleado y CFDI</span><em>1</em></button>
-                        <button type="button" data-side-tab="tab-percepciones" class="side-nav-btn" onclick="switchTab('tab-percepciones')"><i data-lucide="coins" class="w-4 h-4"></i><span>Percepciones y SBC</span><em>2</em></button>
-                        <button type="button" data-side-tab="tab-deducciones" class="side-nav-btn" onclick="switchTab('tab-deducciones')"><i data-lucide="minus-circle" class="w-4 h-4"></i><span>Deducciones</span><em>3</em></button>
-                        <button type="button" data-side-tab="tab-auditoria" class="side-nav-btn" onclick="switchTab('tab-auditoria')"><i data-lucide="file-search" class="w-4 h-4"></i><span>Auditoría</span><em>4</em></button>
-                        <button type="button" data-side-tab="tab-config" class="side-nav-btn" onclick="switchTab('tab-config')"><i data-lucide="settings-2" class="w-4 h-4"></i><span>Tablas 2026</span><em>5</em></button>
+                        <button type="button" data-side-tab="tab-parametros" class="side-nav-btn active" onclick="switchTab('tab-parametros')"><i data-lucide="sliders-horizontal" class="w-4 h-4"></i><span>Parámetros de cálculo</span><em>1</em></button>
+                        <button type="button" data-side-tab="tab-general" class="side-nav-btn" onclick="switchTab('tab-general')"><i data-lucide="user-round" class="w-4 h-4"></i><span>Empleado y CFDI</span><em>2</em></button>
+                        <button type="button" data-side-tab="tab-percepciones" class="side-nav-btn" onclick="switchTab('tab-percepciones')"><i data-lucide="coins" class="w-4 h-4"></i><span>Percepciones y SBC</span><em>3</em></button>
+                        <button type="button" data-side-tab="tab-deducciones" class="side-nav-btn" onclick="switchTab('tab-deducciones')"><i data-lucide="minus-circle" class="w-4 h-4"></i><span>Deducciones</span><em>4</em></button>
+                        <button type="button" data-side-tab="tab-auditoria" class="side-nav-btn" onclick="switchTab('tab-auditoria')"><i data-lucide="file-search" class="w-4 h-4"></i><span>Auditoría</span><em>5</em></button>
+                        <button type="button" data-side-tab="tab-resumen" class="side-nav-btn" onclick="switchTab('tab-resumen')"><i data-lucide="layout-dashboard" class="w-4 h-4"></i><span>Resumen de nómina</span><em>6</em></button>
+                        <button type="button" data-side-tab="tab-recibo" class="side-nav-btn" onclick="switchTab('tab-recibo')"><i data-lucide="receipt" class="w-4 h-4"></i><span>Recibo de nómina</span><em>7</em></button>
+                        <button type="button" data-side-tab="tab-config" class="side-nav-btn" onclick="switchTab('tab-config')"><i data-lucide="settings-2" class="w-4 h-4"></i><span>Tablas 2026</span><em>8</em></button>
                     </nav>
                 </div>
 
                 <div id="sidebar-nav-salida" class="hidden">
                     <div class="sidebar-section-label">Finiquito / Liquidación</div>
                     <nav class="sidebar-nav">
-                        <button type="button" class="side-nav-btn" onclick="navegarSalida('salida-datos')"><i data-lucide="user-round" class="w-4 h-4"></i><span>Datos de salida</span></button>
-                        <button type="button" class="side-nav-btn" onclick="navegarSalida('salida-derechos')"><i data-lucide="receipt-text" class="w-4 h-4"></i><span>Derechos / Finiquito</span></button>
-                        <button type="button" class="side-nav-btn" onclick="navegarSalida('salida-liquidacion')"><i data-lucide="gavel" class="w-4 h-4"></i><span>Liquidación</span></button>
-                        <button type="button" class="side-nav-btn" onclick="navegarSalida('salida-isr')"><i data-lucide="percent" class="w-4 h-4"></i><span>ISR de salida</span></button>
-                        <button type="button" class="side-nav-btn" onclick="navegarSalida('salida-resultado')"><i data-lucide="badge-dollar-sign" class="w-4 h-4"></i><span>Resultado y auditoría</span></button>
+                        <button type="button" class="side-nav-btn" data-salida-nav="salida-datos" onclick="navegarSalida('salida-datos')"><i data-lucide="user-round" class="w-4 h-4"></i><span>Datos de salida</span></button>
+                        <button type="button" class="side-nav-btn" data-salida-nav="salida-derechos" onclick="navegarSalida('salida-derechos')"><i data-lucide="receipt-text" class="w-4 h-4"></i><span>Derechos / Finiquito</span></button>
+                        <button type="button" class="side-nav-btn" data-salida-nav="salida-liquidacion" onclick="navegarSalida('salida-liquidacion')"><i data-lucide="gavel" class="w-4 h-4"></i><span>Liquidación</span></button>
+                        <button type="button" class="side-nav-btn" data-salida-nav="salida-resultado" onclick="navegarSalida('salida-resultado')"><i data-lucide="badge-dollar-sign" class="w-4 h-4"></i><span>Resultado y auditoría</span></button>
                     </nav>
                 </div>
 
                 <div class="sidebar-divider"></div>
-                <div class="sidebar-section-label">Herramientas</div>
-                <div class="sidebar-tools">
-                    <button type="button" class="sidebar-tool" onclick="cargarEjemplo();"><i data-lucide="sparkles" class="w-4 h-4"></i><span> Cargar ejemplo</span></button>
-                    <button type="button" class="sidebar-tool" onclick="limpiarDatos();"><i data-lucide="rotate-ccw" class="w-4 h-4"></i><span> Limpiar captura</span></button>
-                    <button type="button" class="sidebar-tool backup" onclick="exportarRespaldoJSON();"><i data-lucide="download" class="w-4 h-4"></i><span> Respaldar JSON</span></button>
-                    <button type="button" class="sidebar-tool backup" onclick="document.getElementById('import-json-file').click();"><i data-lucide="upload" class="w-4 h-4"></i><span> Importar JSON</span></button>
-                    <input id="import-json-file" type="file" accept="application/json,.json" class="hidden" onchange="importarRespaldoJSON(event)">
-                </div>
-                <div class="sidebar-note"><i data-lucide="shield-check" class="w-4 h-4 shrink-0"></i><span>Los respaldos JSON usan identificadores de campos y un esquema versionado. La versión de la aplicación es informativa: el respaldo se puede importar entre versiones siempre que los campos sigan siendo compatibles; los campos desconocidos se conservan para no perder información.</span></div>
+                <div class="sidebar-note"><i data-lucide="shield-check" class="w-4 h-4 shrink-0"></i><span>Las herramientas de gestión de captura y respaldo se encuentran en <b>8 · Tablas 2026</b>, para mantener la navegación lateral limpia y sin acciones duplicadas.</span></div>
             </aside>
 
             <div id="dashboard-content" class="dashboard-content">
                 <div class="mobile-dashboard-bar lg:hidden">
                     <button type="button" onclick="toggleSidebar(true)" class="mobile-menu-btn"><i data-lucide="menu" class="w-5 h-5"></i><span>Menú</span></button>
-                    <div class="min-w-0"><div id="mobile-section-title" class="text-xs font-black text-slate-900 truncate">Empleado y CFDI</div><div id="mobile-mode-title" class="text-[9px] text-slate-500">Nómina</div></div>
-                    <button type="button" onclick="exportarRespaldoJSON()" class="mobile-menu-btn"><i data-lucide="download" class="w-4 h-4"></i></button>
+                    <div class="min-w-0"><div id="mobile-section-title" class="text-xs font-black text-slate-900 truncate">Resumen de nómina</div><div id="mobile-mode-title" class="text-[9px] text-slate-500">Nómina</div></div>
+                    <button type="button" onclick="toggleTheme()" id="mobile-theme-toggle" class="mobile-menu-btn" title="Cambiar tema" aria-label="Cambiar tema"><i data-lucide="moon" class="w-4 h-4"></i></button>
                 </div>
                 <section id="workspace-nomina" class="workspace-panel space-y-6">
 
+        <div id="nomina-view-host" class="space-y-6" aria-live="polite"></div>
+
+        <div id="nomina-core-layout" class="space-y-6">
+
+        <!-- TAB PARÁMETROS DE CÁLCULO -->
+        <section id="tab-parametros" class="section-card p-4 sm:p-5 space-y-6" aria-label="Parámetros de cálculo">
+            <div class="section-head">
+                <div>
+                    <div class="eyebrow">Configuración del periodo</div>
+                    <div class="flex flex-wrap items-center gap-2 mt-1">
+                        <h2 class="text-base sm:text-lg font-black text-slate-900">Parámetros de cálculo</h2>
+                        <span class="read-only-chip bg-blue-50 text-blue-700">ISR · Subsidio · IMSS</span>
+                    </div>
+                    <p class="text-[10px] sm:text-xs text-slate-500 mt-1">Este panel contiene únicamente los controles generales que gobiernan el cálculo. Las demás opciones del menú muestran su propio contenido.</p>
+                </div>
+            </div>
         <!-- GLOBAL CONTROL BAR -->
         <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-wrap items-center justify-between gap-4">
             <div class="flex flex-wrap items-center gap-5">
@@ -449,14 +609,8 @@
                 </div>
             </div>
 
-            <!-- Action Buttons -->
-            <div class="flex items-center space-x-2 w-full sm:w-auto justify-end">
-                <button type="button" onclick="cargarEjemplo()" class="px-3 py-2 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-300 text-xs font-semibold rounded-lg transition flex items-center">
-                    <i data-lucide="sparkles" class="w-3.5 h-3.5 mr-1.5 text-amber-600"></i> Cargar Ejemplo
-                </button>
-                <button type="button" onclick="limpiarDatos()" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-medium rounded-lg transition flex items-center">
-                    <i data-lucide="rotate-ccw" class="w-3.5 h-3.5 mr-1.5"></i> Limpiar
-                </button>
+            <!-- Action Button: cálculo rápido -->
+            <div class="flex items-center w-full sm:w-auto justify-end">
                 <button type="button" onclick="calcularNomina()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-lg shadow-sm transition flex items-center">
                     <i data-lucide="zap" class="w-3.5 h-3.5 mr-1.5"></i> Calcular
                 </button>
@@ -464,13 +618,15 @@
         </div>
 
         <!-- DYNAMIC PAYROLL DASHBOARD -->
-        <div class="section-card p-4 sm:p-5">
+        <div id="nomina-dynamic-dashboard" class="section-card p-4 sm:p-5">
             <div class="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-4">
                 <div><div class="eyebrow">Vista dinámica</div><div class="flex items-center gap-2 mt-1"><h2 class="text-base font-black text-slate-900">Nómina del periodo</h2><span id="nomina-estado-pill" class="read-only-chip bg-emerald-50 text-emerald-700">Cálculo listo</span></div><p class="text-[10px] text-slate-500 mt-1">Los cuatro indicadores principales quedan visibles antes de entrar al detalle.</p></div>
                 <div class="flex items-center gap-2 text-[10px] font-bold text-slate-500"><div id="nomina-flow-1" class="flow-step current"><span class="flow-dot">1</span><span>Datos</span></div><div class="flow-line"></div><div id="nomina-flow-2" class="flow-step"><span class="flow-dot">2</span><span>Percepciones</span></div><div class="flow-line"></div><div id="nomina-flow-3" class="flow-step"><span class="flow-dot">3</span><span>Deducciones</span></div><div class="flow-line"></div><div id="nomina-flow-4" class="flow-step"><span class="flow-dot">4</span><span>Neto</span></div></div>
             </div>
             <div class="kpi-grid mt-4"><div class="kpi-card primary"><div class="kpi-label">Percepciones</div><div id="nomina-kpi-percepciones" class="kpi-value">$0.00</div></div><div class="kpi-card rose"><div class="kpi-label">Retenciones</div><div id="nomina-kpi-retenciones" class="kpi-value">$0.00</div></div><div class="kpi-card warn"><div class="kpi-label">Carga patronal</div><div id="nomina-kpi-patronal" class="kpi-value">$0.00</div></div><div class="kpi-card success"><div class="kpi-label">Neto</div><div id="nomina-kpi-neto" class="kpi-value">$0.00</div></div></div>
         </div>
+
+        </section>
 
         <!-- FORM TABS & CONTENT -->
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -479,27 +635,8 @@
             <div class="lg:col-span-7 space-y-6">
                 <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
                     
-                    <!-- Tab Headers -->
-                    <div class="legacy-tab-strip border-b border-slate-200 flex overflow-x-auto bg-slate-50/80 p-1 gap-1 text-xs font-medium">
-                        <button onclick="switchTab('tab-general')" id="btn-tab-general" class="tab-btn active rounded-lg px-4 py-2.5 text-slate-600 hover:text-blue-600 whitespace-nowrap flex items-center transition">
-                            <i data-lucide="user-check" class="w-4 h-4 mr-1.5"></i> 1. CFDI 4.0 & Empleado
-                        </button>
-                        <button onclick="switchTab('tab-percepciones')" id="btn-tab-percepciones" class="tab-btn rounded-lg px-4 py-2.5 text-slate-600 hover:text-blue-600 whitespace-nowrap flex items-center transition">
-                            <i data-lucide="trending-up" class="w-4 h-4 mr-1.5"></i> 2. Percepciones & SBC
-                        </button>
-                        <button onclick="switchTab('tab-deducciones')" id="btn-tab-deducciones" class="tab-btn rounded-lg px-4 py-2.5 text-slate-600 hover:text-blue-600 whitespace-nowrap flex items-center transition">
-                            <i data-lucide="trending-down" class="w-4 h-4 mr-1.5"></i> 3. Deducciones & Ausentismo
-                        </button>
-                        <button onclick="switchTab('tab-auditoria')" id="btn-tab-auditoria" class="tab-btn rounded-lg px-4 py-2.5 text-slate-600 hover:text-blue-600 whitespace-nowrap flex items-center transition">
-                            <i data-lucide="file-search" class="w-4 h-4 mr-1.5"></i> 4. Auditoría ISR/IMSS
-                        </button>
-                        <button onclick="switchTab('tab-config')" id="btn-tab-config" class="tab-btn rounded-lg px-4 py-2.5 text-slate-600 hover:text-blue-600 whitespace-nowrap flex items-center transition">
-                            <i data-lucide="sliders" class="w-4 h-4 mr-1.5"></i> 5. Tablas 2026
-                        </button>
-                    </div>
-
                     <!-- TAB 1: DATOS GENERALES & CFDI 4.0 -->
-                    <div id="tab-general" class="p-5 space-y-5">
+                    <div id="tab-general" class="p-5 space-y-5 hidden">
                         
                         <!-- Emisor Section -->
                         <div>
@@ -956,6 +1093,28 @@
                             Valores 2026: UMA $117.31 diaria / $3,566.22 mensual / $42,794.64 anual; salario mínimo general $315.04 diaria; ZLFN $440.87 diaria; UMI $100.81 diaria. Para enero de 2026 se conserva la UMA 2025 ($113.14 diaria) en los cálculos cuya vigencia depende de la UMA anterior. El Decreto de Subsidio 2026 establece 15.02% de UMA mensual y un límite de $11,492.66; su considerando reporta un monto de referencia de $536.22. El motor conserva el cálculo operativo por porcentaje.
                         </p>
 
+                        <div class="app-tools-card mt-4 p-4 rounded-xl border border-slate-200 bg-slate-50">
+                            <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+                                <div>
+                                    <div class="eyebrow">Gestión de información</div>
+                                    <h4 class="text-sm font-black text-slate-800 mt-1 flex items-center gap-2"><i data-lucide="database-backup" class="w-4 h-4 text-indigo-600"></i> Herramientas de la aplicación</h4>
+                                    <p class="text-[10px] text-slate-500 mt-1 max-w-3xl">Estas acciones trabajan sobre la captura actual. Las <b>Tablas 2026</b> no se eliminan al limpiar, y los respaldos JSON incluyen el esquema y la versión de la aplicación para conservar compatibilidad.</p>
+                                </div>
+                                <span class="read-only-chip bg-white text-slate-600 border border-slate-200">v2.3.7</span>
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 mt-4">
+                                <button type="button" onclick="cargarEjemplo();" class="sidebar-tool bg-white hover:bg-amber-50 border-amber-200 text-amber-800"><i data-lucide="sparkles" class="w-4 h-4"></i><span>Cargar ejemplo</span></button>
+                                <button type="button" onclick="limpiarDatos();" class="sidebar-tool bg-white hover:bg-slate-100"><i data-lucide="rotate-ccw" class="w-4 h-4"></i><span>Limpiar captura</span></button>
+                                <button type="button" onclick="exportarRespaldoJSON();" class="sidebar-tool backup bg-white"><i data-lucide="download" class="w-4 h-4"></i><span>Respaldar JSON</span></button>
+                                <button type="button" onclick="document.getElementById('import-json-file').click();" class="sidebar-tool backup bg-white"><i data-lucide="upload" class="w-4 h-4"></i><span>Importar JSON</span></button>
+                            </div>
+                            <input id="import-json-file" type="file" accept="application/json,.json" class="hidden" onchange="importarRespaldoJSON(event)">
+                            <div class="mt-3 flex items-start gap-2 text-[10px] text-slate-500 bg-white border border-dashed border-slate-300 rounded-lg p-2.5">
+                                <i data-lucide="shield-check" class="w-4 h-4 shrink-0 text-emerald-600"></i>
+                                <span>Los respaldos son independientes de la versión visual: conservan <b>appVersion</b>, <b>schemaVersion</b> y los datos identificados por campo. Esto permite migrar el contenido a versiones futuras sin depender de la apariencia del dashboard.</span>
+                            </div>
+                        </div>
+
                         <div class="flex justify-end pt-2">
                             <button type="button" onclick="guardarConfiguracionTablas()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-lg shadow-sm">
                                 Guardar y Aplicar Indicadores
@@ -967,10 +1126,10 @@
             </div>
 
             <!-- RIGHT COLUMN: RESULTS, COST SUMMARY & CFDI RECEIPT (5 cols) -->
-            <div class="lg:col-span-5 space-y-6 lg:sticky lg:top-20 lg:self-start">
+            <div id="nomina-legacy-summary-column" class="lg:col-span-5 space-y-6 lg:sticky lg:top-20 lg:self-start">
                 
                 <!-- EXECUTIVE SUMMARY CARD -->
-                <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 space-y-4">
+                <div id="nomina-executive-summary-card" class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 space-y-4">
                     <div class="flex items-center justify-between border-b pb-3">
                         <div>
                             <h3 class="font-bold text-slate-800 text-base">Resumen de Nómina</h3>
@@ -1068,7 +1227,31 @@
                     </div>
                 </div>
 
-                <!-- REPRESENTACIÓN IMPRESA DEL RECIBO DE NÓMINA -->
+            </div>
+        </div>
+
+        <!-- RECIBO DE NÓMINA · DASHBOARD FULL WIDTH -->
+        <section id="tab-recibo" class="section-card p-3 sm:p-5 hidden" aria-label="Recibo de nómina">
+            <div class="section-head no-print">
+                <div>
+                    <div class="eyebrow">Documento del periodo</div>
+                    <div class="flex flex-wrap items-center gap-2 mt-1">
+                        <h2 class="text-base sm:text-lg font-black text-slate-900">Recibo de nómina</h2>
+                        <span class="read-only-chip bg-blue-50 text-blue-700">Vista completa</span>
+                    </div>
+                    <p class="text-[10px] sm:text-xs text-slate-500 mt-1 max-w-3xl">Aquí se presenta el comprobante completo dentro del dashboard. El diseño toma como referencia el formato de la hoja de Excel proporcionada, conservando la información fiscal y laboral que ya maneja la aplicación.</p>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                    <button type="button" onclick="exportarExcel()" class="dashboard-action-btn bg-emerald-600 hover:bg-emerald-700 text-white">
+                        <i data-lucide="file-spreadsheet" class="w-4 h-4 mr-1.5"></i> Exportar Excel
+                    </button>
+                    <button type="button" onclick="imprimirRecibo()" class="dashboard-action-btn bg-slate-900 hover:bg-slate-800 text-white">
+                        <i data-lucide="printer" class="w-4 h-4 mr-1.5"></i> Imprimir recibo
+                    </button>
+                    <span class="text-[10px] text-slate-500 self-center hidden xl:inline">Salida optimizada a 1 hoja carta · v2.3.7</span>
+                </div>
+            </div>
+            <div id="receipt-dashboard-body" class="receipt-stage mt-4">
                 <div class="payroll-receipt rounded-xl p-5" id="printable-receipt">
                     <div class="text-center pb-2">
                         <div class="receipt-title">Recibo de Nómina</div>
@@ -1106,20 +1289,35 @@
                         </div>
                     </div>
 
-                    <!-- Tabla principal con el mismo esquema visual solicitado -->
-                    <table class="receipt-table mb-2">
-                        <thead>
-                            <tr>
-                                <th style="width:34%; text-align:left;">PERCEPCIONES</th>
-                                <th style="width:17%; text-align:right;">GRAVADO (+)</th>
-                                <th style="width:17%; text-align:right;">EXENTO (+)</th>
-                                <th style="width:22%; text-align:left;">DEDUCCIONES</th>
-                                <th style="width:10%; text-align:right;">IMPORTE (-)</th>
-                            </tr>
-                        </thead>
-                        <tbody id="rec-tabla-principal">
-                        </tbody>
-                    </table>
+                    <!-- Formato tipo Excel: percepciones y deducciones independientes -->
+                    <div class="receipt-two-col mb-3">
+                        <div class="receipt-section-card">
+                            <div class="receipt-section-title">PERCEPCIONES</div>
+                            <table class="receipt-table">
+                                <thead>
+                                    <tr><th style="width:48%;text-align:left;">Concepto</th><th style="width:26%;text-align:right;">Gravado (+)</th><th style="width:26%;text-align:right;">Exento (+)</th></tr>
+                                </thead>
+                                <tbody id="rec-percepciones-body"></tbody>
+                                <tfoot>
+                                    <tr class="section-total"><td>Suma percepciones</td><td id="rec-suma-gravado" class="text-right font-mono">$0.00</td><td id="rec-suma-exento" class="text-right font-mono">$0.00</td></tr>
+                                    <tr class="grand-total"><td>Total percepciones</td><td colspan="2" id="rec-total-percepciones" class="text-right font-mono">$0.00</td></tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                        <div class="receipt-section-card">
+                            <div class="receipt-section-title">DEDUCCIONES</div>
+                            <table class="receipt-table">
+                                <thead>
+                                    <tr><th style="width:70%;text-align:left;">Concepto</th><th style="width:30%;text-align:right;">Importe (-)</th></tr>
+                                </thead>
+                                <tbody id="rec-deducciones-body"></tbody>
+                                <tfoot>
+                                    <tr class="section-total"><td>Suma deducciones</td><td id="rec-suma-deducciones" class="text-right font-mono">$0.00</td></tr>
+                                    <tr class="grand-total"><td>Total deducciones</td><td id="rec-total-deducciones" class="text-right font-mono">$0.00</td></tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
 
                     <!-- Otros pagos -->
                     <div class="mt-3 mb-3">
@@ -1156,10 +1354,10 @@
                     </div>
                     <div class="text-[8px] text-slate-400 text-center mt-4">Este documento es una representación simplificada de un comprobante fiscal digital.</div>
                 </div>
-
             </div>
-        </div>
+        </section>
 
+        </div>
         </section>
 
         <!-- WORKSPACE: FINIQUITO / LIQUIDACIÓN -->
@@ -1171,7 +1369,19 @@
                 </div>
             </div>
 
-            <div class="section-card p-4 sm:p-5">
+            <div class="salida-subnav section-card p-2 sm:p-3" role="navigation" aria-label="Secciones de Finiquito y Liquidación">
+                <div class="flex flex-wrap items-center justify-between gap-2">
+                    <div class="flex flex-wrap gap-2">
+                        <button type="button" class="salida-subnav-btn active" data-salida-nav="salida-datos" onclick="navegarSalida('salida-datos')"><i data-lucide="user-round" class="w-4 h-4"></i><span>Datos de salida</span></button>
+                        <button type="button" class="salida-subnav-btn" data-salida-nav="salida-derechos" onclick="navegarSalida('salida-derechos')"><i data-lucide="receipt-text" class="w-4 h-4"></i><span>Finiquito</span></button>
+                        <button type="button" class="salida-subnav-btn" data-salida-nav="salida-liquidacion" onclick="navegarSalida('salida-liquidacion')"><i data-lucide="gavel" class="w-4 h-4"></i><span>Liquidación</span></button>
+                        <button type="button" class="salida-subnav-btn" data-salida-nav="salida-resultado" onclick="navegarSalida('salida-resultado')"><i data-lucide="badge-dollar-sign" class="w-4 h-4"></i><span>Resultado y auditoría</span></button>
+                    </div>
+                    <div class="text-[9px] text-slate-500 hidden md:block">Vista independiente · cálculo separado de Nómina</div>
+                </div>
+            </div>
+
+            <div class="section-card p-4 sm:p-5" data-salida-panel="salida-datos">
                 <div class="section-head"><div><div class="eyebrow">Datos compartidos</div><h3 class="text-sm font-bold text-slate-800 mt-1">Trabajador y salario</h3></div><label class="inline-flex items-center gap-2 text-[10px] font-semibold text-slate-600 cursor-pointer"><input id="salida-auto-sync" type="checkbox" checked onchange="syncSalidaFromNomina(); calcularSalida()" class="rounded border-slate-300 text-blue-600 focus:ring-blue-500"> Sincronizar con Nómina</label></div>
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mt-4 text-xs">
                     <div class="p-3 rounded-lg bg-slate-50 border border-slate-200"><div class="text-[9px] uppercase font-bold text-slate-500">Empleado</div><div id="salida-res-nombre" class="font-bold text-slate-900 mt-1 truncate">-</div></div>
@@ -1184,7 +1394,7 @@
 
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
                 <div class="lg:col-span-7 space-y-6">
-                    <div id="salida-datos" class="section-card p-4 sm:p-5">
+                    <div class="section-card p-4 sm:p-5" data-salida-panel="salida-datos">
                         <div class="section-head"><div><div class="eyebrow">1. Escenario laboral</div><h3 class="text-sm font-bold text-slate-800 mt-1">¿Qué deseas calcular?</h3></div><span class="read-only-chip"><i data-lucide="help-circle" class="w-3 h-3"></i> Finiquito vs. liquidación</span></div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
                             <label class="cursor-pointer"><input class="peer sr-only" type="radio" name="salida-tipo" id="salida-tipo-finiquito" value="finiquito" checked onchange="actualizarUISalidaTipo(); calcularSalida()"><div class="p-4 rounded-xl border border-slate-200 bg-white peer-checked:border-blue-500 peer-checked:bg-blue-50/70 transition"><div class="flex items-center gap-3"><span class="p-2 rounded-lg bg-blue-100 text-blue-700"><i data-lucide="receipt-text" class="w-5 h-5"></i></span><div><div class="text-sm font-bold">Finiquito</div><div class="text-[10px] text-slate-500">Derechos devengados al terminar la relación</div></div></div></div></label>
@@ -1202,7 +1412,7 @@
                         </div>
                     </div>
 
-                    <div id="salida-derechos" class="section-card p-4 sm:p-5">
+                    <div class="section-card p-4 sm:p-5" data-salida-panel="salida-derechos">
                         <div class="section-head"><div><div class="eyebrow">2. Derechos devengados</div><h3 class="text-sm font-bold text-slate-800 mt-1">Componentes del finiquito</h3></div><span class="read-only-chip">LFT Arts. 76, 80 y 87</span></div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4 text-xs">
                             <div class="input-focus-ring rounded-lg border border-transparent p-1"><label class="block font-medium text-slate-700 mb-1">Días de aguinaldo anual</label><input id="salida-aguinaldo-dias" type="number" step="0.01" min="0" value="15" class="w-full border border-slate-300 rounded-lg p-2" oninput="calcularSalida()"></div>
@@ -1214,8 +1424,7 @@
                         <div class="mt-4 p-3 rounded-lg bg-blue-50 border border-blue-200 text-[10px] text-blue-900 leading-relaxed"><b>Según la guía:</b> aguinaldo proporcional, vacaciones proporcionales, prima vacacional y salarios devengados forman la base del finiquito. Las exenciones se aplican conforme a los topes indicados por la guía.</div>
                     </div>
 
-                    <div id="salida-liquidacion" class="scroll-anchor"></div>
-                    <div id="panel-liquidacion-opciones" data-anchor="salida-liquidacion" class="section-card p-4 sm:p-5">
+                    <div id="panel-liquidacion-opciones" data-anchor="salida-liquidacion" data-salida-panel="salida-liquidacion" class="section-card p-4 sm:p-5">
                         <div class="section-head"><div><div class="eyebrow">3. Indemnizaciones</div><h3 class="text-sm font-bold text-slate-800 mt-1">Componentes de liquidación</h3></div><span class="read-only-chip" id="salida-legal-chip">Configura el supuesto</span></div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4 text-xs">
                             <label class="flex items-start gap-3 p-3 rounded-lg border border-slate-200 bg-slate-50 cursor-pointer"><input id="salida-incluir-90" type="checkbox" class="mt-1 rounded text-amber-600 focus:ring-amber-500" checked onchange="calcularSalida()"><span><b class="block">Indemnización constitucional</b><span class="text-[10px] text-slate-500">90 días de SDI</span></span></label>
@@ -1229,14 +1438,14 @@
                         <div class="mt-3 subtle-note rounded-lg p-3 text-[10px] leading-relaxed"><b>Según la guía:</b> la liquidación utiliza SDI; la indemnización constitucional se presenta como 90 días y los 20 días por año se activan solo cuando procede. La prima de antigüedad es de 12 días por año y tiene un tope de dos salarios mínimos para su base.</div>
                     </div>
 
-                    <div id="salida-isr" class="section-card p-4 sm:p-5">
+                    <div class="section-card p-4 sm:p-5" data-salida-panel="salida-derechos">
                         <div class="section-head"><div><div class="eyebrow">4. ISR</div><h3 class="text-sm font-bold text-slate-800 mt-1">Tratamiento fiscal de la salida</h3></div><span class="read-only-chip">LISR Arts. 93, 95 y 174</span></div>
                         <label class="flex items-start gap-3 p-3 mt-4 rounded-lg border border-slate-200 bg-white cursor-pointer"><input id="salida-usar-art174" type="checkbox" class="mt-1 rounded text-blue-600 focus:ring-blue-500" checked onchange="calcularSalida()"><span><b class="block text-xs">Aplicar Art. 174 a prestaciones gravadas</b><span class="text-[10px] text-slate-500">La guía lo presenta como opción de tasa efectiva para prestaciones gravadas del finiquito.</span></span></label>
                     </div>
                 </div>
 
                 <div class="lg:col-span-5 space-y-6">
-                    <div id="salida-resultado" class="section-card p-4 sm:p-5 lg:sticky lg:top-24">
+                    <div class="section-card p-4 sm:p-5 lg:sticky lg:top-24" data-salida-panel="salida-resultado">
                         <div class="section-head"><div><div class="eyebrow">Resumen dinámico</div><h3 id="salida-resumen-titulo" class="text-base font-bold text-slate-800 mt-1">Finiquito</h3></div><span id="salida-badge" class="read-only-chip bg-blue-50 text-blue-700">Derechos devengados</span></div>
                         <div class="kpi-grid mt-4">
                             <div class="kpi-card primary"><div class="kpi-label">Finiquito</div><div id="salida-kpi-finiquito" class="kpi-value">$0.00</div></div>
@@ -1259,7 +1468,7 @@
                         <div class="grid grid-cols-2 gap-2 mt-4 sticky-action"><button type="button" onclick="exportarSalidaExcel()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold py-2.5 rounded-lg flex items-center justify-center"><i data-lucide="file-spreadsheet" class="w-4 h-4 mr-1.5"></i> Excel salida</button><button type="button" onclick="imprimirSalida()" class="bg-slate-800 hover:bg-slate-900 text-white text-xs font-semibold py-2.5 rounded-lg flex items-center justify-center"><i data-lucide="printer" class="w-4 h-4 mr-1.5"></i> Imprimir salida</button></div>
                     </div>
 
-                    <div class="section-card p-4 sm:p-5"><div class="section-head"><div><div class="eyebrow">Auditoría visible</div><h3 class="text-sm font-bold text-slate-800 mt-1">Trazabilidad del cálculo</h3></div><span class="read-only-chip">Paso a paso</span></div><div class="text-[10px] mt-4 text-slate-600"><div class="formula-row"><span>Días laborados en el año</span><span id="audit-salida-dias-anio" class="font-mono">0</span></div><div class="formula-row"><span>Días vacaciones anuales aplicables</span><span id="audit-salida-vac-anuales" class="font-mono">0</span></div><div class="formula-row"><span>Días vacaciones proporcionales</span><span id="audit-salida-vac-prop" class="font-mono">0.00</span></div><div class="formula-row"><span>SDI usado</span><span id="audit-salida-sdi" class="font-mono">$0.00</span></div><div class="formula-row"><span>Tope salarial prima de antigüedad</span><span id="audit-salida-tope-antig" class="font-mono">$0.00</span></div><div class="formula-row"><span>Tasa ISR separación</span><span id="audit-salida-tasa-sep" class="font-mono">0.00%</span></div><div class="formula-row"><span>Método ISR prestaciones</span><span id="audit-salida-metodo-prest" class="font-mono">Art. 174</span></div></div><div class="subtle-note rounded-lg p-3 mt-3 text-[9px] leading-relaxed">Este módulo es deliberadamente transparente: los conceptos de indemnización se activan de forma explícita para que el cálculo no los mezcle automáticamente con una nómina ordinaria.</div></div>
+                    <div class="section-card p-4 sm:p-5" data-salida-panel="salida-resultado"><div class="section-head"><div><div class="eyebrow">Auditoría visible</div><h3 class="text-sm font-bold text-slate-800 mt-1">Trazabilidad del cálculo</h3></div><span class="read-only-chip">Paso a paso</span></div><div class="text-[10px] mt-4 text-slate-600"><div class="formula-row"><span>Días laborados en el año</span><span id="audit-salida-dias-anio" class="font-mono">0</span></div><div class="formula-row"><span>Días vacaciones anuales aplicables</span><span id="audit-salida-vac-anuales" class="font-mono">0</span></div><div class="formula-row"><span>Días vacaciones proporcionales</span><span id="audit-salida-vac-prop" class="font-mono">0.00</span></div><div class="formula-row"><span>SDI usado</span><span id="audit-salida-sdi" class="font-mono">$0.00</span></div><div class="formula-row"><span>Tope salarial prima de antigüedad</span><span id="audit-salida-tope-antig" class="font-mono">$0.00</span></div><div class="formula-row"><span>Tasa ISR separación</span><span id="audit-salida-tasa-sep" class="font-mono">0.00%</span></div><div class="formula-row"><span>Método ISR prestaciones</span><span id="audit-salida-metodo-prest" class="font-mono">Art. 174</span></div></div><div class="subtle-note rounded-lg p-3 mt-3 text-[9px] leading-relaxed">Este módulo es deliberadamente transparente: los conceptos de indemnización se activan de forma explícita para que el cálculo no los mezcle automáticamente con una nómina ordinaria. El ISR de salida se concentra en esta vista para mantener la navegación limpia.</div></div>
                 </div>
             </div>
         </section>
@@ -1268,7 +1477,7 @@
     </main>
 
     <footer class="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 pb-6 text-[10px] text-slate-400 text-center">
-        Nómina MX 2026 · versión profesional <span class="font-mono">1.5.0</span> · Cálculo local en el navegador · Módulo separado de Finiquito/Liquidación · Sin timbrado fiscal.
+        Nómina MX 2026 · versión profesional <span class="font-mono">2.3.7</span> · Cálculo local en el navegador · Módulo separado de Finiquito/Liquidación · Sin timbrado fiscal.
     </footer>
 
     <!-- JAVASCRIPT ENGINE -->
@@ -1385,7 +1594,7 @@
             }
         };
 
-        const APP_VERSION = '1.5.0-profesional';
+        const APP_VERSION = '2.3.7-profesional';
         const BACKUP_FORMAT = 'nomina-mx-backup';
         const BACKUP_SCHEMA_VERSION = 2;
 
@@ -1449,23 +1658,80 @@
         }
 
         const SIDEBAR_TAB_TITLES = {
+            'tab-parametros':'Parámetros de cálculo',
             'tab-general':'Empleado y CFDI',
             'tab-percepciones':'Percepciones y SBC',
             'tab-deducciones':'Deducciones',
             'tab-auditoria':'Auditoría ISR / IMSS',
+            'tab-resumen':'Resumen de nómina',
+            'tab-recibo':'Recibo de nómina',
             'tab-config':'Tablas 2026'
         };
+
+        function ensureNominaDashboardStructure(){
+            const host=document.getElementById('nomina-view-host');
+            if(!host) return;
+            const core=document.getElementById('nomina-core-layout');
+            const legacy=document.getElementById('nomina-legacy-summary-column');
+            const summaryCard=document.getElementById('nomina-executive-summary-card');
+            const dynamic=document.getElementById('nomina-dynamic-dashboard');
+            let summary=document.getElementById('tab-resumen');
+            if(!summary){
+                summary=document.createElement('section');
+                summary.id='tab-resumen';
+                summary.className='section-card p-4 sm:p-5 space-y-5 hidden';
+                summary.setAttribute('data-nomina-panel','true');
+                summary.setAttribute('aria-label','Resumen de nómina');
+                summary.innerHTML=`
+                    <div class="section-head">
+                        <div>
+                            <div class="eyebrow">Vista ejecutiva</div>
+                            <div class="flex flex-wrap items-center gap-2 mt-1">
+                                <h2 class="text-base sm:text-lg font-black text-slate-900">Resumen de nómina</h2>
+                                <span class="read-only-chip bg-emerald-50 text-emerald-700">Resultado del periodo</span>
+                            </div>
+                            <p class="text-[10px] sm:text-xs text-slate-500 mt-1">Aquí se concentra una sola vez la lectura ejecutiva del cálculo. La lectura final queda después de la auditoría y antes del recibo para facilitar la revisión y autorización del pago.</p>
+                        </div>
+                    </div>
+                    <div id="summary-dynamic-anchor"></div>
+                    <div id="summary-card-anchor"></div>`;
+                host.prepend(summary);
+            }
+            const panels=['tab-parametros','tab-general','tab-percepciones','tab-deducciones','tab-auditoria','tab-resumen','tab-recibo','tab-config'];
+            for(const id of panels){
+                const el=document.getElementById(id);
+                if(el){
+                    el.setAttribute('data-nomina-panel','true');
+                    host.appendChild(el);
+                }
+            }
+            const da=document.getElementById('summary-dynamic-anchor');
+            if(da && dynamic) da.appendChild(dynamic);
+            const ca=document.getElementById('summary-card-anchor');
+            if(ca && summaryCard) ca.appendChild(summaryCard);
+            if(legacy) legacy.remove();
+            if(core) core.style.display='none';
+            const receipt=document.getElementById('tab-recibo');
+            if(receipt) receipt.style.maxWidth='100%';
+        }
+
         function switchTab(tabId) {
-            const tabs = ['tab-general','tab-percepciones','tab-deducciones','tab-auditoria','tab-config'];
-            if (!tabs.includes(tabId)) return;
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            document.querySelectorAll('.side-nav-btn[data-side-tab]').forEach(btn => btn.classList.toggle('active', btn.dataset.sideTab === tabId));
-            tabs.forEach(id => document.getElementById(id)?.classList.add('hidden'));
+            ensureNominaDashboardStructure();
+            const tabs=['tab-parametros','tab-general','tab-percepciones','tab-deducciones','tab-auditoria','tab-resumen','tab-recibo','tab-config'];
+            if(!tabs.includes(tabId)) tabId='tab-parametros';
+            document.querySelectorAll('#nomina-view-host [data-nomina-panel]').forEach(el=>el.classList.add('hidden'));
             document.getElementById(tabId)?.classList.remove('hidden');
-            document.getElementById('btn-' + tabId)?.classList.add('active');
-            const mobileTitle=document.getElementById('mobile-section-title'); if(mobileTitle) mobileTitle.textContent=SIDEBAR_TAB_TITLES[tabId]||'Módulo';
-            try { sessionStorage.setItem('nomina:lastTab', tabId); } catch(e) {}
-            if (window.innerWidth < 1024) toggleSidebar(false);
+            document.querySelectorAll('.tab-btn').forEach(btn=>btn.classList.remove('active'));
+            document.querySelectorAll('.side-nav-btn[data-side-tab]').forEach(btn=>{
+                const active=btn.dataset.sideTab===tabId;
+                btn.classList.toggle('active',active);
+                if(active) btn.setAttribute('aria-current','page'); else btn.removeAttribute('aria-current');
+            });
+            const mobileTitle=document.getElementById('mobile-section-title');
+            if(mobileTitle) mobileTitle.textContent=SIDEBAR_TAB_TITLES[tabId]||'Módulo';
+            try { sessionStorage.setItem('nomina:lastTab',tabId); } catch(e) {}
+            if(window.innerWidth<1024) toggleSidebar(false);
+            if(tabId==='tab-recibo') montarReciboEnDashboard();
         }
 
         function toggleSidebar(open) {
@@ -1477,10 +1743,39 @@
         }
 
         function navegarSalida(anchorId) {
-            const el=document.getElementById(anchorId);
-            if(!el) return;
-            if(window.innerWidth<1024) toggleSidebar(false);
-            requestAnimationFrame(()=>el.scrollIntoView({behavior:'smooth', block:'start'}));
+            const allowed = ['salida-datos','salida-derechos','salida-liquidacion','salida-resultado'];
+            const next = allowed.includes(anchorId) ? anchorId : 'salida-datos';
+            const workspace = document.getElementById('workspace-salida');
+            if (!workspace) return;
+            workspace.classList.remove('hidden');
+            const panels = workspace.querySelectorAll('[data-salida-panel]');
+            let visible = 0;
+            panels.forEach(el => {
+                const match = el.getAttribute('data-salida-panel') === next;
+                el.classList.toggle('hidden', !match);
+                el.classList.toggle('salida-panel-in', match);
+                if (match) visible++;
+            });
+            if (!visible) {
+                panels.forEach(el => {
+                    const match = el.getAttribute('data-salida-panel') === 'salida-datos';
+                    el.classList.toggle('hidden', !match);
+                    el.classList.toggle('salida-panel-in', match);
+                });
+            }
+            document.querySelectorAll('#workspace-salida .salida-subnav-btn, #sidebar-nav-salida .side-nav-btn').forEach(btn => {
+                const key = btn.dataset.salidaNav || '';
+                const active = key === next;
+                btn.classList.toggle('active', active);
+                if (active) btn.setAttribute('aria-current','page'); else btn.removeAttribute('aria-current');
+            });
+            const titles = {'salida-datos':'Datos de salida','salida-derechos':'Finiquito','salida-liquidacion':'Liquidación','salida-resultado':'Resultado y auditoría'};
+            const mobileTitle = document.getElementById('mobile-section-title');
+            if (mobileTitle) mobileTitle.textContent = titles[next];
+            try { sessionStorage.setItem('nomina:lastSalidaTab', next); } catch(e) {}
+            if (window.innerWidth < 1024) toggleSidebar(false);
+            window.requestAnimationFrame(()=>window.scrollTo({top:0,behavior:'smooth'}));
+            globalThis.lucide?.createIcons?.();
         }
 
         function validateRFC(rfc) {
@@ -1776,7 +2071,7 @@
                 };
             }
 
-            const inputUltimo = document.getElementById('indem-ultimo-sueldo');
+            const inputUltimo = document.getElementById('salida-ultimo-sueldo');
             const capturado = inputUltimo ? Number(String(inputUltimo.value || '').trim()) : 0;
             const ultimoSueldoMensual = capturado > 0 ? capturado : Math.max(0, sd * 30.4);
 
@@ -2248,7 +2543,7 @@
             document.getElementById('rec-regimen').innerText = document.getElementById('tra-tipo-regimen').options[document.getElementById('tra-tipo-regimen').selectedIndex].text;
             document.getElementById('rec-contrato').innerText = document.getElementById('tra-tipo-contrato').options[document.getElementById('tra-tipo-contrato').selectedIndex].text;
 
-            // Tabla principal: cada percepción conserva su importe total y se separa en gravado/exento.
+            // Tablas del recibo estilo Excel: percepciones y deducciones independientes.
             const percepciones = [
                 ['001 Sueldos y Salarios', sueldoBase, 0],
                 ['002 Horas Extra', gravadoHe, exentoHe],
@@ -2267,34 +2562,18 @@
             if (dedPension > 0) deducciones.push(['007 Pensión Alimenticia', dedPension]);
             if (dedOtras > 0) deducciones.push(['008 Otras Deducciones', dedOtras]);
 
-            const filas = Math.max(percepciones.length, deducciones.length);
-            let htmlPrincipal = '';
-            for (let i = 0; i < filas; i++) {
-                const p = percepciones[i];
-                const d = deducciones[i];
-                htmlPrincipal += `<tr>
-                    <td>${p ? p[0] : ''}</td>
-                    <td class="text-right font-mono">${p ? fmtMXN(p[1]) : ''}</td>
-                    <td class="text-right font-mono">${p && p[2] > 0 ? fmtMXN(p[2]) : (p ? '-' : '')}</td>
-                    <td>${d ? d[0] : ''}</td>
-                    <td class="text-right font-mono">${d ? fmtMXN(d[1]) : ''}</td>
-                </tr>`;
-            }
+            const percepBody=document.getElementById('rec-percepciones-body');
+            if (percepBody) percepBody.innerHTML=percepciones.map(p=>`<tr><td>${p[0]}</td><td class="text-right font-mono">${fmtMXN(p[1])}</td><td class="text-right font-mono">${p[2]>0?fmtMXN(p[2]):'-'}</td></tr>`).join('');
+            const dedBody=document.getElementById('rec-deducciones-body');
+            if (dedBody) dedBody.innerHTML=deducciones.map(d=>`<tr><td>${d[0]}</td><td class="text-right font-mono">${fmtMXN(d[1])}</td></tr>`).join('');
+
             const sumaDeducciones = deducciones.reduce((a, x) => a + Number(x[1] || 0), 0);
-            htmlPrincipal += `<tr class="section-total">
-                <td>Suma Percepciones</td>
-                <td class="text-right font-mono">${fmtMXN(totalGravado)}</td>
-                <td class="text-right font-mono">${fmtMXN(totalExento)}</td>
-                <td>Suma Deducciones</td>
-                <td class="text-right font-mono">${fmtMXN(sumaDeducciones)}</td>
-            </tr>`;
-            htmlPrincipal += `<tr class="grand-total">
-                <td>TOTAL PERCEPCIONES</td>
-                <td class="text-right font-mono" colspan="2">${fmtMXN(totalBruto)}</td>
-                <td>TOTAL DEDUCCIONES</td>
-                <td class="text-right font-mono">${fmtMXN(sumaDeducciones)}</td>
-            </tr>`;
-            document.getElementById('rec-tabla-principal').innerHTML = htmlPrincipal;
+            const setRec=(id,v)=>{const e=document.getElementById(id);if(e)e.innerText=v;};
+            setRec('rec-suma-gravado', fmtMXN(totalGravado));
+            setRec('rec-suma-exento', fmtMXN(totalExento));
+            setRec('rec-total-percepciones', fmtMXN(totalBruto));
+            setRec('rec-suma-deducciones', fmtMXN(sumaDeducciones));
+            setRec('rec-total-deducciones', fmtMXN(sumaDeducciones));
 
             const subsidio = Number(resISR.subsidio || 0);
             document.getElementById('rec-subsidio').innerText = fmtMXN(subsidio);
@@ -2317,7 +2596,8 @@
             ['rec-emisor-nombre','rec-emisor-rfc','rec-emisor-rp','rec-emisor-cp','rec-tra-nombre','rec-tra-rfc','rec-tra-curp','rec-tra-nss','rec-tra-cp','rec-fecha-ingreso','rec-antiguedad','rec-fecha-pago','rec-periodo'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent='';});
             ['rec-periodicidad','rec-tipo-nomina','rec-regimen','rec-contrato'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent='';});
             const letras=document.getElementById('rec-total-letras'); if(letras) letras.textContent='CERO PESOS 00/100 M.N.';
-            const tabla=document.getElementById('rec-tabla-principal'); if(tabla) tabla.innerHTML='';
+            ['rec-percepciones-body','rec-deducciones-body'].forEach(id=>{const tabla=document.getElementById(id);if(tabla)tabla.innerHTML='';});
+            ['rec-suma-gravado','rec-suma-exento','rec-total-percepciones','rec-suma-deducciones','rec-total-deducciones'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent='$0.00';});
             const auditStatus=document.getElementById('audit-status'); if(auditStatus){auditStatus.textContent='Sin datos';auditStatus.className='text-[10px] font-semibold px-2 py-0.5 rounded bg-slate-100 text-slate-600';}
             const estado=document.getElementById('nomina-estado-pill'); if(estado){estado.textContent='Sin datos';estado.className='read-only-chip bg-slate-100 text-slate-600';}
             ['nomina-flow-1','nomina-flow-2','nomina-flow-3','nomina-flow-4'].forEach(id=>document.getElementById(id)?.classList.remove('done'));
@@ -2398,7 +2678,6 @@
             actualizarUIHistorialISR([]);
             globalThis.__nominaISRContext = null;
             globalThis.__salidaContext = null;
-            __backupUnknownFields = {};
             actualizarControlesManuales();
             limpiarResultadosNominaUI();
             validarInputsCFDI();
@@ -2458,16 +2737,13 @@
             actualizarIndicadoresUI();
         }
 
-        function aplicarConfiguracionDesdeUI() {
-            CONFIG_NOMINA_2026.UMA.diario = parseFloat(document.getElementById('cfg-uma-val')?.value) || 117.31;
+        function guardarConfiguracionTablas() {
+            CONFIG_NOMINA_2026.UMA.diario = parseFloat(document.getElementById('cfg-uma-val').value) || 117.31;
             CONFIG_NOMINA_2026.UMA.mensual = round2(CONFIG_NOMINA_2026.UMA.diario * 30.4);
             CONFIG_NOMINA_2026.UMA.anual = round2(CONFIG_NOMINA_2026.UMA.mensual * 12);
-            CONFIG_NOMINA_2026.SMI.general = parseFloat(document.getElementById('cfg-smi-val')?.value) || 315.04;
-            CONFIG_NOMINA_2026.UMI = parseFloat(document.getElementById('cfg-umi-val')?.value) || 100.81;
-        }
+            CONFIG_NOMINA_2026.SMI.general = parseFloat(document.getElementById('cfg-smi-val').value) || 315.04;
+            CONFIG_NOMINA_2026.UMI = parseFloat(document.getElementById('cfg-umi-val').value) || 100.81;
 
-        function guardarConfiguracionTablas() {
-            aplicarConfiguracionDesdeUI();
             cargarConfiguracionEnUI();
             calcularSBC();
             calcularNomina();
@@ -2487,7 +2763,7 @@
         }
 
 
-        /* ===== v1.5 JSON BACKUP / RESTORE ===== */
+        /* ===== v1.5+ JSON BACKUP / RESTORE ===== */
         let __backupUnknownFields = {};
         const BACKUP_FIELD_ALIASES = {
             // Compatibilidad futura: si algún ID cambia, agrega aquí el nuevo ID como clave y el ID anterior como valor.
@@ -2529,7 +2805,8 @@
                     fields: collectFormState(),
                     ui: {
                         mode: __appMode || 'nomina',
-                        tab: document.querySelector('.side-nav-btn[data-side-tab].active')?.dataset.sideTab || 'tab-general'
+                        tab: document.querySelector('.side-nav-btn[data-side-tab].active')?.dataset.sideTab || 'tab-general',
+                        theme: document.body.dataset.theme || 'light'
                     }
                 },
                 history: collectISRHistoryStore(),
@@ -2590,11 +2867,8 @@
                 const incomingVersion=Number(payload.schemaVersion||1);
                 const warning=incomingVersion>BACKUP_SCHEMA_VERSION?`El respaldo proviene de un esquema más reciente (${incomingVersion}). Se cargarán todos los campos conocidos y se conservarán los desconocidos para no perder información.`:`Se cargará el respaldo creado por ${payload.appVersion||'otra versión'}.`;
                 if(!confirm(`${warning}\n\n¿Deseas reemplazar la captura actual con la información del respaldo?`)) return;
-                __backupUnknownFields={...(payload.legacy?.unknownFields||{}),...(__backupUnknownFields||{})};
                 applyBackupFields(payload.state?.fields||{});
                 applyBackupHistory(payload.history||{});
-                aplicarConfiguracionDesdeUI();
-                cargarConfiguracionEnUI();
                 actualizarControlesManuales();
                 validarInputsCFDI();
                 actualizarIndicadoresUI();
@@ -2604,6 +2878,7 @@
                 syncSalidaFromNomina(true);
                 calcularNomina();
                 calcularSalida();
+                applyTheme(payload.state?.ui?.theme || 'light');
                 setAppMode(payload.state?.ui?.mode==='salida'?'salida':'nomina');
                 switchTab(payload.state?.ui?.tab||'tab-general');
                 actualizarUIHistorialISR();
@@ -2665,20 +2940,203 @@
             XLSX.writeFile(wb,`Nomina_2026_${rfc}.xlsx`);
         }
 
-        function imprimirRecibo() {
-            const receipt=document.getElementById('printable-receipt');
-            if(!receipt){alert('No se encontró el recibo de nómina.');return;}
-            const existing=document.getElementById('print-only-root'); if(existing) existing.remove();
-            const root=document.createElement('div'); root.id='print-only-root'; root.innerHTML=receipt.outerHTML;
-            document.body.appendChild(root);
-            document.body.classList.add('printing-receipt');
-            let cleaned=false;
-            const cleanup=()=>{if(cleaned)return;cleaned=true;document.body.classList.remove('printing-receipt');root.remove();window.removeEventListener('afterprint',cleanup);};
-            window.addEventListener('afterprint',cleanup);
-            window.print();
-            setTimeout(cleanup,60000);
+        function montarReciboEnDashboard(){
+            ensureNominaDashboardStructure();
+            const receipt=document.getElementById('tab-recibo');
+            const host=document.getElementById('nomina-view-host');
+            if(!receipt || !host) return false;
+            receipt.classList.remove('hidden');
+            receipt.style.width='100%';
+            receipt.style.maxWidth='100%';
+            return true;
         }
 
+        function imprimirRecibo() {
+            const receipt = document.getElementById('printable-receipt');
+            if (!receipt) { alert('No se encontró el recibo de nómina.'); return; }
+
+            const esc = (v='') => String(v)
+                .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+                .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+            const text = id => document.getElementById(id)?.textContent?.trim() || '';
+            const html = id => document.getElementById(id)?.innerHTML || '';
+            const cloneRows = id => document.getElementById(id)?.innerHTML || '<tr><td colspan="3" class="empty">Sin movimientos</td></tr>';
+
+            const popup = window.open('', '_blank', 'width=980,height=1100');
+            if (!popup) {
+                // Fallback: use the browser's print path from the dashboard.
+                window.print();
+                return;
+            }
+
+            const percepcionesRows = cloneRows('rec-percepciones-body');
+            const deduccionesRows = cloneRows('rec-deducciones-body');
+
+            popup.document.open();
+            popup.document.write(`<!doctype html>
+<html lang="es"><head><meta charset="utf-8">
+<title>Recibo de Nómina 2026</title>
+<style>
+  @page { size: letter portrait; margin: 7mm; }
+  :root { color-scheme: light; }
+  * { box-sizing: border-box; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+  html, body { margin:0; padding:0; background:#fff; color:#111827; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+  body { font-family: Arial, Helvetica, sans-serif; font-size:10pt; line-height:1.25; }
+  .print-page { width:100%; max-width:100%; margin:0 auto; }
+  .head { text-align:center; }
+  .title { margin:0; font-size:18pt; line-height:1.05; font-weight:900; letter-spacing:.025em; text-transform:uppercase; }
+  .subtitle { margin-top:2px; color:#475569; font-size:9pt; font-weight:700; }
+  .rule { border-top:1.8px solid #334155; margin:4mm 0 3mm; }
+  .meta-grid { display:grid; grid-template-columns:1fr 1fr; gap:3px 9mm; margin-bottom:3mm; }
+  .worker-grid { display:grid; grid-template-columns:1fr 1fr; gap:2px 10mm; margin-bottom:3.5mm; }
+  .meta-item { min-width:0; }
+  .label { font-weight:900; text-transform:uppercase; }
+  .mono { font-family: "Courier New", monospace; }
+  .two-col { display:grid; grid-template-columns:minmax(0,1.34fr) minmax(0,1fr); gap:4mm; align-items:start; }
+  .card { border:1px solid #cbd5e1; border-radius:5px; overflow:hidden; break-inside:avoid; page-break-inside:avoid; }
+  .card-title { padding:3px 6px; text-align:center; font-weight:900; font-size:9pt; letter-spacing:.04em; color:#fff; background:#1d4ed8; border-bottom:1px solid #1e40af; }
+  table { width:100%; border-collapse:collapse; table-layout:fixed; }
+  th { background:#1d4ed8; color:#fff; padding:4.5px 6px; font-size:8.8pt; font-weight:900; border:1px solid #1e40af; }
+  td { padding:4px 6px; border-bottom:1px solid #e5e7eb; vertical-align:top; overflow-wrap:anywhere; }
+  th:nth-child(1) { text-align:left; }
+  .num { text-align:right; font-family:"Courier New", monospace; white-space:nowrap; }
+  .empty { color:#64748b; text-align:center; }
+  .total td { background:#eff6ff; font-weight:900; color:#0f172a; }
+  .grand td { background:#dbeafe; font-weight:900; border-top:1.5px solid #60a5fa; color:#0f172a; }
+  .other { margin-top:3.5mm; break-inside:avoid; page-break-inside:avoid; }
+  .other-title { margin:0 0 2px; font-weight:900; font-size:8.5pt; text-transform:uppercase; color:#b45309; }
+  .net { margin-top:3.5mm; border:1.8px solid #1d4ed8; background:#eff6ff; padding:8px; text-align:center; break-inside:avoid; page-break-inside:avoid; }
+  .net-label { font-weight:900; text-transform:uppercase; font-size:8.5pt; color:#0f172a; }
+  .net-value { margin-top:1px; color:#1d4ed8; font:900 18pt "Courier New", monospace; }
+  .net-letters { margin-top:1px; font-size:8.2pt; font-weight:800; text-transform:uppercase; }
+  .footer-grid { display:grid; grid-template-columns:1fr 1fr; gap:10mm; margin-top:3.5mm; padding-top:3mm; border-top:1px solid #94a3b8; }
+  .footer-item { break-inside:avoid; page-break-inside:avoid; }
+  .signatures { display:grid; grid-template-columns:1fr 1fr; gap:18mm; margin-top:10mm; }
+  .sign { padding-top:3mm; border-top:1px solid #64748b; text-align:center; font-size:8.2pt; color:#475569; }
+  .note { margin-top:4mm; text-align:center; font-size:7.5pt; color:#64748b; }
+  .nowrap { white-space:nowrap; }
+  @media (max-width:800px) {
+    body { font-size:8.5pt; }
+  }
+  @media print {
+    html, body { width:auto; height:auto; overflow:visible; }
+    .print-page { width:100%; }
+  }
+</style></head><body>
+<div class="print-page">
+  <div class="head">
+    <h1 class="title">Recibo de Nómina</h1>
+    <div class="subtitle">Comprobante de Pago de Sueldos y Salarios</div>
+  </div>
+  <div class="rule"></div>
+
+  <div class="meta-grid">
+    <div class="meta-item"><span class="label">Patrón / Emisor:</span> ${esc(text('rec-emisor-nombre'))}</div>
+    <div class="meta-item"><span class="label">RFC Emisor:</span> <span class="mono">${esc(text('rec-emisor-rfc'))}</span></div>
+    <div class="meta-item"><span class="label">Registro Patronal:</span> <span class="mono">${esc(text('rec-emisor-rp'))}</span></div>
+    <div class="meta-item"><span class="label">C.P. Expedición:</span> ${esc(text('rec-emisor-cp'))}</div>
+  </div>
+
+  <div class="worker-grid">
+    <div><span class="label">Empleado:</span> ${esc(text('rec-tra-nombre'))}</div>
+    <div><span class="label">Fecha pago:</span> ${esc(text('rec-fecha-pago'))}</div>
+    <div><span class="label">RFC:</span> <span class="mono">${esc(text('rec-tra-rfc'))}</span></div>
+    <div><span class="label">Periodo:</span> ${esc(text('rec-periodo'))}</div>
+    <div><span class="label">CURP:</span> <span class="mono">${esc(text('rec-tra-curp'))}</span></div>
+    <div><span class="label">Periodicidad:</span> ${esc(text('rec-periodicidad'))}</div>
+    <div><span class="label">NSS:</span> <span class="mono">${esc(text('rec-tra-nss'))}</span></div>
+    <div><span class="label">Tipo nómina:</span> ${esc(text('rec-tipo-nomina'))}</div>
+    <div><span class="label">Días pagados:</span> ${esc(text('rec-dias-pagados'))}</div>
+    <div><span class="label">Salario diario:</span> <span class="mono">$${esc(text('rec-salario-diario'))}</span></div>
+    <div><span class="label">Fecha ingreso:</span> ${esc(text('rec-fecha-ingreso'))}</div>
+    <div><span class="label">SBC integrado:</span> <span class="mono">$${esc(text('rec-sbc'))}</span></div>
+    <div><span class="label">Antigüedad:</span> ${esc(text('rec-antiguedad'))}</div>
+    <div><span class="label">C.P. fiscal trabajador:</span> ${esc(text('rec-tra-cp'))}</div>
+  </div>
+
+  <div class="two-col">
+    <div class="card">
+      <div class="card-title">PERCEPCIONES</div>
+      <table><thead><tr><th style="width:48%">Concepto</th><th style="width:26%;text-align:right">Gravado (+)</th><th style="width:26%;text-align:right">Exento (+)</th></tr></thead>
+      <tbody>${percepcionesRows}</tbody>
+      <tfoot>
+        <tr class="total"><td>Suma percepciones</td><td class="num">${esc(text('rec-suma-gravado'))}</td><td class="num">${esc(text('rec-suma-exento'))}</td></tr>
+        <tr class="grand"><td>Total percepciones</td><td colspan="2" class="num">${esc(text('rec-total-percepciones'))}</td></tr>
+      </tfoot></table>
+    </div>
+
+    <div class="card">
+      <div class="card-title">DEDUCCIONES</div>
+      <table><thead><tr><th style="width:70%">Concepto</th><th style="width:30%;text-align:right">Importe (-)</th></tr></thead>
+      <tbody>${deduccionesRows}</tbody>
+      <tfoot>
+        <tr class="total"><td>Suma deducciones</td><td class="num">${esc(text('rec-suma-deducciones'))}</td></tr>
+        <tr class="grand"><td>Total deducciones</td><td class="num">${esc(text('rec-total-deducciones'))}</td></tr>
+      </tfoot></table>
+    </div>
+  </div>
+
+  <div class="other">
+    <div class="other-title">Otros pagos</div>
+    <table><thead><tr><th>Concepto</th><th style="width:30%;text-align:right">Importe</th></tr></thead>
+      <tbody><tr><td>Subsidio causado</td><td class="num">${esc(text('rec-subsidio'))}</td></tr></tbody>
+    </table>
+  </div>
+
+  <div class="net">
+    <div class="net-label">Neto a pagar</div>
+    <div class="net-value">${esc(text('rec-total-neto'))}</div>
+    <div class="net-letters">${esc(text('rec-total-letras'))}</div>
+  </div>
+
+  <div class="footer-grid">
+    <div class="footer-item"><span class="label">Régimen fiscal trabajador:</span> ${esc(text('rec-regimen'))}</div>
+    <div class="footer-item"><span class="label">Tipo de contrato:</span> ${esc(text('rec-contrato'))}</div>
+    <div class="footer-item"><span class="label">Estado CFDI:</span> ${esc(text('rec-uuid'))}</div>
+    <div class="footer-item"><span class="label">CFDI:</span> 4.0 / Complemento Nómina 1.2</div>
+  </div>
+
+  <div class="signatures">
+    <div class="sign">Firma del Empleado</div>
+    <div class="sign">Sello y Firma del Patrón</div>
+  </div>
+  <div class="note">Este documento es una representación simplificada de un comprobante fiscal digital.</div>
+</div>
+<script>window.addEventListener('load',()=>{setTimeout(()=>{window.focus();window.print();},250);});<\/script>
+</body></html>`);
+            popup.document.close();
+        }
+
+
+        /* ===== THEME ENGINE v1.6 ===== */
+        function applyTheme(theme, persist=true) {
+            const next = theme === 'dark' ? 'dark' : 'light';
+            document.body.dataset.theme = next;
+            const icon = next === 'dark' ? 'sun' : 'moon';
+            const labelText = next === 'dark' ? 'Claro' : 'Oscuro';
+            const btn = document.getElementById('theme-toggle');
+            const mobileBtn = document.getElementById('mobile-theme-toggle');
+            const label = document.getElementById('theme-toggle-label');
+            if (btn) {
+                btn.setAttribute('aria-pressed', next === 'dark' ? 'true' : 'false');
+                btn.innerHTML = `<i data-lucide="${icon}" class="w-3.5 h-3.5 mr-1.5"></i><span class="theme-toggle-label">${labelText}</span>`;
+            }
+            if (label) label.textContent = labelText;
+            if (mobileBtn) {
+                mobileBtn.setAttribute('aria-pressed', next === 'dark' ? 'true' : 'false');
+                mobileBtn.innerHTML = `<i data-lucide="${icon}" class="w-4 h-4"></i>`;
+            }
+            if (persist) { try { localStorage.setItem('nomina:theme', next); } catch(e) {} }
+            globalThis.lucide?.createIcons?.();
+        }
+        function toggleTheme() {
+            applyTheme(document.body.dataset.theme === 'dark' ? 'light' : 'dark');
+        }
+        function loadThemePreference() {
+            let theme='light';
+            try { theme=localStorage.getItem('nomina:theme') || 'light'; } catch(e) {}
+            applyTheme(theme, false);
+        }
 
         /* ===== WORKSPACE ENGINE ===== */
         let __appMode = 'nomina';
@@ -2692,7 +3150,7 @@
             document.getElementById('sidebar-nav-nomina')?.classList.toggle('hidden', __appMode !== 'nomina');
             document.getElementById('sidebar-nav-salida')?.classList.toggle('hidden', __appMode !== 'salida');
             const mt=document.getElementById('mobile-mode-title'); if(mt) mt.textContent=__appMode==='salida'?'Finiquito / Liquidación':'Nómina';
-            if (__appMode === 'salida') { syncSalidaFromNomina(); actualizarUISalidaTipo(); calcularSalida(); }
+            if (__appMode === 'salida') { syncSalidaFromNomina(); actualizarUISalidaTipo(); calcularSalida(); navegarSalida('salida-datos'); setTimeout(()=>window.scrollTo({top:0, behavior:'smooth'}),0); }
             else { calcularNomina(); }
             globalThis.lucide?.createIcons?.();
             try { sessionStorage.setItem('nomina:lastMode', __appMode); } catch(e) {}
@@ -2776,6 +3234,7 @@
         }
 
         window.addEventListener('DOMContentLoaded', () => {
+            loadThemePreference();
             if (globalThis.lucide?.createIcons) lucide.createIcons();
             cargarConfiguracionEnUI();
             actualizarControlesManuales();
@@ -2786,9 +3245,15 @@
             syncSalidaFromNomina(true);
             actualizarUISalidaTipo();
             calcularSalida();
+            ensureNominaDashboardStructure();
+            montarReciboEnDashboard();
             setAppMode('nomina');
-            try { const lastTab=sessionStorage.getItem('nomina:lastTab'); if(lastTab) switchTab(lastTab); } catch(e) { switchTab('tab-general'); }
-            switchTab(document.querySelector('.side-nav-btn.active')?.dataset.sideTab || 'tab-general');
+            let initialTab='tab-parametros';
+            try { const lastTab=sessionStorage.getItem('nomina:lastTab'); if(lastTab) initialTab=lastTab; } catch(e) {}
+            switchTab(initialTab);
+            let initialSalidaTab='salida-datos';
+            try { const lastSalida=sessionStorage.getItem('nomina:lastSalidaTab'); if(lastSalida) initialSalidaTab=lastSalida; } catch(e) {}
+            navegarSalida(initialSalidaTab);
             toggleSidebar(false);
         });
     </script>
